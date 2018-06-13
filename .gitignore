@@ -6,3 +6,4 @@ out/*
 *(original)twitter4j.*
 src/*.jar
 *.iml
+twitter4j.properties
