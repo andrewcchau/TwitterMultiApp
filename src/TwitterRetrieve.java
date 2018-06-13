@@ -2,20 +2,22 @@ import twitter4j.*;
 import java.util.List;
 
 public class TwitterRetrieve {
+
     public static void main(String[] args) {
         try{
             TwitterRetrieve t = new TwitterRetrieve();
-            Twitter twit = TwitterFactory.getSingleton();
-            t.retrieveFromTwitter(twit);
+            Twitter twitter = TwitterFactory.getSingleton();
+            t.retrieveFromTwitter(twitter, 30);
         }catch(TwitterException e){
             e.printStackTrace();
         }
     }
-    public void retrieveFromTwitter(Twitter t) throws TwitterException {
+
+
+    public void retrieveFromTwitter(Twitter twitter, final int TWEETTOTAL) throws TwitterException {
         /*Fetch a titak.. I mean number of tweets*/
-        int tweetTotal = 30;
-        Paging p = new Paging(1, tweetTotal);
-        List<Status> tweets = t.getHomeTimeline(p);
+        Paging p = new Paging(1, TWEETTOTAL);
+        List<Status> tweets = twitter.getHomeTimeline(p);
         for(Status s: tweets){
             System.out.println("=======================================");
             System.out.println(s.getUser().getName() + ": " + s.getText());

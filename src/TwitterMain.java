@@ -5,29 +5,31 @@ import twitter4j.TwitterFactory;
 import java.util.Scanner;
 
 public class TwitterMain {
-    private static String p = "p";
-    private static String r = "r";
-    private static String e = "exit";
+    private static final String P = "p";
+    private static final String R = "r";
+    private static final String E = "exit";
+    private static final int TWEETTOTAL = 30;
+
     public static void main(String[] args) {
         System.out.println("Please ensure you have filled in the appropriate keys before posting/retrieving.");
         Scanner s = new Scanner(System.in);
         String holder = null;
         TwitterPublish tp = new TwitterPublish();
         TwitterRetrieve tr = new TwitterRetrieve();
-        Twitter t = TwitterFactory.getSingleton();
+        Twitter twitter = TwitterFactory.getSingleton();
         boolean loop = true;
 
         while(loop) {
             System.out.println("Post to timeline or retrieve from timeline? (\"p\" to post) (\"r\" to retrieve) (\"exit\" to exit)");
             holder = s.nextLine();
             try{
-                if (holder.toLowerCase().equals(p)) {
+                if (holder.toLowerCase().equals(P)) {
                     System.out.print("Enter post: ");
-                    tp.postToTwitter(t, s.nextLine());
-                } else if (holder.toLowerCase().equals(r)) {
-                    System.out.println("Here are the top 30 latest posts:");
-                    tr.retrieveFromTwitter(t);
-                } else if(holder.toLowerCase().equals(e)){
+                    tp.postToTwitter(twitter, s.nextLine());
+                } else if (holder.toLowerCase().equals(R)) {
+                    System.out.println("Here are the top " + TWEETTOTAL + " latest posts:");
+                    tr.retrieveFromTwitter(twitter, TWEETTOTAL);
+                } else if(holder.toLowerCase().equals(E)){
                     System.out.println("Goodbye");
                     loop = false;
                 } else {
