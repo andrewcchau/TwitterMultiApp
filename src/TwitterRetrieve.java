@@ -14,9 +14,9 @@ public class TwitterRetrieve {
     }
 
 
-    public void retrieveFromTwitter(Twitter twitter, final int TWEETTOTAL) throws TwitterException {
+    public void retrieveFromTwitter(Twitter twitter, final int TWEET_TOTAL) throws TwitterException {
         /*Fetch a titak.. I mean number of tweets*/
-        Paging p = new Paging(1, TWEETTOTAL);
+        Paging p = new Paging(1, TWEET_TOTAL);
         List<Status> tweets = twitter.getHomeTimeline(p);
         for(Status s: tweets){
             System.out.println("=======================================");

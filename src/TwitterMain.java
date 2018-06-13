@@ -8,7 +8,7 @@ public class TwitterMain {
     private static final String P = "p";
     private static final String R = "r";
     private static final String E = "exit";
-    private static final int TWEETTOTAL = 30;
+    private static final int TWEET_TOTAL = 30;
 
     public static void main(String[] args) {
         System.out.println("Please ensure you have filled in the appropriate keys before posting/retrieving.");
@@ -27,8 +27,8 @@ public class TwitterMain {
                     System.out.print("Enter post: ");
                     tp.postToTwitter(twitter, s.nextLine());
                 } else if (holder.toLowerCase().equals(R)) {
-                    System.out.println("Here are the top " + TWEETTOTAL + " latest posts:");
-                    tr.retrieveFromTwitter(twitter, TWEETTOTAL);
+                    System.out.println("Here are the top " + TWEET_TOTAL + " latest posts:");
+                    tr.retrieveFromTwitter(twitter, TWEET_TOTAL);
                 } else if(holder.toLowerCase().equals(E)){
                     System.out.println("Goodbye");
                     loop = false;
