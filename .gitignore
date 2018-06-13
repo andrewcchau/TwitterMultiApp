@@ -1,0 +1,6 @@
+.idea
+.idea/*
+src/*.class
+.DS_Store
+out/artifacts/*
+*(original)twitter4j.*
