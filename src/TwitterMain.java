@@ -37,6 +37,7 @@ public class TwitterMain {
                 }
             }catch(TwitterException te){
                 te.printStackTrace();
+                loop = false;
             }
         }
         s.close();
