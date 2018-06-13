@@ -2,6 +2,7 @@
 .idea/*
 src/*.class
 .DS_Store
-out/artifacts/*
+out/*
 *(original)twitter4j.*
 src/*.jar
+*.iml
