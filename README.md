@@ -4,11 +4,13 @@ A simple program that can post to a user's timeline and retrieve timeline posts.
 # Getting Started
 Before you start, make sure you have done these few things:
 * Have Java 8 installed on your computer
-* Go into the src folder and make a copy of "twitter4jTEMPLATE.properties". Renamed it "twitter4j.properties" and fill the file in with your consumer key/secret and access token/secret
+* Have Maven installed on your computer
+* Go into the src/main/resources folder and make a copy of "twitter4jTEMPLATE.properties". Renamed it "twitter4j.properties" and fill the file in with your consumer key/secret and access token/secret
 
 # Running The Program
 To run the program, follow these steps:
-1. Open command line and navigate to the src folder
-2. Run "javac -cp ../twitter4j-core-4.0.4.jar *.java" to compile the java files with twitter4j library
-3. Run "jar cfm TwitterMain.jar META-INF/MANIFEST.MF \*.class" to create a jar file named "TwitterMain.jar"
-4. Run "java -jar TwitterMain.jar" to execute the jar file
+1. Open command line and navigate to the folder where you have cloned this repo (you should see "pom.xml" and this README along with some folders)
+2. Run "mvn clean" to ensure that you're working with a clean directory
+3. Run "mvn compile" to have Maven compile the java files with twitter4j dependencies
+4. Run "mvn package" to create the jar file in a newly created "target" folder
+5. Run "java -cp target/TwitterMultiApp-1.0.0-SNAPSHOT.jar TwitterMain" to execute the jar file
