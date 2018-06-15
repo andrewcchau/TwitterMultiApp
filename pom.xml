@@ -32,7 +32,7 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>TwitterMain</mainClass>
+                            <mainClass>lithium.university.TwitterMain</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>

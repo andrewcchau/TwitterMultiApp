@@ -1,3 +1,5 @@
+package lithium.university;
+
 import twitter4j.*;
 import java.util.List;
 
