@@ -16,25 +16,6 @@
         </dependency>
     </dependencies>
 
-    <!--<build>-->
-        <!--<plugins>-->
-            <!--<plugin>-->
-                <!--&lt;!&ndash;- Build Executable Jar &ndash;&gt;-->
-                <!--<groupId>org.twitter4j</groupId>-->
-                <!--<artifactId>twitter4j-core</artifactId>-->
-                <!--<version>4.0.4</version>-->
-                <!--<configuration>-->
-                    <!--<archive>-->
-                            <!--&lt;!&ndash;<manifest>&ndash;&gt;-->
-                                <!--&lt;!&ndash;<mainClass>TwitterMain</mainClass>&ndash;&gt;-->
-                            <!--&lt;!&ndash;</manifest>&ndash;&gt;-->
-                        <!--<manifestFile>src/main/resources/META-INF/MANIFEST.MF</manifestFile>-->
-                    <!--</archive>-->
-                <!--</configuration>-->
-            <!--</plugin>-->
-        <!--</plugins>-->
-    <!--</build>-->
-
     <build>
         <plugins>
             <plugin>
