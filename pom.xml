@@ -6,19 +6,21 @@
 
     <groupId>LiUni</groupId>
     <artifactId>TwitterMultiApp</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>${build.version}</version>
 
     <properties>
-        <twitter4jVersion>4.0.4</twitter4jVersion>
+        <build.version>1.0.0-SNAPSHOT</build.version>
+        <twitter4j.version>4.0.4</twitter4j.version>
     </properties>
+
+
     <dependencies>
         <dependency>
             <groupId>org.twitter4j</groupId>
             <artifactId>twitter4j-core</artifactId>
-            <version>4.0.4</version>
+            <version>${twitter4j.version}</version>
         </dependency>
     </dependencies>
-
 
 
     <build>
