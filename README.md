@@ -13,4 +13,5 @@ To run the program, follow these steps:
 2. Run "mvn clean" to ensure that you're working with a clean directory
 3. Run "mvn compile" to have Maven compile the java files with twitter4j dependencies
 4. Run "mvn package" to create the jar file in a newly created "target" folder
-5. Run "java -jar target/TwitterMultiApp-1.0.0-SNAPSHOT-jar-with-dependencies.jar" to execute the jar file
+5. Move the filled in "twitter4j.properties" file from src/main/resources into the newly created "target" folder 
+6. Run "java -jar target/TwitterMultiApp-1.0.0-SNAPSHOT-jar-with-dependencies.jar" to execute the jar file

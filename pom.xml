@@ -34,6 +34,9 @@
                             <addClasspath>true</addClasspath>
                             <mainClass>lithium.university.TwitterMain</mainClass>
                         </manifest>
+                        <manifestEntries>
+                            <Class-Path>.</Class-Path>
+                        </manifestEntries>
                     </archive>
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
