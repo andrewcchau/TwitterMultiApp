@@ -30,7 +30,7 @@ public class TwitterMain {
                     tp.postToTwitter(twitter, s.nextLine());
                 } else if (holder.toLowerCase().equals(R)) {
                     System.out.println("Here are the top " + TWEET_TOTAL + " latest posts:");
-                    tr.retrieveFromTwitter(twitter, TWEET_TOTAL);
+                    System.out.println(tr.retrieveFromTwitter(twitter, TWEET_TOTAL));
                 } else if(holder.toLowerCase().equals(E)){
                     System.out.println("Goodbye");
                     loop = false;
