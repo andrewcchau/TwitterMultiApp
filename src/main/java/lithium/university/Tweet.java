@@ -8,7 +8,6 @@ import org.json.simple.JSONObject;
 public class Tweet {
     private long id;
 
-//    @Length(max = 280)
     private JSONObject[] content;
 
     public Tweet(){

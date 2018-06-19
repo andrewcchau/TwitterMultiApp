@@ -11,6 +11,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.POST;
+import javax.ws.rs.core.Response;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.Optional;
 
@@ -36,7 +37,7 @@ public class TwitterResource {
     @GET
     @Path("/timeline")
     @Timed
-    public Tweet getTimeline(){
+    public Tweet getHomeTimeline(){
         TwitterRetrieve tr = new TwitterRetrieve();
         String[] value = null;
         JSONObject[] tweet_holder = new JSONObject[TWEET_TOTAL];
@@ -51,18 +52,40 @@ public class TwitterResource {
         }catch(Exception e){
             e.printStackTrace();
         }
+
         return new Tweet(counter.incrementAndGet(), tweet_holder);
     }
 
     @POST
     @Path("/tweet")
-    public void postTweet(@QueryParam("message") Optional<String> message){
+    public Response postTweet(String message){
         TwitterPublish tp = new TwitterPublish();
-        final String value = String.format(template, message.orElse("..."));
+        int error_code = -1;
         try{
-            tp.postToTwitter(twitter, value);
+            error_code = tp.postToTwitter(twitter, message);
         }catch(TwitterException te){
             te.printStackTrace();
         }
+        if(error_code != -1){
+            return Response.status(Response.Status.OK).build();
+        }
+        return Response.serverError().entity("{}").build();
+    }
+
+    @GET
+    @Path("/tweet")
+    public Tweet getLatestUserTweet(){
+        TwitterRetrieve tr = new TwitterRetrieve();
+        JSONObject[] tweet_holder = new JSONObject[1];
+        try{
+            JSONParser parser = new JSONParser();
+            tweet_holder[0] = (JSONObject) parser.parse(tr.retrieveLatestUserTweet(twitter));
+        }catch(TwitterException te){
+            te.printStackTrace();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+        return new Tweet(counter.incrementAndGet(), tweet_holder);
     }
 }

@@ -9,4 +9,3 @@ src/*.jar
 *twitter4j.properties
 target/*
 dependency-reduced-pom.xml
-*.yml

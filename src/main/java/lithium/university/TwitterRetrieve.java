@@ -20,19 +20,23 @@ public class TwitterRetrieve {
     * Gets the data from twitter and returns raw JSON data
     * */
     public String[] retrieveFromTwitter(Twitter twitter, final int TWEET_TOTAL) throws TwitterException {
-        /*Fetch a titak.. I mean number of tweets*/
         String timeline[] = new String[TWEET_TOTAL * 2];
         int index = 0;
         Paging p = new Paging(1, TWEET_TOTAL);
         List<Status> tweets = twitter.getHomeTimeline(p);
         for(Status s: tweets){
-//            System.out.println("=======================================");
-//            System.out.println(s.getUser().getName() + ": " + s.getText());
-//            System.out.println("=======================================\n\n");
-
             timeline[index++] = DataObjectFactory.getRawJSON(s);
         }
 
         return timeline;
+    }
+
+    public String retrieveLatestUserTweet(Twitter twitter) throws TwitterException {
+        Paging p = new Paging(1, 1);
+        List tweet_list = twitter.getUserTimeline(p);
+        if(!tweet_list.isEmpty() && tweet_list.size() != 0) {
+            return DataObjectFactory.getRawJSON(tweet_list.get(0));
+        }
+        return null;
     }
 }
