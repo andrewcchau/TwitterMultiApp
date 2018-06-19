@@ -19,7 +19,7 @@ To run the program, follow these steps:
 To post to twitter using this program, follow these steps:
 1. Make sure the program is running first (see: Running The Program above)
 2. Open a new tab in terminal (or new terminal window)
-3. Run ```curl -H "Content-Type: application/json" --data '(MESSAGE)' http://localhost:8080/api/1.0/twitter/tweet``` where (MESSAGE) is the message / tweet you wish to post
+3. Run ```curl --data '(MESSAGE)' http://localhost:8080/api/1.0/twitter/tweet``` where (MESSAGE) is the message / tweet you wish to post
 
 ## Viewing Twitter Timeline
 Make sure the program is running (see: Running The Program above) before following these steps:
