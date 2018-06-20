@@ -22,13 +22,13 @@ import org.json.simple.parser.*;
 @Path("/api/1.0/twitter")
 @Produces(MediaType.APPLICATION_JSON)
 public class TwitterResource {
-    private final String template;
+//    private final String template;
     private final AtomicLong counter;
     private final Twitter twitter;
     private final int TWEET_TOTAL;
 
-    public TwitterResource(String template, Twitter twitter, int TWEET_TOTAL){
-        this.template = template;
+    public TwitterResource(Twitter twitter, int TWEET_TOTAL){
+//        this.template = template;
         this.twitter = twitter;
         this.TWEET_TOTAL = TWEET_TOTAL;
         this.counter = new AtomicLong();
@@ -45,10 +45,10 @@ public class TwitterResource {
             value = tr.retrieveFromTwitter(twitter, TWEET_TOTAL);
             JSONParser parser = new JSONParser();
             for(int i = 0; i < TWEET_TOTAL; i++){
-                tweet_holder[i] = (JSONObject) parser.parse(value[i]);
+                if(value[i] != null) {
+                    tweet_holder[i] = (JSONObject) parser.parse(value[i]);
+                }
             }
-        }catch(TwitterException te){
-            te.printStackTrace();
         }catch(Exception e){
             e.printStackTrace();
         }
@@ -63,13 +63,15 @@ public class TwitterResource {
         int error_code = -1;
         try{
             error_code = tp.postToTwitter(twitter, message);
-        }catch(TwitterException te){
-            te.printStackTrace();
+        }catch(Exception e){
+            e.printStackTrace();
         }
+
         if(error_code != -1){
-            return Response.status(Response.Status.OK).build();
+            return Response.status(Response.Status.OK).entity("Successfully updated status to: " + message + "\n").build();
         }
-        return Response.serverError().entity("{}").build();
+
+        return Response.serverError().entity("Failure to post tweet.").build();
     }
 
     @GET
@@ -77,11 +79,9 @@ public class TwitterResource {
     public Tweet getLatestUserTweet(){
         TwitterRetrieve tr = new TwitterRetrieve();
         JSONObject[] tweet_holder = new JSONObject[1];
-        try{
+        try {
             JSONParser parser = new JSONParser();
             tweet_holder[0] = (JSONObject) parser.parse(tr.retrieveLatestUserTweet(twitter));
-        }catch(TwitterException te){
-            te.printStackTrace();
         }catch(Exception e){
             e.printStackTrace();
         }

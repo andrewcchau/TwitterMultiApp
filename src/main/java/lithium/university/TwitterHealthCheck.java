@@ -1,19 +1,22 @@
 package lithium.university;
 
 import com.codahale.metrics.health.HealthCheck;
+import twitter4j.*;
 
 public class TwitterHealthCheck extends HealthCheck {
-    private final String template;
+    private final Twitter twitter;
 
-    public TwitterHealthCheck(String template){
-        this.template = template;
+    public TwitterHealthCheck(Twitter twitter){
+        this.twitter = twitter;
     }
 
     @Override
     protected Result check() throws Exception {
-        final String tweet = String.format(template, "TEST");
-        if(!tweet.contains("TEST)")){
-            return Result.unhealthy("Tweet doesn't include a name");
+        try{
+            User user = twitter.verifyCredentials();
+        }catch(Exception e){
+            e.printStackTrace();
+            return Result.unhealthy("Can't reach twitter due to faulty authentication!");
         }
 
         return Result.healthy();

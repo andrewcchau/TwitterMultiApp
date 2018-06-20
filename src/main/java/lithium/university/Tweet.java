@@ -10,9 +10,7 @@ public class Tweet {
 
     private JSONObject[] content;
 
-    public Tweet(){
-
-    }
+    public Tweet(){}
 
     public Tweet(long id, JSONObject[] content){
         this.id = id;

@@ -20,7 +20,7 @@ public class TwitterRetrieve {
     * Gets the data from twitter and returns raw JSON data
     * */
     public String[] retrieveFromTwitter(Twitter twitter, final int TWEET_TOTAL) throws TwitterException {
-        String timeline[] = new String[TWEET_TOTAL * 2];
+        String timeline[] = new String[TWEET_TOTAL];
         int index = 0;
         Paging p = new Paging(1, TWEET_TOTAL);
         List<Status> tweets = twitter.getHomeTimeline(p);
