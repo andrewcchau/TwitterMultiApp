@@ -9,6 +9,8 @@ import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.conf.ConfigurationBuilder;
+import javax.ws.rs.core.Response;
+
 
 public class TwitterApplication extends Application<TwitterConfiguration> {
     private static final int TWEET_TOTAL = 25;
@@ -34,16 +36,7 @@ public class TwitterApplication extends Application<TwitterConfiguration> {
         TwitterFactory twitterFactory = new TwitterFactory(cb.build());
         final Twitter twitter = twitterFactory.getInstance();
         final TwitterHealthCheck healthCheck = new TwitterHealthCheck(twitter);
-        final TwitterResource resource = new TwitterResource(twitter, TWEET_TOTAL);
-
-        /*Initial credential verification*/
-        try{
-            System.out.println("INFO  ------------------------- Verifying twitter authentication key and secrets");
-            User user = twitter.verifyCredentials();
-        }catch(Exception e){
-            System.out.println("ERROR: Twitter authentication failed! Please check your consumer and access key / secrets!");
-            System.exit(1);
-        }
+        final TwitterResource resource = new TwitterResource(twitter, TWEET_TOTAL, healthCheck);
 
         environment.healthChecks().register("twitter", healthCheck);
         environment.jersey().register(resource);
