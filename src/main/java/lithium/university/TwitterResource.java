@@ -17,9 +17,12 @@ import java.util.List;
 public class TwitterResource {
     private final int TWEET_TOTAL;
     private final int TWEET_LENGTH;
+    private final String ERROR_MESSAGE = "Oops! Something went wrong! Please check the server log for details and try again.";
+
     private Twitter twitter;
     private TwitterRetrieve twitterRetrieve;
     private TwitterPublish twitterPublish;
+
 
     public TwitterResource(int TWEET_TOTAL, int TWEET_LENGTH){
         this.TWEET_TOTAL = TWEET_TOTAL;
@@ -40,7 +43,7 @@ public class TwitterResource {
             list = twitterRetrieve.retrieveFromTwitter(twitter, TWEET_TOTAL);
         } catch (Exception e) {
             e.printStackTrace();
-            return Response.serverError().entity(e.getMessage()).build();
+            return Response.serverError().entity(ERROR_MESSAGE).build();
         }
 
         return new Tweet(list);
@@ -54,19 +57,19 @@ public class TwitterResource {
 
         /*Attempt to post to Twitter and get error codes*/
         boolean post_success = false;
-        String error_message = "";
+        boolean error = false;
         try{
             post_success = twitterPublish.postToTwitter(twitter, message, TWEET_LENGTH);
         }catch(Exception e){
             e.printStackTrace();
-            error_message = e.toString();
+            error = true;
         }
 
         /*Handle errors as needed*/
         if(post_success){
             return Response.status(Response.Status.OK).entity("Successfully updated status to: " + message + "\n").build();
-        }else if(error_message.length() > 0){
-            return Response.serverError().entity("Cannot post. " + error_message).build();
+        }else if(error){
+            return Response.serverError().entity(ERROR_MESSAGE).build();
         }
 
         return Response.serverError().entity("Cannot post. Message length should not exceed " + TWEET_LENGTH + " characters.").build();
