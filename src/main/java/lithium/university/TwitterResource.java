@@ -37,7 +37,7 @@ public class TwitterResource {
 
         List<Status> list = null;
         try {
-            list = twitterRetrieve.retrieveFromTwitter(twitter, TWEET_TOTAL, TWEET_LENGTH);
+            list = twitterRetrieve.retrieveFromTwitter(twitter, TWEET_TOTAL);
         } catch (Exception e) {
             e.printStackTrace();
             return Response.serverError().entity(e.getMessage()).build();
@@ -56,7 +56,7 @@ public class TwitterResource {
         boolean post_success = false;
         String error_message = "";
         try{
-            post_success = twitterPublish.postToTwitter(twitter, message);
+            post_success = twitterPublish.postToTwitter(twitter, message, TWEET_LENGTH);
         }catch(Exception e){
             e.printStackTrace();
             error_message = e.toString();
