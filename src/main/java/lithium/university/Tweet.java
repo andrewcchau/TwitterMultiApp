@@ -1,8 +1,6 @@
 package lithium.university;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.hibernate.validator.constraints.Length;
-import twitter4j.JSONObject;
 
 
 public class Tweet<T> {

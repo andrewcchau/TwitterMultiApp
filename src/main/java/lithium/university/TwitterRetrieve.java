@@ -1,7 +1,6 @@
 package lithium.university;
 
 import twitter4j.*;
-import twitter4j.TwitterObjectFactory;
 import java.util.List;
 
 public class TwitterRetrieve {
@@ -21,7 +20,6 @@ public class TwitterRetrieve {
     * */
     public List<Status> retrieveFromTwitter(Twitter twitter, final int TWEET_TOTAL) throws TwitterException {
         String timeline[] = new String[TWEET_TOTAL];
-        int index = 0;
         Paging p = new Paging(1, TWEET_TOTAL);
         return twitter.getHomeTimeline(p);
     }
