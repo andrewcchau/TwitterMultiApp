@@ -8,3 +8,6 @@ src/*.jar
 *.iml
 *twitter4j.properties
 target/*
+dependency-reduced-pom.xml
+*TwitterMain.java
+*.yml
