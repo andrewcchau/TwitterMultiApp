@@ -9,8 +9,8 @@ import twitter4j.conf.ConfigurationBuilder;
 
 
 public class TwitterApplication extends Application<TwitterConfiguration> {
-    private static final int TWEET_TOTAL = 25;
-    private static final int TWEET_LENGTH = 280;
+    public static final int TWEET_TOTAL = 25;
+    public static final int TWEET_LENGTH = 280;
 
     public static void main(String args[]) throws Exception {
         new TwitterApplication().run(args);
@@ -32,8 +32,8 @@ public class TwitterApplication extends Application<TwitterConfiguration> {
         cb.setJSONStoreEnabled(true);
         TwitterFactory twitterFactory = new TwitterFactory(cb.build());
         final Twitter twitter = twitterFactory.getInstance();
-        final TwitterHealthCheck healthCheck = new TwitterHealthCheck(twitter);
-        final TwitterResource resource = new TwitterResource(TWEET_TOTAL, TWEET_LENGTH);
+        final TwitterHealthCheck healthCheck = new TwitterHealthCheck();
+        final TwitterResource resource = new TwitterResource();
 
         environment.healthChecks().register("twitter", healthCheck);
         environment.jersey().register(resource);

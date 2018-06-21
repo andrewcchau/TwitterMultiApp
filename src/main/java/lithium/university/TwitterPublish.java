@@ -13,9 +13,9 @@ public class TwitterPublish {
     * Input: Twitter twitter - twitter instance, String message - message to be posted
     * Output: true if successful, false otherwise
     * */
-    public boolean postToTwitter(Twitter twitter, String message, int TWEET_LENGTH) throws TwitterException {
-        if(message.length() > TWEET_LENGTH) {
-            System.out.println("Cannot post. Message length should not exceed 280 characters. You're " + (message.length() - TWEET_LENGTH) + " characters too long.");
+    public boolean postToTwitter(Twitter twitter, String message, int tweetTotal) throws TwitterException {
+        if(message.length() > tweetTotal) {
+            System.out.println("Cannot post. Message length should not exceed 280 characters. You're " + (message.length() - tweetTotal) + " characters too long.");
             return false;
         }
         Status status = twitter.updateStatus(message);

@@ -6,11 +6,10 @@
 
     <groupId>LiUni</groupId>
     <artifactId>TwitterMultiApp</artifactId>
-    <version>${build.version}</version>
+    <version>1.0.0-SNAPSHOT</version>
 
     <properties>
         <mainClass>lithium.university.TwitterApplication</mainClass>
-        <build.version>1.0.0-SNAPSHOT</build.version>
         <twitter4j.version>4.0.4</twitter4j.version>
         <dropwizard.version>1.3.4</dropwizard.version>
         <maven-assembly.version>3.1.0</maven-assembly.version>
