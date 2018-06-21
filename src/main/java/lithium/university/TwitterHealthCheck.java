@@ -6,9 +6,11 @@ import twitter4j.*;
 public class TwitterHealthCheck extends HealthCheck {
     private final Twitter twitter;
     private User user;
+    private boolean health;
 
     public TwitterHealthCheck(Twitter twitter){
         this.twitter = twitter;
+        health = false;
     }
 
     @Override
@@ -17,22 +19,19 @@ public class TwitterHealthCheck extends HealthCheck {
             User user = twitter.verifyCredentials();
         }catch(Exception e){
             e.printStackTrace();
+            health = false;
             return Result.unhealthy("Can't reach twitter due to faulty authentication!");
         }
 
+        health = true;
         return Result.healthy();
     }
 
-    public boolean isHealthy(){
-        System.out.println("INFO  ------------------------- Verifying twitter authentication key and secrets");
+    public boolean getHealth(){
+        return health;
+    }
 
-        try{
-            user = twitter.verifyCredentials();
-        }catch(Exception e){
-            System.out.println("ERROR: Twitter authentication failed! Please check your consumer and access key / secrets!");
-            return false;
-        }
-
-        return true;
+    public void setHealth(boolean value){
+        health = value;
     }
 }

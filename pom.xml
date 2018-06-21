@@ -16,6 +16,7 @@
         <maven-assembly.version>3.1.0</maven-assembly.version>
         <shade.version>3.1.1</shade.version>
         <json-simple.version>1.1</json-simple.version>
+        <!--<jackson.version>2.6.3</jackson.version>-->
     </properties>
 
 
@@ -37,6 +38,18 @@
             <artifactId>json-simple</artifactId>
             <version>${json-simple.version}</version>
         </dependency>
+
+        <!--<dependency>-->
+            <!--<groupId>com.fasterxml.jackson.core</groupId>-->
+            <!--<artifactId>jackson-databind</artifactId>-->
+            <!--<version>${jackson.version}</version>-->
+        <!--</dependency>-->
+
+        <!--<dependency>-->
+            <!--<groupId>com.fasterxml.jackson.core</groupId>-->
+            <!--<artifactId>jackson-annotations</artifactId>-->
+            <!--<version>${jackson.version}</version>-->
+        <!--</dependency>-->
     </dependencies>
 
 

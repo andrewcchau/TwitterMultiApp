@@ -2,28 +2,20 @@ package lithium.university;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.validator.constraints.Length;
-import org.json.simple.JSONObject;
+import twitter4j.JSONObject;
 
 
-public class Tweet {
-    private long id;
-
-    private JSONObject[] content;
+public class Tweet<T> {
+    private Object content;
 
     public Tweet(){}
 
-    public Tweet(long id, JSONObject[] content){
-        this.id = id;
+    public Tweet(Object content){
         this.content = content;
     }
 
     @JsonProperty
-    public long getId(){
-        return id;
-    }
-
-    @JsonProperty
-    public JSONObject[] getContent(){
+    public Object getContent(){
         return content;
     }
 }

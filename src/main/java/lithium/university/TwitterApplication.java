@@ -3,13 +3,9 @@ package lithium.university;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-
-import twitter4j.User;
 import twitter4j.Twitter;
-import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.conf.ConfigurationBuilder;
-import javax.ws.rs.core.Response;
 
 
 public class TwitterApplication extends Application<TwitterConfiguration> {
@@ -36,7 +32,7 @@ public class TwitterApplication extends Application<TwitterConfiguration> {
         TwitterFactory twitterFactory = new TwitterFactory(cb.build());
         final Twitter twitter = twitterFactory.getInstance();
         final TwitterHealthCheck healthCheck = new TwitterHealthCheck(twitter);
-        final TwitterResource resource = new TwitterResource(twitter, TWEET_TOTAL, healthCheck);
+        final TwitterResource resource = new TwitterResource(TWEET_TOTAL);
 
         environment.healthChecks().register("twitter", healthCheck);
         environment.jersey().register(resource);

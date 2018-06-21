@@ -1,7 +1,7 @@
 package lithium.university;
 
 import twitter4j.*;
-import twitter4j.json.DataObjectFactory;
+import twitter4j.TwitterObjectFactory;
 import java.util.List;
 
 public class TwitterRetrieve {
@@ -17,26 +17,12 @@ public class TwitterRetrieve {
     }
 
     /*
-    * Gets the data from twitter and returns raw JSON data
+    * Gets the data from twitter and returns a list of the statuses
     * */
-    public String[] retrieveFromTwitter(Twitter twitter, final int TWEET_TOTAL) throws TwitterException {
+    public List<Status> retrieveFromTwitter(Twitter twitter, final int TWEET_TOTAL) throws TwitterException {
         String timeline[] = new String[TWEET_TOTAL];
         int index = 0;
         Paging p = new Paging(1, TWEET_TOTAL);
-        List<Status> tweets = twitter.getHomeTimeline(p);
-        for(Status s: tweets){
-            timeline[index++] = DataObjectFactory.getRawJSON(s);
-        }
-
-        return timeline;
-    }
-
-    public String retrieveLatestUserTweet(Twitter twitter) throws TwitterException {
-        Paging p = new Paging(1, 1);
-        List tweet_list = twitter.getUserTimeline(p);
-        if(!tweet_list.isEmpty() && tweet_list.size() != 0) {
-            return DataObjectFactory.getRawJSON(tweet_list.get(0));
-        }
-        return null;
+        return twitter.getHomeTimeline(p);
     }
 }
