@@ -23,8 +23,14 @@ public class TwitterResource {
 
 
     public TwitterResource(){
+        System.out.println("Default Constructor");
         twitterRetrieve = new TwitterRetrieve();
         twitterPublish = new TwitterPublish();
+    }
+
+    public TwitterResource(TwitterRetrieve tr, TwitterPublish tp){
+        twitterRetrieve = tr;
+        twitterPublish = tp;
     }
 
 
