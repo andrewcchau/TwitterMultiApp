@@ -26,12 +26,12 @@ public class TwitterRetrieveTest {
 
     private Status mockStatus(String message){
         Status s = Mockito.mock(Status.class);
-        if(message.length() > 0) {
-            Mockito.when(s.getText()).thenReturn(message);
-        }else{
-            Mockito.when(s.getText()).thenReturn("This is a mocked status!");
-        }
+        Mockito.when(s.getText()).thenReturn(message);
         return s;
+    }
+
+    private Status mockStatus() {
+        return mockStatus("This is a mocked status!");
     }
 
     @Test(expected = NegativeArraySizeException.class)
@@ -47,11 +47,11 @@ public class TwitterRetrieveTest {
     @Test
     public void testRetrieveSomething() throws TwitterException {
         ResponseList<Status> fakeList = new FakeResponseList<>();
-        fakeList.add(mockStatus(""));
+        fakeList.add(mockStatus());
         Mockito.when(twitterTest.getHomeTimeline(Mockito.any(Paging.class))).thenReturn(fakeList);
         List<Status> l = twitterRetrieveTest.retrieveFromTwitter(twitterTest, 1);
         Assert.assertEquals(1, l.size());
-        Assert.assertEquals(mockStatus("").getText(), l.get(0).getText());
+        Assert.assertEquals(mockStatus().getText(), l.get(0).getText());
     }
 
     @Test
