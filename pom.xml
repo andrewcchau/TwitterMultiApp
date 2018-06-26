@@ -17,6 +17,7 @@
         <mockito.version>2.19.0</mockito.version>
         <junit.version>4.12</junit.version>
         <surefire.version>2.22.0</surefire.version>
+        <mvn-compiler.version>3.7.0</mvn-compiler.version>
     </properties>
 
 
@@ -128,6 +129,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>${mvn-compiler.version}</version>
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
