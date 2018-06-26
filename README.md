@@ -25,3 +25,9 @@ To post to twitter using this program, follow these steps:
 Make sure the program is running (see: Running The Program above) before following these steps:
 * To view your home timeline, go to http://localhost:8080/api/1.0/twitter/timeline
 * To view your latest tweet, go to http://localhost:8080/api/1.0/twitter/tweet
+
+
+# Unit Testing
+To execute Unit Testing of the program, follow these steps:
+1. Follow step 1 of Running The Program above
+2. Run ```mvn clean test``` to run unit tests 
