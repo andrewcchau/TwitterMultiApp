@@ -39,6 +39,7 @@ public class TwitterResourceTest {
 
         Response response = twitterResourceTest.getHomeTimeline();
         Assert.assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        Assert.assertEquals(1, ((List<Status>) ((Tweet) response.getEntity()).getContent()).size());
         Assert.assertEquals(mockStatus().getText(), ((List<Status>) ((Tweet) response.getEntity()).getContent()).get(0).getText());
     }
 

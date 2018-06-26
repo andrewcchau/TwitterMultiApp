@@ -7,7 +7,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-import twitter4j.*;
+import twitter4j.ResponseList;
+import twitter4j.Status;
+import twitter4j.Paging;
+import twitter4j.Twitter;
+import twitter4j.TwitterException;
+
 
 import java.util.List;
 
@@ -19,15 +24,13 @@ public class TwitterRetrieveTest {
     @InjectMocks
     private TwitterRetrieve twitterRetrieveTest;
 
-    private Status mockStatus() {
-        Status s = Mockito.mock(Status.class);
-        Mockito.when(s.getText()).thenReturn("This is a mocked status!");
-        return s;
-    }
-
     private Status mockStatus(String message){
         Status s = Mockito.mock(Status.class);
-        Mockito.when(s.getText()).thenReturn(message);
+        if(message.length() > 0) {
+            Mockito.when(s.getText()).thenReturn(message);
+        }else{
+            Mockito.when(s.getText()).thenReturn("This is a mocked status!");
+        }
         return s;
     }
 
@@ -44,11 +47,11 @@ public class TwitterRetrieveTest {
     @Test
     public void testRetrieveSomething() throws TwitterException {
         ResponseList<Status> fakeList = new FakeResponseList<>();
-        fakeList.add(mockStatus());
+        fakeList.add(mockStatus(""));
         Mockito.when(twitterTest.getHomeTimeline(Mockito.any(Paging.class))).thenReturn(fakeList);
         List<Status> l = twitterRetrieveTest.retrieveFromTwitter(twitterTest, 1);
         Assert.assertEquals(1, l.size());
-        Assert.assertEquals(mockStatus().getText(), l.get(0).getText());
+        Assert.assertEquals(mockStatus("").getText(), l.get(0).getText());
     }
 
     @Test
