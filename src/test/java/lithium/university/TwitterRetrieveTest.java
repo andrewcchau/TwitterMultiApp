@@ -25,6 +25,12 @@ public class TwitterRetrieveTest {
         return s;
     }
 
+    private Status mockStatus(String message){
+        Status s = Mockito.mock(Status.class);
+        Mockito.when(s.getText()).thenReturn(message);
+        return s;
+    }
+
     @Test(expected = NegativeArraySizeException.class)
     public void testRetrieveNegative() throws TwitterException {
         List<Status> l = twitterRetrieveTest.retrieveFromTwitter(twitterTest, -1);
@@ -41,20 +47,23 @@ public class TwitterRetrieveTest {
         fakeList.add(mockStatus());
         Mockito.when(twitterTest.getHomeTimeline(Mockito.any(Paging.class))).thenReturn(fakeList);
         List<Status> l = twitterRetrieveTest.retrieveFromTwitter(twitterTest, 1);
-        Assert.assertEquals("This is a mocked status!", l.get(0).getText());
+        Assert.assertEquals(1, l.size());
+        Assert.assertEquals(mockStatus().getText(), l.get(0).getText());
     }
 
     @Test
     public void testRetrieveMany() throws TwitterException {
-        int size = 100;
+        int size = 10;
+        String testMessage = "Many num ";
         ResponseList<Status> fakeList = new FakeResponseList<>();
-        for(int i = 0; i < 100; i++){
-            fakeList.add(mockStatus());
+        for(int i = 0; i < size; i++){
+            fakeList.add(mockStatus(testMessage + i));
         }
         Mockito.when(twitterTest.getHomeTimeline(Mockito.any(Paging.class))).thenReturn(fakeList);
         List<Status> l = twitterRetrieveTest.retrieveFromTwitter(twitterTest, size);
-        for(int i = 0; i < 100; i++){
-            Assert.assertEquals("This is a mocked status!", l.get(0).getText());
+        Assert.assertEquals(size, l.size());
+        for(int i = 0; i < size; i++){
+            Assert.assertEquals(testMessage + i, l.get(i).getText());
         }
     }
 }

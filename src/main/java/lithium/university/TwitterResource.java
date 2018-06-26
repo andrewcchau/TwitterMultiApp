@@ -1,7 +1,8 @@
 package lithium.university;
 
-import twitter4j.*;
+import twitter4j.Status;
 import twitter4j.Twitter;
+import twitter4j.TwitterFactory;
 import twitter4j.conf.ConfigurationBuilder;
 
 import javax.ws.rs.GET;
@@ -30,6 +31,14 @@ public class TwitterResource {
     public TwitterResource(TwitterRetrieve tr, TwitterPublish tp){
         twitterRetrieve = tr;
         twitterPublish = tp;
+    }
+
+    protected String errorLengthMessage(){
+        return "Cannot post. Message length should not exceed " + TwitterApplication.TWEET_LENGTH + " characters.";
+    }
+
+    protected String successMessage(String message){
+        return "Successfully updated status to: " + message + "\n";
     }
 
 
@@ -68,12 +77,12 @@ public class TwitterResource {
 
         /*Handle errors as needed*/
         if(post_success){
-            return Response.status(Response.Status.OK).entity("Successfully updated status to: " + message + "\n").build();
+            return Response.status(Response.Status.OK).entity(successMessage(message)).build();
         }else if(error){
             return Response.serverError().entity(ERROR_MESSAGE).build();
         }
 
-        return Response.serverError().entity("Cannot post. Message length should not exceed " + TwitterApplication.TWEET_LENGTH + " characters.").build();
+        return Response.serverError().entity(errorLengthMessage()).build();
     }
 
     /*

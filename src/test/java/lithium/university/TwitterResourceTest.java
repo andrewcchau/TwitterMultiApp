@@ -39,7 +39,7 @@ public class TwitterResourceTest {
 
         Response response = twitterResourceTest.getHomeTimeline();
         Assert.assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        Assert.assertEquals("This is a mocked status!", ((List<Status>) ((Tweet) response.getEntity()).getContent()).get(0).getText());
+        Assert.assertEquals(mockStatus().getText(), ((List<Status>) ((Tweet) response.getEntity()).getContent()).get(0).getText());
     }
 
     @Test
@@ -51,7 +51,7 @@ public class TwitterResourceTest {
 
         Response response = twitterResourceTest.postTweet(message);
         Assert.assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        Assert.assertEquals("Successfully updated status to: " + message + "\n", response.getEntity());
+        Assert.assertEquals(twitterResourceTest.successMessage(message), response.getEntity());
     }
 
     @Test
@@ -63,6 +63,6 @@ public class TwitterResourceTest {
 
         Response response = twitterResourceTest.postTweet(message);
         Assert.assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
-        Assert.assertEquals("Cannot post. Message length should not exceed " + TwitterApplication.TWEET_LENGTH + " characters.", response.getEntity());
+        Assert.assertEquals(twitterResourceTest.errorLengthMessage(), response.getEntity());
     }
 }

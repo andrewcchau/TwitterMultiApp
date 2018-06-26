@@ -1,7 +1,6 @@
 package lithium.university;
 
 import org.apache.commons.lang3.StringUtils;
-import org.eclipse.jetty.util.StringUtil;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
