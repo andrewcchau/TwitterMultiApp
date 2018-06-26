@@ -36,7 +36,7 @@ public class TwitterResource {
     @GET
     @Path("/timeline")
     @Produces(MediaType.APPLICATION_JSON)
-    public Object getHomeTimeline() {
+    public Response getHomeTimeline() {
         this.getTwitterAuthentication();
 
         List<Status> list = null;
@@ -47,7 +47,7 @@ public class TwitterResource {
             return Response.serverError().entity(ERROR_MESSAGE).build();
         }
 
-        return new Tweet(list);
+        return Response.ok(new Tweet(list), MediaType.APPLICATION_JSON).build();
     }
 
 

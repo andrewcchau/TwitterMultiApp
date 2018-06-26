@@ -1,5 +1,6 @@
 package lithium.university;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -8,7 +9,6 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import twitter4j.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -20,19 +20,19 @@ public class TwitterRetrieveTest {
     private TwitterRetrieve twitterRetrieveTest;
 
     private Status mockStatus() {
-        return Mockito.mock(Status.class);
+        Status s = Mockito.mock(Status.class);
+        Mockito.when(s.getText()).thenReturn("This is a mocked status!");
+        return s;
     }
 
     @Test(expected = NegativeArraySizeException.class)
     public void testRetrieveNegative() throws TwitterException {
         List<Status> l = twitterRetrieveTest.retrieveFromTwitter(twitterTest, -1);
-        System.out.println("testRetrieveNegative pass");
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testRetrieveNothing() throws TwitterException {
         List<Status> l = twitterRetrieveTest.retrieveFromTwitter(twitterTest, 0);
-        System.out.println("testRetrieveNothing pass");
     }
 
     @Test
@@ -41,10 +41,7 @@ public class TwitterRetrieveTest {
         fakeList.add(mockStatus());
         Mockito.when(twitterTest.getHomeTimeline(Mockito.any(Paging.class))).thenReturn(fakeList);
         List<Status> l = twitterRetrieveTest.retrieveFromTwitter(twitterTest, 1);
-        System.out.println("Size Expected: 1, Size Actual: " + l.size());
-        if(l.size() == 1){
-            System.out.println("testRetrieveSomething pass");
-        }
+        Assert.assertEquals("This is a mocked status!", l.get(0).getText());
     }
 
     @Test
@@ -56,9 +53,8 @@ public class TwitterRetrieveTest {
         }
         Mockito.when(twitterTest.getHomeTimeline(Mockito.any(Paging.class))).thenReturn(fakeList);
         List<Status> l = twitterRetrieveTest.retrieveFromTwitter(twitterTest, size);
-        System.out.println("Size Expected: " + size + ", Size Actual: " + l.size());
-        if(size == l.size()) {
-            System.out.println("testRetrieveMany pass");
+        for(int i = 0; i < 100; i++){
+            Assert.assertEquals("This is a mocked status!", l.get(0).getText());
         }
     }
 }

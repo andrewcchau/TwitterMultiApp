@@ -1,5 +1,7 @@
 package lithium.university;
 
+import org.apache.commons.lang3.StringUtils;
+import org.eclipse.jetty.util.StringUtil;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,43 +31,35 @@ public class TwitterPublishTest {
         Mockito.when(twitterTest.updateStatus(Mockito.anyString())).thenReturn(s);
     }
 
-    private String genStringLength(int charLength) {
-        String ret = "";
-        for (int i = 0; i < charLength; i++) {
-            ret += "!";
-        }
-        return ret;
+    private String generateStringLength(int charLength) {
+        return StringUtils.repeat("!", charLength);
     }
 
     @Test
     public void testPublishCharLengthZero() throws TwitterException {
         boolean publishTest = true;
-        publishTest = twitterPublishTest.postToTwitter(twitterTest, genStringLength(0), TwitterApplication.TWEET_LENGTH);
+        publishTest = twitterPublishTest.postToTwitter(twitterTest, generateStringLength(0), TwitterApplication.TWEET_LENGTH);
         Assert.assertEquals(false, publishTest);
-        System.out.println("testPublishCharLengthZero pass");
     }
 
     @Test
     public void testPublishCharLengthOver() throws TwitterException {
         boolean publishTest = true;
-        publishTest = twitterPublishTest.postToTwitter(twitterTest, genStringLength(TwitterApplication.TWEET_LENGTH + 1), TwitterApplication.TWEET_LENGTH);
+        publishTest = twitterPublishTest.postToTwitter(twitterTest, generateStringLength(TwitterApplication.TWEET_LENGTH + 1), TwitterApplication.TWEET_LENGTH);
         Assert.assertEquals(false, publishTest);
-        System.out.println("testPublishCharLengthOver pass");
     }
 
     @Test
     public void testPublishCharLengthUnder() throws TwitterException {
         boolean publishTest = true;
-        publishTest = twitterPublishTest.postToTwitter(twitterTest, genStringLength(TwitterApplication.TWEET_LENGTH - 1), TwitterApplication.TWEET_LENGTH);
+        publishTest = twitterPublishTest.postToTwitter(twitterTest, generateStringLength(TwitterApplication.TWEET_LENGTH - 1), TwitterApplication.TWEET_LENGTH);
         Assert.assertEquals(true, publishTest);
-        System.out.println("testPublishCharLengthUnder pass");
     }
 
     @Test
     public void testPublishCharLengthEqual() throws TwitterException {
         boolean publishTest = true;
-        publishTest = twitterPublishTest.postToTwitter(twitterTest, genStringLength(TwitterApplication.TWEET_LENGTH), TwitterApplication.TWEET_LENGTH);
+        publishTest = twitterPublishTest.postToTwitter(twitterTest, generateStringLength(TwitterApplication.TWEET_LENGTH), TwitterApplication.TWEET_LENGTH);
         Assert.assertEquals(true, publishTest);
-        System.out.println("testPublishLengthEqual pass");
     }
 }

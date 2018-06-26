@@ -24,7 +24,9 @@ public class TwitterResourceTest {
     }
 
     private Status mockStatus() {
-        return Mockito.mock(Status.class);
+        Status s = Mockito.mock(Status.class);
+        Mockito.when(s.getText()).thenReturn("This is a mocked status!");
+        return s;
     }
 
     @Test
@@ -35,12 +37,9 @@ public class TwitterResourceTest {
 
         Mockito.when(twitterRetrieveTest.retrieveFromTwitter(Mockito.any(Twitter.class), Mockito.anyInt())).thenReturn(fakeList);
 
-        Object o = twitterResourceTest.getHomeTimeline();
-        if (!(o instanceof Tweet)) {
-            Assert.fail("Failed to grab info from timeline");
-        }
-        System.out.println(((Tweet) o).getContent());
-        System.out.println("testResourceGetTimeline pass");
+        Response response = twitterResourceTest.getHomeTimeline();
+        Assert.assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        Assert.assertEquals("This is a mocked status!", ((List<Status>) ((Tweet) response.getEntity()).getContent()).get(0).getText());
     }
 
     @Test
@@ -52,7 +51,7 @@ public class TwitterResourceTest {
 
         Response response = twitterResourceTest.postTweet(message);
         Assert.assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        System.out.println("testResourcePost pass");
+        Assert.assertEquals("Successfully updated status to: " + message + "\n", response.getEntity());
     }
 
     @Test
@@ -64,6 +63,6 @@ public class TwitterResourceTest {
 
         Response response = twitterResourceTest.postTweet(message);
         Assert.assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
-        System.out.println("testResourcePostLengthError pass");
+        Assert.assertEquals("Cannot post. Message length should not exceed " + TwitterApplication.TWEET_LENGTH + " characters.", response.getEntity());
     }
 }
