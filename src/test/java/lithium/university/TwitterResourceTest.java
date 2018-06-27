@@ -2,7 +2,10 @@ package lithium.university;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import twitter4j.Status;
 import twitter4j.Twitter;
@@ -17,10 +20,9 @@ public class TwitterResourceTest {
     private TwitterPublish twitterPublishTest;
     private TwitterResource twitterResourceTest;
 
-
     @Before
     public void init() {
-        twitterResourceTest = new TwitterResource();
+        twitterResourceTest = new TwitterResource(new TwitterConfiguration());
         twitterRetrieveTest = Mockito.mock(TwitterRetrieve.class);
         twitterPublishTest = Mockito.mock(TwitterPublish.class);
         twitterResourceTest = new TwitterResource(twitterRetrieveTest, twitterPublishTest);
@@ -74,6 +76,17 @@ public class TwitterResourceTest {
         Response response = twitterResourceTest.postTweet(message);
         Assert.assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
         Assert.assertEquals(twitterResourceTest.errorLengthMessage(), response.getEntity());
+    }
+
+    @Test
+    public void testResourcePostLengthZeroError() throws TwitterException {
+        String message = "";
+
+        Mockito.when(twitterPublishTest.postToTwitter(Mockito.any(Twitter.class), Mockito.anyString(), Mockito.anyInt())).thenReturn(false);
+
+        Response response = twitterResourceTest.postTweet(message);
+        Assert.assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
+        Assert.assertEquals(twitterResourceTest.errorZeroMessage(), response.getEntity());
     }
 
     @Test

@@ -21,20 +21,31 @@ public class TwitterResource {
     private Twitter twitter;
     private TwitterRetrieve twitterRetrieve;
     private TwitterPublish twitterPublish;
-
+    private TwitterConfiguration twitterConfiguration;
 
     public TwitterResource(){
         twitterRetrieve = new TwitterRetrieve();
         twitterPublish = new TwitterPublish();
+        twitterConfiguration = new TwitterConfiguration();
+    }
+
+    public TwitterResource(TwitterConfiguration tc){
+        this();
+        twitterConfiguration = tc;
     }
 
     public TwitterResource(TwitterRetrieve tr, TwitterPublish tp){
+        this();
         twitterRetrieve = tr;
         twitterPublish = tp;
     }
 
     protected String errorLengthMessage(){
         return "Cannot post. Message length should not exceed " + TwitterApplication.TWEET_LENGTH + " characters.";
+    }
+
+    protected String errorZeroMessage(){
+        return "Cannot post. Message length needs to be greater than 0.";
     }
 
     protected String successMessage(String message){
@@ -83,7 +94,11 @@ public class TwitterResource {
             return Response.serverError().entity(ERROR_MESSAGE).build();
         }
 
-        return Response.serverError().entity(errorLengthMessage()).build();
+        if(message.length() > 0) {
+            return Response.serverError().entity(errorLengthMessage()).build();
+        }else {
+            return Response.serverError().entity(errorZeroMessage()).build();
+        }
     }
 
     /*
@@ -91,6 +106,10 @@ public class TwitterResource {
      * */
     private void getTwitterAuthentication(){
         ConfigurationBuilder cb = new ConfigurationBuilder();
+        cb.setOAuthConsumerKey(twitterConfiguration.getConsumerKey())
+                .setOAuthConsumerSecret(twitterConfiguration.getConsumerSecret())
+                .setOAuthAccessToken(twitterConfiguration.getAccessToken())
+                .setOAuthAccessTokenSecret(twitterConfiguration.getAccessTokenSecret());
         TwitterFactory twitterFactory = new TwitterFactory(cb.build());
         twitter = twitterFactory.getInstance();
     }

@@ -30,15 +30,14 @@ public class TwitterApplication extends Application<TwitterConfiguration> {
     public void run(TwitterConfiguration config, Environment environment){
         final ConfigurationBuilder cb = new ConfigurationBuilder();
         cb.setJSONStoreEnabled(true);
-        cb.setDebugEnabled(config.getDebug())
-                .setOAuthConsumerKey(config.getConsumerKey())
+        cb.setOAuthConsumerKey(config.getConsumerKey())
                 .setOAuthConsumerSecret(config.getConsumerSecret())
                 .setOAuthAccessToken(config.getAccessToken())
                 .setOAuthAccessTokenSecret(config.getAccessTokenSecret());
         TwitterFactory twitterFactory = new TwitterFactory(cb.build());
         final Twitter twitter = twitterFactory.getInstance();
         final TwitterHealthCheck healthCheck = new TwitterHealthCheck();
-        final TwitterResource resource = new TwitterResource();
+        final TwitterResource resource = new TwitterResource(config);
 
         environment.healthChecks().register("twitter", healthCheck);
         environment.jersey().register(resource);

@@ -8,10 +8,6 @@ import org.hibernate.validator.constraints.NotEmpty;
 public class TwitterConfiguration extends Configuration {
     @NotEmpty
     @JsonProperty
-    private boolean debug;
-
-    @NotEmpty
-    @JsonProperty
     private String consumerKey;
 
     @NotEmpty
@@ -25,10 +21,6 @@ public class TwitterConfiguration extends Configuration {
     @NotEmpty
     @JsonProperty
     private String accessTokenSecret;
-
-    public boolean getDebug(){
-        return debug;
-    }
 
     public String getConsumerKey(){
         return consumerKey;
