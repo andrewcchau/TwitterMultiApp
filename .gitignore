@@ -10,4 +10,5 @@ src/*.jar
 target/*
 dependency-reduced-pom.xml
 *TwitterMain.java
-*.yml
+twitter4j-example.yml
+twitter4j.yml
