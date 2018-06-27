@@ -41,6 +41,7 @@ public class TwitterResource {
         return "Successfully updated status to: " + message + "\n";
     }
 
+    protected String getErrorMessage(){ return ERROR_MESSAGE;}
 
     @GET
     @Path("/timeline")

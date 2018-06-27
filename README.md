@@ -30,4 +30,4 @@ Make sure the program is running (see: Running The Program above) before followi
 # Unit Testing
 To execute Unit Testing of the program, follow these steps:
 1. Follow step 1 of Running The Program above
-2. Run ```mvn clean test``` to run unit tests 
+2. Run ```mvn clean test``` to run unit tests and create a code coverage report at /target/jacoco.exec
