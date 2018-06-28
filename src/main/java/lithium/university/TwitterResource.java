@@ -56,7 +56,7 @@ public class TwitterResource {
 
     protected String getErrorMessage(){ return ERROR_MESSAGE;}
 
-    protected String getMessageFormError(){ return "Cannot post. Message is either missing or not in the correct form.";}
+    protected String getMessageFormError(){ return "Cannot post. Message data is either missing or not in the correct form.";}
 
     @GET
     @Path("/timeline")
