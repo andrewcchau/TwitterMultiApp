@@ -5,6 +5,8 @@ import twitter4j.Twitter;
 import twitter4j.TwitterFactory;
 import twitter4j.conf.ConfigurationBuilder;
 
+import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -54,6 +56,8 @@ public class TwitterResource {
 
     protected String getErrorMessage(){ return ERROR_MESSAGE;}
 
+    protected String getMessageFormError(){ return "Cannot post. Message is either missing or not in the correct form.";}
+
     @GET
     @Path("/timeline")
     @Produces(MediaType.APPLICATION_JSON)
@@ -74,8 +78,14 @@ public class TwitterResource {
 
     @POST
     @Path("/tweet")
-    public Response postTweet(String message){
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    public Response postTweet(@FormParam("message") String message){
         this.getTwitterAuthentication();
+
+        /*Initial checking of message for correct form*/
+        if(message == null){
+            return Response.serverError().entity(getMessageFormError()).build();
+        }
 
         /*Attempt to post to Twitter and get error codes*/
         boolean post_success = false;

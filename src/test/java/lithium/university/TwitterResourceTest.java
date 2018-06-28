@@ -99,4 +99,11 @@ public class TwitterResourceTest {
         Assert.assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
         Assert.assertEquals(twitterResourceTest.getErrorMessage(), response.getEntity());
     }
+
+    @Test
+    public void testResourcePostNullMessage() {
+        Response response = twitterResourceTest.postTweet(null);
+        Assert.assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
+        Assert.assertEquals(twitterResourceTest.getMessageFormError(), response.getEntity());
+    }
 }
