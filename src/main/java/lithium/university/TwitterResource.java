@@ -5,6 +5,8 @@ import twitter4j.Twitter;
 import twitter4j.TwitterFactory;
 import twitter4j.conf.ConfigurationBuilder;
 
+import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -21,14 +23,21 @@ public class TwitterResource {
     private Twitter twitter;
     private TwitterRetrieve twitterRetrieve;
     private TwitterPublish twitterPublish;
-
+    private TwitterProperties twitterProperties;
 
     public TwitterResource(){
         twitterRetrieve = new TwitterRetrieve();
         twitterPublish = new TwitterPublish();
+        twitterProperties = new TwitterProperties();
+    }
+
+    public TwitterResource(TwitterProperties twitterProperties){
+        this();
+        this.twitterProperties = twitterProperties;
     }
 
     public TwitterResource(TwitterRetrieve tr, TwitterPublish tp){
+        this();
         twitterRetrieve = tr;
         twitterPublish = tp;
     }
@@ -37,11 +46,17 @@ public class TwitterResource {
         return "Cannot post. Message length should not exceed " + TwitterApplication.TWEET_LENGTH + " characters.";
     }
 
+    protected String errorZeroMessage(){
+        return "Cannot post. Message length needs to be greater than 0.";
+    }
+
     protected String successMessage(String message){
         return "Successfully updated status to: " + message + "\n";
     }
 
     protected String getErrorMessage(){ return ERROR_MESSAGE;}
+
+    protected String getMessageFormError(){ return "Cannot post. Message data is either missing or not in the correct form.";}
 
     @GET
     @Path("/timeline")
@@ -63,8 +78,14 @@ public class TwitterResource {
 
     @POST
     @Path("/tweet")
-    public Response postTweet(String message){
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    public Response postTweet(@FormParam("message") String message){
         this.getTwitterAuthentication();
+
+        /*Initial checking of message for correct form*/
+        if(message == null){
+            return Response.serverError().entity(getMessageFormError()).build();
+        }
 
         /*Attempt to post to Twitter and get error codes*/
         boolean post_success = false;
@@ -83,7 +104,11 @@ public class TwitterResource {
             return Response.serverError().entity(ERROR_MESSAGE).build();
         }
 
-        return Response.serverError().entity(errorLengthMessage()).build();
+        if(message.length() > 0) {
+            return Response.serverError().entity(errorLengthMessage()).build();
+        }else {
+            return Response.serverError().entity(errorZeroMessage()).build();
+        }
     }
 
     /*
@@ -91,6 +116,11 @@ public class TwitterResource {
      * */
     private void getTwitterAuthentication(){
         ConfigurationBuilder cb = new ConfigurationBuilder();
+        cb.setJSONStoreEnabled(true);
+        cb.setOAuthConsumerKey(twitterProperties.getConsumerKey())
+                .setOAuthConsumerSecret(twitterProperties.getConsumerSecret())
+                .setOAuthAccessToken(twitterProperties.getAccessToken())
+                .setOAuthAccessTokenSecret(twitterProperties.getAccessTokenSecret());
         TwitterFactory twitterFactory = new TwitterFactory(cb.build());
         twitter = twitterFactory.getInstance();
     }

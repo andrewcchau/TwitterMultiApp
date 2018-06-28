@@ -1,0 +1,6 @@
+# Twitter4j properties
+Twitter:
+  consumerKey:
+  consumerSecret:
+  accessToken:
+  accessTokenSecret:

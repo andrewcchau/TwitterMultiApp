@@ -1,8 +1,18 @@
 package lithium.university;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.Configuration;
 
 
 public class TwitterConfiguration extends Configuration {
-    /*Class needed for Override of run. Will be used later*/
+    private TwitterProperties twitterProperties;
+
+    @JsonProperty("Twitter")
+    public TwitterProperties getTwitterProperties() {
+        return twitterProperties;
+    }
+
+    public void setTwitterProperties(TwitterProperties twitterProperties) {
+        this.twitterProperties = twitterProperties;
+    }
 }
