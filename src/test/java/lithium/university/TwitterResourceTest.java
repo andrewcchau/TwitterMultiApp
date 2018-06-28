@@ -22,7 +22,7 @@ public class TwitterResourceTest {
 
     @Before
     public void init() {
-        twitterResourceTest = new TwitterResource(new TwitterConfiguration());
+        twitterResourceTest = new TwitterResource(new TwitterProperties());
         twitterRetrieveTest = Mockito.mock(TwitterRetrieve.class);
         twitterPublishTest = Mockito.mock(TwitterPublish.class);
         twitterResourceTest = new TwitterResource(twitterRetrieveTest, twitterPublishTest);

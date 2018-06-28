@@ -21,17 +21,17 @@ public class TwitterResource {
     private Twitter twitter;
     private TwitterRetrieve twitterRetrieve;
     private TwitterPublish twitterPublish;
-    private TwitterConfiguration twitterConfiguration;
+    private TwitterProperties twitterProperties;
 
     public TwitterResource(){
         twitterRetrieve = new TwitterRetrieve();
         twitterPublish = new TwitterPublish();
-        twitterConfiguration = new TwitterConfiguration();
+        twitterProperties = new TwitterProperties();
     }
 
-    public TwitterResource(TwitterConfiguration tc){
+    public TwitterResource(TwitterProperties twitterProperties){
         this();
-        twitterConfiguration = tc;
+        this.twitterProperties = twitterProperties;
     }
 
     public TwitterResource(TwitterRetrieve tr, TwitterPublish tp){
@@ -106,10 +106,11 @@ public class TwitterResource {
      * */
     private void getTwitterAuthentication(){
         ConfigurationBuilder cb = new ConfigurationBuilder();
-        cb.setOAuthConsumerKey(twitterConfiguration.getConsumerKey())
-                .setOAuthConsumerSecret(twitterConfiguration.getConsumerSecret())
-                .setOAuthAccessToken(twitterConfiguration.getAccessToken())
-                .setOAuthAccessTokenSecret(twitterConfiguration.getAccessTokenSecret());
+        cb.setJSONStoreEnabled(true);
+        cb.setOAuthConsumerKey(twitterProperties.getConsumerKey())
+                .setOAuthConsumerSecret(twitterProperties.getConsumerSecret())
+                .setOAuthAccessToken(twitterProperties.getAccessToken())
+                .setOAuthAccessTokenSecret(twitterProperties.getAccessTokenSecret());
         TwitterFactory twitterFactory = new TwitterFactory(cb.build());
         twitter = twitterFactory.getInstance();
     }

@@ -1,5 +1,6 @@
 # Twitter4j properties
-oauth.consumerKey:
-oauth.consumerSecret:
-oauth.accessToken:
-oauth.accessTokenSecret:
+Twitter:
+  consumerKey:
+  consumerSecret:
+  accessToken:
+  accessTokenSecret:
