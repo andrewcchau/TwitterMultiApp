@@ -3,10 +3,10 @@ package lithium.university;
 import com.codahale.metrics.health.HealthCheck;
 
 public class TwitterHealthCheck extends HealthCheck {
-    public TwitterHealthCheck(){ }
+    public TwitterHealthCheck() { }
 
     @Override
-    protected Result check() throws Exception {
+    protected Result check() {
         return Result.healthy();
     }
 }
