@@ -21,7 +21,7 @@ import java.util.List;
 @Path("/api/1.0/twitter")
 public class TwitterResource {
     private final Logger logger = LoggerFactory.getLogger(TwitterResource.class);
-    private final String ERROR_MESSAGE = "Oops! Something went wrong! Please check the server log for details and try again.";
+    private final String errorMessage = "Oops! Something went wrong! Please check the server log for details and try again.";
 
     private Twitter twitter;
     private TwitterRetrieve twitterRetrieve;
@@ -29,7 +29,6 @@ public class TwitterResource {
     private TwitterProperties twitterProperties;
 
     public TwitterResource(){
-        logger.debug("Created TwitterResource object");
         twitterRetrieve = new TwitterRetrieve();
         twitterPublish = new TwitterPublish();
         twitterProperties = new TwitterProperties();
@@ -56,7 +55,7 @@ public class TwitterResource {
         return "Successfully updated status to: " + message + "\n";
     }
 
-    protected String getErrorMessage(){ return ERROR_MESSAGE;}
+    protected String getErrorMessage(){ return errorMessage;}
 
     protected String getMessageFormError(){ return "Cannot post. Message data is either missing or not in the correct form.";}
 
@@ -71,8 +70,8 @@ public class TwitterResource {
             list = twitterRetrieve.retrieveFromTwitter(twitter, TwitterApplication.TWEET_TOTAL);
         } catch (Exception e) {
             e.printStackTrace();
-            logger.error("An exception was caught from retrieveFromTwitter. Stack trace:\n" + e.getMessage());
-            return Response.serverError().entity(ERROR_MESSAGE).build();
+            logger.error("An exception was caught from retrieveFromTwitter. Check stack trace for details.");
+            return Response.serverError().entity(errorMessage).build();
         }
 
         logger.info("Successfully grabbed tweets from home timeline.");
@@ -98,25 +97,21 @@ public class TwitterResource {
         try{
             post_success = twitterPublish.postToTwitter(twitter, message, TwitterApplication.TWEET_LENGTH);
         }catch(Exception e){
-            logger.error("An exception was caught from postToTwitter. Stack trace:\n" + e.getMessage());
+            logger.error("An exception was caught from postToTwitter. Check stack trace for details.");
             e.printStackTrace();
             error = true;
         }
 
         /*Handle errors as needed*/
         if(post_success){
-            logger.debug("Successful posting of tweet from postTweet");
             return Response.status(Response.Status.OK).entity(successMessage(message)).build();
         }else if(error){
-            logger.debug("postTweet handled some error");
-            return Response.serverError().entity(ERROR_MESSAGE).build();
+            return Response.serverError().entity(errorMessage).build();
         }
 
         if(message.length() > 0) {
-            logger.debug("Posting of tweet was not carried out due to too many characters in message");
             return Response.serverError().entity(errorLengthMessage()).build();
         }else {
-            logger.debug("Posting of tweet was not carried out due to zero length message");
             return Response.serverError().entity(errorZeroMessage()).build();
         }
     }
