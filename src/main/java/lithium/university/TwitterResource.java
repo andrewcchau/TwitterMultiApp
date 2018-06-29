@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import twitter4j.Status;
 import twitter4j.Twitter;
+import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.conf.ConfigurationBuilder;
 
@@ -68,9 +69,8 @@ public class TwitterResource {
         List<Status> list = null;
         try {
             list = twitterRetrieve.retrieveFromTwitter(twitter, TwitterApplication.TWEET_TOTAL);
-        } catch (Exception e) {
-            e.printStackTrace();
-            logger.error("An exception was caught from retrieveFromTwitter. Check stack trace for details.");
+        } catch (TwitterException te) {
+            logger.error("An exception has occurred in getHomeTimeline", te);
             return Response.serverError().entity(errorMessage).build();
         }
 
@@ -96,9 +96,8 @@ public class TwitterResource {
         boolean error = false;
         try{
             post_success = twitterPublish.postToTwitter(twitter, message, TwitterApplication.TWEET_LENGTH);
-        }catch(Exception e){
-            logger.error("An exception was caught from postToTwitter. Check stack trace for details.");
-            e.printStackTrace();
+        }catch(TwitterException te){
+            logger.error("An exception has occurred in postTweet", te);
             error = true;
         }
 
