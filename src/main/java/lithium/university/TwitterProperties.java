@@ -1,13 +1,20 @@
 package lithium.university;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class TwitterProperties {
+    private final Logger logger = LoggerFactory.getLogger(TwitterProperties.class);
     private String consumerKey;
     private String consumerSecret;
     private String accessToken;
     private String accessTokenSecret;
+
+    public TwitterProperties() {
+        logger.debug("Created TwitterProperties object");
+    }
 
     @JsonProperty("consumerKey")
     public String getConsumerKey() {

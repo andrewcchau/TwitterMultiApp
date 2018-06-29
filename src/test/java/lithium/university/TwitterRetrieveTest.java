@@ -34,7 +34,7 @@ public class TwitterRetrieveTest {
         return mockStatus("This is a mocked status!");
     }
 
-    @Test(expected = NegativeArraySizeException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testRetrieveNegative() throws TwitterException {
         List<Status> l = twitterRetrieveTest.retrieveFromTwitter(twitterTest, -1);
     }

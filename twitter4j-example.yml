@@ -4,3 +4,17 @@ Twitter:
   consumerSecret:
   accessToken:
   accessTokenSecret:
+
+
+# Logging Settings
+logging:
+
+  # Default level for all loggers. Can be OFF, ERROR, WARN, INFO, DEBUG, TRACE, or ALL
+  level: INFO
+
+  # Logger - specific levels
+  loggers:
+    lithium.university: DEBUG
+
+  appenders:
+    - type: console

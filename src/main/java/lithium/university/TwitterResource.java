@@ -1,5 +1,7 @@
 package lithium.university;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterFactory;
@@ -18,6 +20,7 @@ import java.util.List;
 
 @Path("/api/1.0/twitter")
 public class TwitterResource {
+    private final Logger logger = LoggerFactory.getLogger(TwitterResource.class);
     private final String ERROR_MESSAGE = "Oops! Something went wrong! Please check the server log for details and try again.";
 
     private Twitter twitter;
@@ -26,6 +29,7 @@ public class TwitterResource {
     private TwitterProperties twitterProperties;
 
     public TwitterResource(){
+        logger.debug("Created TwitterResource object");
         twitterRetrieve = new TwitterRetrieve();
         twitterPublish = new TwitterPublish();
         twitterProperties = new TwitterProperties();
@@ -42,9 +46,7 @@ public class TwitterResource {
         twitterPublish = tp;
     }
 
-    protected String errorLengthMessage(){
-        return "Cannot post. Message length should not exceed " + TwitterApplication.TWEET_LENGTH + " characters.";
-    }
+    protected String errorLengthMessage(){ return "Cannot post. Message length should not exceed " + TwitterApplication.TWEET_LENGTH + " characters."; }
 
     protected String errorZeroMessage(){
         return "Cannot post. Message length needs to be greater than 0.";
@@ -69,9 +71,11 @@ public class TwitterResource {
             list = twitterRetrieve.retrieveFromTwitter(twitter, TwitterApplication.TWEET_TOTAL);
         } catch (Exception e) {
             e.printStackTrace();
+            logger.error("An exception was caught from retrieveFromTwitter. Stack trace:\n" + e.getMessage());
             return Response.serverError().entity(ERROR_MESSAGE).build();
         }
 
+        logger.info("Successfully grabbed tweets from home timeline.");
         return Response.ok(new Tweet(list), MediaType.APPLICATION_JSON).build();
     }
 
@@ -84,6 +88,7 @@ public class TwitterResource {
 
         /*Initial checking of message for correct form*/
         if(message == null){
+            logger.debug("User passed in null message form data");
             return Response.serverError().entity(getMessageFormError()).build();
         }
 
@@ -93,20 +98,25 @@ public class TwitterResource {
         try{
             post_success = twitterPublish.postToTwitter(twitter, message, TwitterApplication.TWEET_LENGTH);
         }catch(Exception e){
+            logger.error("An exception was caught from postToTwitter. Stack trace:\n" + e.getMessage());
             e.printStackTrace();
             error = true;
         }
 
         /*Handle errors as needed*/
         if(post_success){
+            logger.debug("Successful posting of tweet from postTweet");
             return Response.status(Response.Status.OK).entity(successMessage(message)).build();
         }else if(error){
+            logger.debug("postTweet handled some error");
             return Response.serverError().entity(ERROR_MESSAGE).build();
         }
 
         if(message.length() > 0) {
+            logger.debug("Posting of tweet was not carried out due to too many characters in message");
             return Response.serverError().entity(errorLengthMessage()).build();
         }else {
+            logger.debug("Posting of tweet was not carried out due to zero length message");
             return Response.serverError().entity(errorZeroMessage()).build();
         }
     }
@@ -115,6 +125,7 @@ public class TwitterResource {
      * Used to re-check authentication credentials
      * */
     private void getTwitterAuthentication(){
+        logger.debug("Re-authenticating Twitter credentials");
         ConfigurationBuilder cb = new ConfigurationBuilder();
         cb.setJSONStoreEnabled(true);
         cb.setOAuthConsumerKey(twitterProperties.getConsumerKey())
