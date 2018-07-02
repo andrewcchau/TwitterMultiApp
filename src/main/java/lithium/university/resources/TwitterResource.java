@@ -3,6 +3,7 @@ package lithium.university.resources;
 import lithium.university.Tweet;
 import lithium.university.TwitterApplication;
 import lithium.university.TwitterProperties;
+import lithium.university.services.TwitterAuthentication;
 import lithium.university.services.TwitterPublish;
 import lithium.university.services.TwitterRetrieve;
 import org.slf4j.Logger;
@@ -10,8 +11,6 @@ import org.slf4j.LoggerFactory;
 import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
-import twitter4j.TwitterFactory;
-import twitter4j.conf.ConfigurationBuilder;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
@@ -32,17 +31,17 @@ public class TwitterResource {
     private Twitter twitter;
     private TwitterRetrieve twitterRetrieve;
     private TwitterPublish twitterPublish;
-    private TwitterProperties twitterProperties;
+    private TwitterAuthentication twitterAuthentication;
 
     public TwitterResource(){
         twitterRetrieve = TwitterRetrieve.getInstance();
         twitterPublish = TwitterPublish.getInstance();
-        twitterProperties = new TwitterProperties();
+        twitterAuthentication = TwitterAuthentication.getInstance();
     }
 
     public TwitterResource(TwitterProperties twitterProperties){
         this();
-        this.twitterProperties = twitterProperties;
+        twitterAuthentication.setTwitterProperties(twitterProperties);
     }
 
     /**
@@ -127,14 +126,6 @@ public class TwitterResource {
      * Used to re-check authentication credentials
      * */
     private void getTwitterAuthentication(){
-        logger.debug("Re-authenticating Twitter credentials");
-        ConfigurationBuilder cb = new ConfigurationBuilder();
-        cb.setJSONStoreEnabled(true);
-        cb.setOAuthConsumerKey(twitterProperties.getConsumerKey())
-                .setOAuthConsumerSecret(twitterProperties.getConsumerSecret())
-                .setOAuthAccessToken(twitterProperties.getAccessToken())
-                .setOAuthAccessTokenSecret(twitterProperties.getAccessTokenSecret());
-        TwitterFactory twitterFactory = new TwitterFactory(cb.build());
-        twitter = twitterFactory.getInstance();
+        twitter = twitterAuthentication.getAuthenticatedTwitter();
     }
 }
