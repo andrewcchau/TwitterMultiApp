@@ -1,8 +1,7 @@
 package lithium.university;
 
 import lithium.university.resources.TwitterResource;
-import lithium.university.services.TwitterPublish;
-import lithium.university.services.TwitterRetrieve;
+import lithium.university.services.TwitterServices;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,21 +15,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TwitterResourceTest {
-    private TwitterRetrieve twitterRetrieveTest;
-    private TwitterPublish twitterPublishTest;
     private TwitterResource twitterResourceTest;
+    private TwitterServices twitterServicesTest;
 
     @Before
     public void init() {
         twitterResourceTest = new TwitterResource(new TwitterProperties());
-        twitterRetrieveTest = Mockito.mock(TwitterRetrieve.class);
-        twitterPublishTest = Mockito.mock(TwitterPublish.class);
-        twitterResourceTest = new TwitterResource(twitterRetrieveTest, twitterPublishTest);
+        twitterServicesTest = Mockito.mock(TwitterServices.class);
+        twitterResourceTest = new TwitterResource(twitterServicesTest);
+        Mockito.when(twitterServicesTest.getAuthenticatedTwitter()).thenReturn(Mockito.mock(Twitter.class));
     }
 
     private Status mockStatus() {
         Status s = Mockito.mock(Status.class);
-        Mockito.when(s.getText()).thenReturn("This is a mocked status!");
         return s;
     }
 
@@ -39,7 +36,8 @@ public class TwitterResourceTest {
         List<Status> fakeList = new ArrayList<>();
         fakeList.add(mockStatus());
 
-        Mockito.when(twitterRetrieveTest.retrieveFromTwitter(Mockito.any(Twitter.class), Mockito.anyInt())).thenReturn(fakeList);
+        Mockito.when(twitterServicesTest.retrieveFromTwitter(Mockito.any(Twitter.class), Mockito.anyInt())).thenReturn(fakeList);
+        Mockito.when(twitterServicesTest.getAuthenticatedTwitter()).thenReturn(Mockito.mock(Twitter.class));
 
         Response response = twitterResourceTest.getHomeTimeline();
         Assert.assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
@@ -49,7 +47,7 @@ public class TwitterResourceTest {
 
     @Test
     public void testResourceGetErrorHandling() throws TwitterException {
-        Mockito.when(twitterRetrieveTest.retrieveFromTwitter(Mockito.any(Twitter.class), Mockito.anyInt())).thenThrow(TwitterException.class);
+        Mockito.when(twitterServicesTest.retrieveFromTwitter(Mockito.any(Twitter.class), Mockito.anyInt())).thenThrow(TwitterException.class);
 
         Response response = twitterResourceTest.getHomeTimeline();
         Assert.assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
@@ -60,7 +58,7 @@ public class TwitterResourceTest {
     public void testResourcePost() throws TwitterException {
         String message = "This should not actually make it to Twitter!";
 
-        Mockito.when(twitterPublishTest.postToTwitter(Mockito.any(Twitter.class), Mockito.anyString(), Mockito.anyInt())).thenReturn(true);
+        Mockito.when(twitterServicesTest.postToTwitter(Mockito.any(Twitter.class), Mockito.anyString(), Mockito.anyInt())).thenReturn(mockStatus());
 
         Response response = twitterResourceTest.postTweet(message);
         Assert.assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
@@ -71,7 +69,7 @@ public class TwitterResourceTest {
     public void testResourcePostLengthError() throws TwitterException {
         String message = "This should not actually make it to Twitter!";
 
-        Mockito.when(twitterPublishTest.postToTwitter(Mockito.any(Twitter.class), Mockito.anyString(), Mockito.anyInt())).thenReturn(false);
+        Mockito.when(twitterServicesTest.postToTwitter(Mockito.any(Twitter.class), Mockito.anyString(), Mockito.anyInt())).thenReturn(null);
 
         Response response = twitterResourceTest.postTweet(message);
         Assert.assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
@@ -82,7 +80,7 @@ public class TwitterResourceTest {
     public void testResourcePostLengthZeroError() throws TwitterException {
         String message = "";
 
-        Mockito.when(twitterPublishTest.postToTwitter(Mockito.any(Twitter.class), Mockito.anyString(), Mockito.anyInt())).thenReturn(false);
+        Mockito.when(twitterServicesTest.postToTwitter(Mockito.any(Twitter.class), Mockito.anyString(), Mockito.anyInt())).thenReturn(null);
 
         Response response = twitterResourceTest.postTweet(message);
         Assert.assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
@@ -93,7 +91,7 @@ public class TwitterResourceTest {
     public void testResourcePostErrorHandling() throws TwitterException {
         String message = "This should not actually make it to Twitter!";
 
-        Mockito.when(twitterPublishTest.postToTwitter(Mockito.any(Twitter.class), Mockito.anyString(), Mockito.anyInt())).thenThrow(TwitterException.class);
+        Mockito.when(twitterServicesTest.postToTwitter(Mockito.any(Twitter.class), Mockito.anyString(), Mockito.anyInt())).thenThrow(TwitterException.class);
 
         Response response = twitterResourceTest.postTweet(message);
         Assert.assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
