@@ -1,4 +1,4 @@
-package lithium.university;
+package lithium.university.services;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,8 +9,15 @@ import twitter4j.TwitterException;
 
 import java.util.List;
 
-public class TwitterRetrieve {
+public final class TwitterRetrieve {
+    private static final TwitterRetrieve INSTANCE = new TwitterRetrieve();
     private final Logger logger = LoggerFactory.getLogger(TwitterRetrieve.class);
+
+    private TwitterRetrieve() {}
+
+    public static TwitterRetrieve getInstance() {
+        return INSTANCE;
+    }
 
     /*
     * Gets the data from twitter and returns a list of the statuses

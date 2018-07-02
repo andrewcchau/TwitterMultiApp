@@ -1,5 +1,6 @@
 package lithium.university;
 
+import lithium.university.services.TwitterPublish;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.Before;

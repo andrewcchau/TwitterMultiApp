@@ -1,5 +1,6 @@
 package lithium.university;
 
+import lithium.university.services.TwitterRetrieve;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;

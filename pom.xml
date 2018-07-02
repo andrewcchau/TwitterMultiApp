@@ -20,6 +20,8 @@
         <surefire.version>2.22.0</surefire.version>
         <mvn-compiler.version>3.7.0</mvn-compiler.version>
         <jacoco.version>0.8.1</jacoco.version>
+        <!--<powermock-junit.version>1.7.4</powermock-junit.version>-->
+        <!--<powermock-api.version>1.7.4</powermock-api.version>-->
     </properties>
 
 
@@ -70,6 +72,23 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.powermock/powermock-module-junit4 -->
+        <!--<dependency>-->
+            <!--<groupId>org.powermock</groupId>-->
+            <!--<artifactId>powermock-module-junit4</artifactId>-->
+            <!--<version>${powermock-junit.version}</version>-->
+            <!--<scope>test</scope>-->
+        <!--</dependency>-->
+
+        <!-- https://mvnrepository.com/artifact/org.powermock/powermock-api-mockito -->
+        <!--<dependency>-->
+            <!--<groupId>org.powermock</groupId>-->
+            <!--<artifactId>powermock-api-mockito</artifactId>-->
+            <!--<version>${powermock-api.version}</version>-->
+            <!--<scope>test</scope>-->
+        <!--</dependency>-->
+
     </dependencies>
 
 

@@ -1,5 +1,10 @@
-package lithium.university;
+package lithium.university.resources;
 
+import lithium.university.Tweet;
+import lithium.university.TwitterApplication;
+import lithium.university.TwitterProperties;
+import lithium.university.services.TwitterPublish;
+import lithium.university.services.TwitterRetrieve;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import twitter4j.Status;
@@ -30,8 +35,8 @@ public class TwitterResource {
     private TwitterProperties twitterProperties;
 
     public TwitterResource(){
-        twitterRetrieve = new TwitterRetrieve();
-        twitterPublish = new TwitterPublish();
+        twitterRetrieve = TwitterRetrieve.getInstance();
+        twitterPublish = TwitterPublish.getInstance();
         twitterProperties = new TwitterProperties();
     }
 
@@ -40,25 +45,28 @@ public class TwitterResource {
         this.twitterProperties = twitterProperties;
     }
 
+    /**
+     * Used mainly for testing purposes
+     */
     public TwitterResource(TwitterRetrieve tr, TwitterPublish tp){
         this();
         twitterRetrieve = tr;
         twitterPublish = tp;
     }
 
-    protected String errorLengthMessage(){ return "Cannot post. Message length should not exceed " + TwitterApplication.TWEET_LENGTH + " characters."; }
+    public String errorLengthMessage(){ return "Cannot post. Message length should not exceed " + TwitterApplication.TWEET_LENGTH + " characters."; }
 
-    protected String errorZeroMessage(){
+    public String errorZeroMessage(){
         return "Cannot post. Message length needs to be greater than 0.";
     }
 
-    protected String successMessage(String message){
+    public String successMessage(String message){
         return "Successfully updated status to: " + message + "\n";
     }
 
-    protected String getErrorMessage(){ return errorMessage;}
+    public String getErrorMessage(){ return errorMessage;}
 
-    protected String getMessageFormError(){ return "Cannot post. Message data is either missing or not in the correct form.";}
+    public String getMessageFormError(){ return "Cannot post. Message data is either missing or not in the correct form.";}
 
     @GET
     @Path("/timeline")

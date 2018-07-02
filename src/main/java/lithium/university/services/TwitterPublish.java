@@ -1,4 +1,4 @@
-package lithium.university;
+package lithium.university.services;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -6,8 +6,15 @@ import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 
-public class TwitterPublish {
+public final class TwitterPublish {
+    private static final TwitterPublish INSTANCE = new TwitterPublish();
     private final Logger logger = LoggerFactory.getLogger(TwitterPublish.class);
+
+    private TwitterPublish() {}
+
+    public static TwitterPublish getInstance() {
+        return INSTANCE;
+    }
 
     /*
     * Takes a message and error checks it before attempting to post to user's twitter
