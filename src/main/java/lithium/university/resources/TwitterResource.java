@@ -90,10 +90,7 @@ public class TwitterResource {
             twitterService.postToTwitter(twitter, message, TwitterApplication.TWEET_LENGTH);
         }catch(TwitterException te){
             logger.error("An exception has occurred in postTweet", te);
-            if (te.getMessage().contains("length")) {
-                return Response.serverError().entity(te.getMessage()).build();
-            }
-            return Response.serverError().entity(errorMessage).build();
+            return Response.serverError().entity(te.getMessage()).build();
         }
 
         return Response.status(Response.Status.OK).entity(successMessage(message)).build();
