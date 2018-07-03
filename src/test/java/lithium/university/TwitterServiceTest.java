@@ -1,6 +1,7 @@
 package lithium.university;
 
 import lithium.university.services.TwitterService;
+import lithium.university.services.TwitterServiceException;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.Before;
@@ -54,8 +55,8 @@ public class TwitterServiceTest {
         Mockito.when(twitterTest.updateStatus(Mockito.anyString())).thenReturn(s);
     }
 
-    @Test (expected = TwitterException.class)
-    public void testPostCharLengthZero() throws TwitterException {
+    @Test (expected = TwitterServiceException.class)
+    public void testPostCharLengthZero() throws TwitterException, TwitterServiceException {
         try {
             twitterServiceTest.postToTwitter(twitterTest, generateStringLength(0), TwitterApplication.TWEET_LENGTH);
         } catch(TwitterException te){
@@ -65,8 +66,8 @@ public class TwitterServiceTest {
         Assert.fail("TwitterException did not throw!");
     }
 
-    @Test (expected = TwitterException.class)
-    public void testPostCharLengthOver() throws TwitterException {
+    @Test (expected = TwitterServiceException.class)
+    public void testPostCharLengthOver() throws TwitterException, TwitterServiceException {
         try {
             twitterServiceTest.postToTwitter(twitterTest, generateStringLength(TwitterApplication.TWEET_LENGTH + 1), TwitterApplication.TWEET_LENGTH);
         } catch(TwitterException te) {
@@ -77,7 +78,7 @@ public class TwitterServiceTest {
     }
 
     @Test
-    public void testPostCharLengthUnder() throws TwitterException {
+    public void testPostCharLengthUnder() throws TwitterException, TwitterServiceException {
         Status publishTest = null;
         publishTest = twitterServiceTest.postToTwitter(twitterTest, generateStringLength(TwitterApplication.TWEET_LENGTH - 1), TwitterApplication.TWEET_LENGTH);
         Assert.assertNotNull(publishTest);
@@ -85,7 +86,7 @@ public class TwitterServiceTest {
     }
 
     @Test
-    public void testPostCharLengthEqual() throws TwitterException {
+    public void testPostCharLengthEqual() throws TwitterException, TwitterServiceException {
         Status publishTest = null;
         publishTest = twitterServiceTest.postToTwitter(twitterTest, generateStringLength(TwitterApplication.TWEET_LENGTH), TwitterApplication.TWEET_LENGTH);
         Assert.assertNotNull(publishTest);

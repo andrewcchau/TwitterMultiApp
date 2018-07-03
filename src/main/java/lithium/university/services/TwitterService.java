@@ -26,11 +26,11 @@ public class TwitterService {
      * Input: Twitter twitter - twitter instance, String message - message to be posted, int tweetTotal - total limited characters
      * Output: status object of updated status if successful update, null otherwise
      * */
-    public Status postToTwitter(Twitter twitter, String message, int tweetTotal) throws TwitterException {
+    public Status postToTwitter(Twitter twitter, String message, int tweetTotal) throws TwitterException, TwitterServiceException {
         if (message.length() <= 0) {
-            throw new TwitterException("Message length must be greater than 0");
+            throw new TwitterServiceException("Message length must be greater than 0");
         }else if (message.length() > tweetTotal) {
-            throw new TwitterException("Message length should not exceed 280 characters");
+            throw new TwitterServiceException("Message length should not exceed 280 characters");
         }
         Status status = twitter.updateStatus(message);
         logger.info("Successfully updated status to: \"" + status.getText() + "\"");

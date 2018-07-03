@@ -4,6 +4,7 @@ import lithium.university.Tweet;
 import lithium.university.TwitterApplication;
 import lithium.university.TwitterProperties;
 import lithium.university.services.TwitterService;
+import lithium.university.services.TwitterServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import twitter4j.Status;
@@ -89,8 +90,11 @@ public class TwitterResource {
         try{
             twitterService.postToTwitter(twitter, message, TwitterApplication.TWEET_LENGTH);
         }catch(TwitterException te){
-            logger.error("An exception has occurred in postTweet", te);
-            return Response.serverError().entity(te.getMessage()).build();
+            logger.error("An exception from Twitter has occurred in postTweet", te);
+            return Response.serverError().entity(errorMessage).build();
+        }catch(TwitterServiceException tse) {
+            logger.error("An exception from TwitterService has occured in postTweet", tse);
+            return Response.serverError().entity(tse.getMessage()).build();
         }
 
         return Response.status(Response.Status.OK).entity(successMessage(message)).build();
