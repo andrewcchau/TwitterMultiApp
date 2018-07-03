@@ -1,6 +1,6 @@
 package lithium.university;
 
-import lithium.university.services.TwitterServices;
+import lithium.university.services.TwitterService;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.Before;
@@ -19,12 +19,12 @@ import twitter4j.TwitterException;
 import java.util.List;
 
 @RunWith(MockitoJUnitRunner.class)
-public class TwitterServicesTest {
+public class TwitterServiceTest {
     @Mock
     private Twitter twitterTest;
 
     @InjectMocks
-    private TwitterServices twitterServicesTest;
+    private TwitterService twitterServiceTest;
 
     private Status mockStatus(String message){
         Status s = Mockito.mock(Status.class);
@@ -33,6 +33,10 @@ public class TwitterServicesTest {
     }
 
     private String mockMessage = "General status message for testing";
+
+    private String exceptionLengthMessage = "Message length should not exceed 280 characters";
+
+    private String exceptionZeroMessage = "Message length must be greater than 0";
 
     private Status mockStatus() {
         return mockStatus("This is a mocked status!");
@@ -50,24 +54,32 @@ public class TwitterServicesTest {
         Mockito.when(twitterTest.updateStatus(Mockito.anyString())).thenReturn(s);
     }
 
-    @Test
+    @Test (expected = TwitterException.class)
     public void testPostCharLengthZero() throws TwitterException {
-        Status publishTest = null;
-        publishTest = twitterServicesTest.postToTwitter(twitterTest, generateStringLength(0), TwitterApplication.TWEET_LENGTH);
-        Assert.assertEquals(null, publishTest);
+        try {
+            twitterServiceTest.postToTwitter(twitterTest, generateStringLength(0), TwitterApplication.TWEET_LENGTH);
+        } catch(TwitterException te){
+            Assert.assertEquals(exceptionZeroMessage, te.getMessage());
+            throw te;
+        }
+        Assert.fail("TwitterException did not throw!");
     }
 
-    @Test
+    @Test (expected = TwitterException.class)
     public void testPostCharLengthOver() throws TwitterException {
-        Status publishTest = null;
-        publishTest = twitterServicesTest.postToTwitter(twitterTest, generateStringLength(TwitterApplication.TWEET_LENGTH + 1), TwitterApplication.TWEET_LENGTH);
-        Assert.assertEquals(null, publishTest);
+        try {
+            twitterServiceTest.postToTwitter(twitterTest, generateStringLength(TwitterApplication.TWEET_LENGTH + 1), TwitterApplication.TWEET_LENGTH);
+        } catch(TwitterException te) {
+            Assert.assertEquals(exceptionLengthMessage, te.getMessage());
+            throw te;
+        }
+        Assert.fail("TwitterException did not throw!");
     }
 
     @Test
     public void testPostCharLengthUnder() throws TwitterException {
         Status publishTest = null;
-        publishTest = twitterServicesTest.postToTwitter(twitterTest, generateStringLength(TwitterApplication.TWEET_LENGTH - 1), TwitterApplication.TWEET_LENGTH);
+        publishTest = twitterServiceTest.postToTwitter(twitterTest, generateStringLength(TwitterApplication.TWEET_LENGTH - 1), TwitterApplication.TWEET_LENGTH);
         Assert.assertNotNull(publishTest);
         Assert.assertEquals(mockMessage, publishTest.getText());
     }
@@ -75,19 +87,19 @@ public class TwitterServicesTest {
     @Test
     public void testPostCharLengthEqual() throws TwitterException {
         Status publishTest = null;
-        publishTest = twitterServicesTest.postToTwitter(twitterTest, generateStringLength(TwitterApplication.TWEET_LENGTH), TwitterApplication.TWEET_LENGTH);
+        publishTest = twitterServiceTest.postToTwitter(twitterTest, generateStringLength(TwitterApplication.TWEET_LENGTH), TwitterApplication.TWEET_LENGTH);
         Assert.assertNotNull(publishTest);
         Assert.assertEquals(mockMessage, publishTest.getText());
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testRetrieveNegative() throws TwitterException {
-        List<Status> l = twitterServicesTest.retrieveFromTwitter(twitterTest, -1);
+        List<Status> l = twitterServiceTest.retrieveFromTwitter(twitterTest, -1);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testRetrieveNothing() throws TwitterException {
-        List<Status> l = twitterServicesTest.retrieveFromTwitter(twitterTest, 0);
+        List<Status> l = twitterServiceTest.retrieveFromTwitter(twitterTest, 0);
     }
 
     @Test
@@ -95,7 +107,7 @@ public class TwitterServicesTest {
         ResponseList<Status> fakeList = new FakeResponseList<>();
         fakeList.add(mockStatus());
         Mockito.when(twitterTest.getHomeTimeline(Mockito.any(Paging.class))).thenReturn(fakeList);
-        List<Status> l = twitterServicesTest.retrieveFromTwitter(twitterTest, 1);
+        List<Status> l = twitterServiceTest.retrieveFromTwitter(twitterTest, 1);
         Assert.assertEquals(1, l.size());
         Assert.assertEquals(mockStatus().getText(), l.get(0).getText());
     }
@@ -109,7 +121,7 @@ public class TwitterServicesTest {
             fakeList.add(mockStatus(testMessage + i));
         }
         Mockito.when(twitterTest.getHomeTimeline(Mockito.any(Paging.class))).thenReturn(fakeList);
-        List<Status> l = twitterServicesTest.retrieveFromTwitter(twitterTest, size);
+        List<Status> l = twitterServiceTest.retrieveFromTwitter(twitterTest, size);
         Assert.assertEquals(size, l.size());
         for(int i = 0; i < size; i++){
             Assert.assertEquals(testMessage + i, l.get(i).getText());
@@ -118,14 +130,14 @@ public class TwitterServicesTest {
 
     @Test
     public void testAuthenticationReturnNull() {
-        twitterServicesTest.setTwitterProperties(null);
-        Assert.assertNull(twitterServicesTest.getAuthenticatedTwitter());
+        twitterServiceTest.setTwitterProperties(null);
+        Assert.assertNull(twitterServiceTest.getAuthenticatedTwitter());
     }
 
     @Test
     public void testAuthenticationReturnNonNull() {
         TwitterProperties twitterProperties = Mockito.mock(TwitterProperties.class);
-        twitterServicesTest.setTwitterProperties(twitterProperties);
-        Assert.assertNotNull(twitterServicesTest.getAuthenticatedTwitter());
+        twitterServiceTest.setTwitterProperties(twitterProperties);
+        Assert.assertNotNull(twitterServiceTest.getAuthenticatedTwitter());
     }
 }

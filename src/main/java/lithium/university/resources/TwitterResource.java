@@ -3,7 +3,7 @@ package lithium.university.resources;
 import lithium.university.Tweet;
 import lithium.university.TwitterApplication;
 import lithium.university.TwitterProperties;
-import lithium.university.services.TwitterServices;
+import lithium.university.services.TwitterService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import twitter4j.Status;
@@ -27,30 +27,23 @@ public class TwitterResource {
     private final String errorMessage = "Oops! Something went wrong! Please check the server log for details and try again.";
 
     private Twitter twitter;
-    private TwitterServices twitterServices;
+    private TwitterService twitterService;
 
     public TwitterResource(){
-        twitterServices = TwitterServices.getInstance();
+        twitterService = TwitterService.getInstance();
     }
 
     public TwitterResource(TwitterProperties twitterProperties){
         this();
-        twitterServices.setTwitterProperties(twitterProperties);
+        twitterService.setTwitterProperties(twitterProperties);
     }
 
     /*
     * Used mainly for testing purposes
     * */
-    public TwitterResource(TwitterServices twitterServices) {
+    public TwitterResource(TwitterService twitterService) {
         this();
-        this.twitterServices = twitterServices;
-    }
-
-
-    public String errorLengthMessage(){ return "Cannot post. Message length should not exceed " + TwitterApplication.TWEET_LENGTH + " characters."; }
-
-    public String errorZeroMessage(){
-        return "Cannot post. Message length needs to be greater than 0.";
+        this.twitterService = twitterService;
     }
 
     public String successMessage(String message){
@@ -69,7 +62,7 @@ public class TwitterResource {
 
         List<Status> list = null;
         try {
-            list = twitterServices.retrieveFromTwitter(twitter, TwitterApplication.TWEET_TOTAL);
+            list = twitterService.retrieveFromTwitter(twitter, TwitterApplication.TWEET_TOTAL);
         } catch (TwitterException te) {
             logger.error("An exception has occurred in getHomeTimeline", te);
             return Response.serverError().entity(errorMessage).build();
@@ -93,33 +86,23 @@ public class TwitterResource {
         }
 
         /*Attempt to post to Twitter and get error codes*/
-        Status status = null;
-        boolean error = false;
         try{
-            status = twitterServices.postToTwitter(twitter, message, TwitterApplication.TWEET_LENGTH);
+            twitterService.postToTwitter(twitter, message, TwitterApplication.TWEET_LENGTH);
         }catch(TwitterException te){
             logger.error("An exception has occurred in postTweet", te);
-            error = true;
-        }
-
-        /*Handle errors as needed*/
-        if(status != null){
-            return Response.status(Response.Status.OK).entity(successMessage(message)).build();
-        }else if(error){
+            if (te.getMessage().contains("length")) {
+                return Response.serverError().entity(te.getMessage()).build();
+            }
             return Response.serverError().entity(errorMessage).build();
         }
 
-        if(message.length() > 0) {
-            return Response.serverError().entity(errorLengthMessage()).build();
-        }else {
-            return Response.serverError().entity(errorZeroMessage()).build();
-        }
+        return Response.status(Response.Status.OK).entity(successMessage(message)).build();
     }
 
     /*
      * Used to re-check authentication credentials
      * */
     private void getTwitterAuthentication(){
-        twitter = twitterServices.getAuthenticatedTwitter();
+        twitter = twitterService.getAuthenticatedTwitter();
     }
 }

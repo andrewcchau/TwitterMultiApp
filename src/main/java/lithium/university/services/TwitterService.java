@@ -12,14 +12,14 @@ import twitter4j.conf.ConfigurationBuilder;
 
 import java.util.List;
 
-public class TwitterServices {
-    private static final TwitterServices INSTANCE = new TwitterServices();
-    private final Logger logger = LoggerFactory.getLogger(TwitterServices.class);
+public class TwitterService {
+    private static final TwitterService INSTANCE = new TwitterService();
+    private final Logger logger = LoggerFactory.getLogger(TwitterService.class);
     private TwitterProperties twitterProperties;
 
-    private TwitterServices() {}
+    private TwitterService() {}
 
-    public static TwitterServices getInstance() { return INSTANCE; }
+    public static TwitterService getInstance() { return INSTANCE; }
 
     /*
      * Takes a message and error checks it before attempting to post to user's twitter
@@ -28,11 +28,9 @@ public class TwitterServices {
      * */
     public Status postToTwitter(Twitter twitter, String message, int tweetTotal) throws TwitterException {
         if (message.length() <= 0) {
-            logger.info("Did not post tweet. Message length was 0");
-            return null;
+            throw new TwitterException("Message length must be greater than 0");
         }else if (message.length() > tweetTotal) {
-            logger.info("Did not post tweet. Message length exceeded 280 characters. Was " + message.length() + " characters long");
-            return null;
+            throw new TwitterException("Message length should not exceed 280 characters");
         }
         Status status = twitter.updateStatus(message);
         logger.info("Successfully updated status to: \"" + status.getText() + "\"");
