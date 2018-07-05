@@ -14,7 +14,7 @@ logging:
 
   # Logger - specific levels
   loggers:
-    lithium.university: DEBUG
+    lithium.university: INFO
 
   appenders:
     - type: console
