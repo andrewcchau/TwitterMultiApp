@@ -28,14 +28,8 @@ public class TwitterResourceTest {
         Mockito.when(twitterServiceTest.getAuthenticatedTwitter()).thenReturn(Mockito.mock(Twitter.class));
     }
 
-    private Status mockStatus() {
-        Status s = Mockito.mock(Status.class);
-        return s;
-    }
-
     private TwitterPost mockPost() {
-        TwitterPost tp = Mockito.mock(TwitterPost.class);
-        return tp;
+        return Mockito.mock(TwitterPost.class);
     }
 
     @Test
@@ -64,8 +58,10 @@ public class TwitterResourceTest {
     @Test
     public void testResourcePost() throws TwitterException, TwitterServiceException {
         String message = "This should not actually make it to Twitter!";
+        Status s = Mockito.mock(Status.class);
 
-        Mockito.when(twitterServiceTest.postToTwitter(Mockito.any(Twitter.class), Mockito.anyString(), Mockito.anyInt())).thenReturn(mockStatus());
+        Mockito.when(s.getText()).thenReturn(message);
+        Mockito.when(twitterServiceTest.postToTwitter(Mockito.any(Twitter.class), Mockito.anyString(), Mockito.anyInt())).thenReturn(s);
 
         Response response = twitterResourceTest.postTweet(message);
         Assert.assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());

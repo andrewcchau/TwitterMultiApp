@@ -29,6 +29,8 @@ public class TwitterServiceTest {
     @InjectMocks
     private TwitterService twitterServiceTest;
 
+    private String mockMessage = "General status message for testing";
+
     private Status mockStatus(String message){
         Status s = Mockito.mock(Status.class);
         User u = Mockito.mock(User.class);
@@ -39,8 +41,6 @@ public class TwitterServiceTest {
         Mockito.when(u.getScreenName()).thenReturn("Mr. Tester");
         return s;
     }
-
-    private String mockMessage = "General status message for testing";
 
     private Status mockStatus() {
         return mockStatus("This is a mocked status!");
@@ -105,12 +105,12 @@ public class TwitterServiceTest {
         Assert.assertEquals(mockMessage, publishTest.getText());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test (expected = IllegalArgumentException.class)
     public void testRetrieveNegative() throws TwitterException {
         twitterServiceTest.retrieveFromTwitter(twitterTest, -1);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test (expected = IllegalArgumentException.class)
     public void testRetrieveNothing() throws TwitterException {
         twitterServiceTest.retrieveFromTwitter(twitterTest, 0);
     }
