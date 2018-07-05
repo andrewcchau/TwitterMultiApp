@@ -3,11 +3,11 @@ package lithium.university.resources;
 import lithium.university.Tweet;
 import lithium.university.TwitterApplication;
 import lithium.university.TwitterProperties;
+import lithium.university.models.TwitterPost;
 import lithium.university.services.TwitterService;
 import lithium.university.services.TwitterServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 
@@ -60,7 +60,7 @@ public class TwitterResource {
     public Response getHomeTimeline() {
         this.getTwitterAuthentication();
 
-        List<Status> list;
+        List<TwitterPost> list;
         try {
             list = twitterService.retrieveFromTwitter(twitter, TwitterApplication.TWEET_TOTAL);
         } catch (TwitterException te) {

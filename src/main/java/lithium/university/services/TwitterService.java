@@ -1,6 +1,8 @@
 package lithium.university.services;
 
 import lithium.university.TwitterProperties;
+import lithium.university.models.TwitterPost;
+import lithium.university.models.TwitterUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import twitter4j.Paging;
@@ -10,6 +12,7 @@ import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.conf.ConfigurationBuilder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TwitterService {
@@ -43,10 +46,18 @@ public class TwitterService {
     /*
      * Gets the data from twitter and returns a list of the statuses
      * */
-    public List<Status> retrieveFromTwitter(Twitter twitter, final int tweetTotal) throws TwitterException {
+    public List<TwitterPost> retrieveFromTwitter(Twitter twitter, final int tweetTotal) throws TwitterException {
+        List<TwitterPost> posts = new ArrayList<>();
+
         Paging p = new Paging(1, tweetTotal);
         logger.debug("Attempting to grab " + tweetTotal + " tweets from Twitter timeline");
-        return twitter.getHomeTimeline(p);
+        List<Status> statuses = twitter.getHomeTimeline(p);
+        for(Status status: statuses) {
+            posts.add(new TwitterPost(status.getText(),
+                                      new TwitterUser(status.getUser().getName(), status.getUser().getScreenName(), status.getUser().getProfileImageURL()),
+                                      status.getCreatedAt()));
+        }
+        return posts;
     }
 
     public Twitter getAuthenticatedTwitter() {

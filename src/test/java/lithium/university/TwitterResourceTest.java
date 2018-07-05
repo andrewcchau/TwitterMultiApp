@@ -1,5 +1,6 @@
 package lithium.university;
 
+import lithium.university.models.TwitterPost;
 import lithium.university.resources.TwitterResource;
 import lithium.university.services.TwitterService;
 import lithium.university.services.TwitterServiceException;
@@ -32,18 +33,24 @@ public class TwitterResourceTest {
         return s;
     }
 
+    private TwitterPost mockPost() {
+        TwitterPost tp = Mockito.mock(TwitterPost.class);
+        return tp;
+    }
+
     @Test
     public void testResourceGetTimeline() throws TwitterException {
-        List<Status> fakeList = new ArrayList<>();
-        fakeList.add(mockStatus());
+        List<TwitterPost> fakeList = new ArrayList<>();
+        fakeList.add(mockPost());
 
         Mockito.when(twitterServiceTest.retrieveFromTwitter(Mockito.any(Twitter.class), Mockito.anyInt())).thenReturn(fakeList);
         Mockito.when(twitterServiceTest.getAuthenticatedTwitter()).thenReturn(Mockito.mock(Twitter.class));
 
         Response response = twitterResourceTest.getHomeTimeline();
         Assert.assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        Assert.assertEquals(1, ((List<Status>) ((Tweet) response.getEntity()).getContent()).size());
-        Assert.assertEquals(mockStatus().getText(), ((List<Status>) ((Tweet) response.getEntity()).getContent()).get(0).getText());
+        Assert.assertEquals(1, ((List<TwitterPost>) ((Tweet) response.getEntity()).getContent()).size());
+//        Assert.assertEquals(mockStatus().getText(), ((List<Status>) ((Tweet) response.getEntity()).getContent()).get(0).getText());
+        Assert.assertEquals(mockPost().getTwitterMessage(), ((List<TwitterPost>) ((Tweet) response.getEntity()).getContent()).get(0).getTwitterMessage());
     }
 
     @Test
