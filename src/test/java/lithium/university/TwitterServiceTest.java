@@ -1,5 +1,6 @@
 package lithium.university;
 
+import lithium.university.models.TwitterPost;
 import lithium.university.services.TwitterService;
 import lithium.university.services.TwitterServiceException;
 import org.apache.commons.lang3.StringUtils;
@@ -16,6 +17,7 @@ import twitter4j.ResponseList;
 import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
+import twitter4j.User;
 
 import java.util.List;
 
@@ -27,13 +29,18 @@ public class TwitterServiceTest {
     @InjectMocks
     private TwitterService twitterServiceTest;
 
+    private String mockMessage = "General status message for testing";
+
     private Status mockStatus(String message){
         Status s = Mockito.mock(Status.class);
+        User u = Mockito.mock(User.class);
         Mockito.when(s.getText()).thenReturn(message);
+        Mockito.when(s.getUser()).thenReturn(u);
+        Mockito.when(u.getName()).thenReturn("Tester");
+        Mockito.when(u.getProfileImageURL()).thenReturn("http://www.url.fake");
+        Mockito.when(u.getScreenName()).thenReturn("Mr. Tester");
         return s;
     }
-
-    private String mockMessage = "General status message for testing";
 
     private Status mockStatus() {
         return mockStatus("This is a mocked status!");
@@ -86,38 +93,38 @@ public class TwitterServiceTest {
 
     @Test
     public void testPostCharLengthUnder() throws TwitterException, TwitterServiceException {
-        Status publishTest = null;
-        publishTest = twitterServiceTest.postToTwitter(twitterTest, generateStringLength(TwitterApplication.TWEET_LENGTH - 1), TwitterApplication.TWEET_LENGTH);
+        Status publishTest = twitterServiceTest.postToTwitter(twitterTest, generateStringLength(TwitterApplication.TWEET_LENGTH - 1), TwitterApplication.TWEET_LENGTH);
         Assert.assertNotNull(publishTest);
         Assert.assertEquals(mockMessage, publishTest.getText());
     }
 
     @Test
     public void testPostCharLengthEqual() throws TwitterException, TwitterServiceException {
-        Status publishTest = null;
-        publishTest = twitterServiceTest.postToTwitter(twitterTest, generateStringLength(TwitterApplication.TWEET_LENGTH), TwitterApplication.TWEET_LENGTH);
+        Status publishTest = twitterServiceTest.postToTwitter(twitterTest, generateStringLength(TwitterApplication.TWEET_LENGTH), TwitterApplication.TWEET_LENGTH);
         Assert.assertNotNull(publishTest);
         Assert.assertEquals(mockMessage, publishTest.getText());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test (expected = IllegalArgumentException.class)
     public void testRetrieveNegative() throws TwitterException {
-        List<Status> l = twitterServiceTest.retrieveFromTwitter(twitterTest, -1);
+        twitterServiceTest.retrieveFromTwitter(twitterTest, -1);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test (expected = IllegalArgumentException.class)
     public void testRetrieveNothing() throws TwitterException {
-        List<Status> l = twitterServiceTest.retrieveFromTwitter(twitterTest, 0);
+        twitterServiceTest.retrieveFromTwitter(twitterTest, 0);
     }
 
     @Test
     public void testRetrieveSomething() throws TwitterException {
         ResponseList<Status> fakeList = new FakeResponseList<>();
         fakeList.add(mockStatus());
+
         Mockito.when(twitterTest.getHomeTimeline(Mockito.any(Paging.class))).thenReturn(fakeList);
-        List<Status> l = twitterServiceTest.retrieveFromTwitter(twitterTest, 1);
+
+        List<TwitterPost> l = twitterServiceTest.retrieveFromTwitter(twitterTest, 1);
         Assert.assertEquals(1, l.size());
-        Assert.assertEquals(mockStatus().getText(), l.get(0).getText());
+        Assert.assertEquals(mockStatus().getText(), l.get(0).getTwitterMessage());
     }
 
     @Test
@@ -128,11 +135,13 @@ public class TwitterServiceTest {
         for(int i = 0; i < size; i++){
             fakeList.add(mockStatus(testMessage + i));
         }
+
         Mockito.when(twitterTest.getHomeTimeline(Mockito.any(Paging.class))).thenReturn(fakeList);
-        List<Status> l = twitterServiceTest.retrieveFromTwitter(twitterTest, size);
+
+        List<TwitterPost> l = twitterServiceTest.retrieveFromTwitter(twitterTest, size);
         Assert.assertEquals(size, l.size());
         for(int i = 0; i < size; i++){
-            Assert.assertEquals(testMessage + i, l.get(i).getText());
+            Assert.assertEquals(testMessage + i, l.get(i).getTwitterMessage());
         }
     }
 

@@ -6,7 +6,7 @@ import org.junit.Test;
 
 public class TwitterHealthCheckTest {
     @Test
-    public void testHealth() throws Exception {
+    public void testHealth() {
         TwitterHealthCheck twitterHealthcheck = new TwitterHealthCheck();
         Assert.assertEquals(HealthCheck.Result.healthy().isHealthy(), twitterHealthcheck.check().isHealthy());
     }

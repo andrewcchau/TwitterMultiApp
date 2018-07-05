@@ -3,6 +3,7 @@ package lithium.university.resources;
 import lithium.university.Tweet;
 import lithium.university.TwitterApplication;
 import lithium.university.TwitterProperties;
+import lithium.university.models.TwitterPost;
 import lithium.university.services.TwitterService;
 import lithium.university.services.TwitterServiceException;
 import org.slf4j.Logger;
@@ -60,7 +61,7 @@ public class TwitterResource {
     public Response getHomeTimeline() {
         this.getTwitterAuthentication();
 
-        List<Status> list;
+        List<TwitterPost> list;
         try {
             list = twitterService.retrieveFromTwitter(twitter, TwitterApplication.TWEET_TOTAL);
         } catch (TwitterException te) {
@@ -80,8 +81,9 @@ public class TwitterResource {
         this.getTwitterAuthentication();
 
         /*Attempt to post to Twitter*/
+        Status status;
         try{
-            twitterService.postToTwitter(twitter, message, TwitterApplication.TWEET_LENGTH);
+             status = twitterService.postToTwitter(twitter, message, TwitterApplication.TWEET_LENGTH);
         }catch(TwitterException te){
             logger.error("An exception from Twitter has occurred in postTweet", te);
             return Response.serverError().entity(errorMessage).build();
@@ -90,7 +92,7 @@ public class TwitterResource {
             return Response.serverError().entity(tse.getMessage()).build();
         }
 
-        return Response.status(Response.Status.OK).entity(successMessage(message)).build();
+        return Response.status(Response.Status.OK).entity(successMessage(status.getText())).build();
     }
 
     /*
