@@ -52,6 +52,17 @@ public class TwitterServiceTest {
     }
 
     @Test (expected = TwitterServiceException.class)
+    public void testPostNull() throws TwitterException, TwitterServiceException {
+        try {
+            twitterServiceTest.postToTwitter(twitterTest, null, TwitterApplication.TWEET_LENGTH);
+        } catch(TwitterServiceException tse) {
+            Assert.assertEquals("Cannot post. Message data is either missing or not in the correct form.", tse.getMessage());
+            throw tse;
+        }
+        Assert.fail("TwitterServiceException did not throw!");
+    }
+
+    @Test (expected = TwitterServiceException.class)
     public void testPostCharLengthZero() throws TwitterException, TwitterServiceException {
         try {
             twitterServiceTest.postToTwitter(twitterTest, generateStringLength(0), TwitterApplication.TWEET_LENGTH);
@@ -59,7 +70,7 @@ public class TwitterServiceTest {
             Assert.assertEquals("Message length must be greater than 0", te.getMessage());
             throw te;
         }
-        Assert.fail("TwitterException did not throw!");
+        Assert.fail("TwitterServiceException did not throw!");
     }
 
     @Test (expected = TwitterServiceException.class)
