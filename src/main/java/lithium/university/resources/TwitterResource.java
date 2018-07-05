@@ -53,7 +53,6 @@ public class TwitterResource {
 
     public String getErrorMessage(){ return errorMessage;}
 
-    public String getMessageFormError(){ return "Cannot post. Message data is either missing or not in the correct form.";}
 
     @GET
     @Path("/timeline")
@@ -80,13 +79,7 @@ public class TwitterResource {
     public Response postTweet(@FormParam("message") String message){
         this.getTwitterAuthentication();
 
-        /*Initial checking of message for correct form*/
-        if(message == null){
-            logger.debug("User passed in null message form data");
-            return Response.serverError().entity(getMessageFormError()).build();
-        }
-
-        /*Attempt to post to Twitter and get error codes*/
+        /*Attempt to post to Twitter*/
         try{
             twitterService.postToTwitter(twitter, message, TwitterApplication.TWEET_LENGTH);
         }catch(TwitterException te){

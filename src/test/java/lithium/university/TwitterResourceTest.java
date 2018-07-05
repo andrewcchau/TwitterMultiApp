@@ -102,9 +102,13 @@ public class TwitterResourceTest {
     }
 
     @Test
-    public void testResourcePostNullMessage() {
+    public void testResourcePostNullMessage() throws TwitterException, TwitterServiceException{
+        String errorNull = "Cannot post. Message data is either missing or not in the correct form.";
+
+        Mockito.when(twitterServiceTest.postToTwitter(Mockito.any(Twitter.class), Mockito.isNull(), Mockito.anyInt())).thenThrow(new TwitterServiceException(errorNull));
+
         Response response = twitterResourceTest.postTweet(null);
         Assert.assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
-        Assert.assertEquals(twitterResourceTest.getMessageFormError(), response.getEntity());
+        Assert.assertEquals(errorNull, response.getEntity());
     }
 }
