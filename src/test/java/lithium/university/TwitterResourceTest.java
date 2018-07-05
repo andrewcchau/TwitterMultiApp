@@ -18,8 +18,6 @@ import java.util.List;
 public class TwitterResourceTest {
     private TwitterResource twitterResourceTest;
     private TwitterService twitterServiceTest;
-    private String errorLength = "Message length should not exceed 280 characters";
-    private String errorZero = "Message length must be greater than 0";
 
     @Before
     public void init() {
@@ -71,6 +69,7 @@ public class TwitterResourceTest {
     @Test
     public void testResourcePostLengthError() throws TwitterException, TwitterServiceException {
         String message = "This should not actually make it to Twitter!";
+        String errorLength = "Message length should not exceed 280 characters";
 
         Mockito.when(twitterServiceTest.postToTwitter(Mockito.any(Twitter.class), Mockito.anyString(), Mockito.anyInt())).thenThrow(new TwitterServiceException(errorLength));
 
@@ -82,6 +81,7 @@ public class TwitterResourceTest {
     @Test
     public void testResourcePostLengthZeroError() throws TwitterException, TwitterServiceException {
         String message = "";
+        String errorZero = "Message length must be greater than 0";
 
         Mockito.when(twitterServiceTest.postToTwitter(Mockito.any(Twitter.class), Mockito.anyString(), Mockito.anyInt())).thenThrow(new TwitterServiceException(errorZero));
 

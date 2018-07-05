@@ -35,10 +35,6 @@ public class TwitterServiceTest {
 
     private String mockMessage = "General status message for testing";
 
-    private String exceptionLengthMessage = "Message length should not exceed 280 characters";
-
-    private String exceptionZeroMessage = "Message length must be greater than 0";
-
     private Status mockStatus() {
         return mockStatus("This is a mocked status!");
     }
@@ -60,7 +56,7 @@ public class TwitterServiceTest {
         try {
             twitterServiceTest.postToTwitter(twitterTest, generateStringLength(0), TwitterApplication.TWEET_LENGTH);
         } catch(TwitterException te){
-            Assert.assertEquals(exceptionZeroMessage, te.getMessage());
+            Assert.assertEquals("Message length must be greater than 0", te.getMessage());
             throw te;
         }
         Assert.fail("TwitterException did not throw!");
@@ -71,7 +67,7 @@ public class TwitterServiceTest {
         try {
             twitterServiceTest.postToTwitter(twitterTest, generateStringLength(TwitterApplication.TWEET_LENGTH + 1), TwitterApplication.TWEET_LENGTH);
         } catch(TwitterException te) {
-            Assert.assertEquals(exceptionLengthMessage, te.getMessage());
+            Assert.assertEquals("Message length should not exceed 280 characters", te.getMessage());
             throw te;
         }
         Assert.fail("TwitterException did not throw!");

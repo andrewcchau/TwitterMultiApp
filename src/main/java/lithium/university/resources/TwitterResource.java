@@ -61,7 +61,7 @@ public class TwitterResource {
     public Response getHomeTimeline() {
         this.getTwitterAuthentication();
 
-        List<Status> list = null;
+        List<Status> list;
         try {
             list = twitterService.retrieveFromTwitter(twitter, TwitterApplication.TWEET_TOTAL);
         } catch (TwitterException te) {
