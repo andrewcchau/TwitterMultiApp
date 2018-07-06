@@ -1,13 +1,12 @@
 package lithium.university;
 
+import lithium.university.exceptions.TwitterServiceException;
 import lithium.university.models.TwitterPost;
 import lithium.university.resources.TwitterResource;
 import lithium.university.services.TwitterService;
-import lithium.university.services.TwitterServiceException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import twitter4j.Status;
 import twitter4j.Twitter;
