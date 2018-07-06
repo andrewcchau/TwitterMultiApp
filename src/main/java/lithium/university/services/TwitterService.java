@@ -14,6 +14,7 @@ import twitter4j.conf.ConfigurationBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class TwitterService {
     private static final TwitterService INSTANCE = new TwitterService();
@@ -47,17 +48,13 @@ public class TwitterService {
      * Gets the data from twitter and returns a list of the statuses
      * */
     public List<TwitterPost> retrieveFromTwitter(Twitter twitter, final int tweetTotal) throws TwitterException {
-        List<TwitterPost> posts = new ArrayList<>();
-
         Paging p = new Paging(1, tweetTotal);
         logger.debug("Attempting to grab " + tweetTotal + " tweets from Twitter timeline");
         List<Status> statuses = twitter.getHomeTimeline(p);
-        for(Status status: statuses) {
-            posts.add(new TwitterPost(status.getText(),
-                                      new TwitterUser(status.getUser().getName(), status.getUser().getScreenName(), status.getUser().getProfileImageURL()),
-                                      status.getCreatedAt()));
-        }
-        return posts;
+        return statuses.parallelStream().map(s -> new TwitterPost(s.getText(),
+                                        new TwitterUser(s.getUser().getName(), s.getUser().getScreenName(), s.getUser().getProfileImageURL()),
+                                        s.getCreatedAt()))
+                                .collect(Collectors.toList());
     }
 
     public Twitter getAuthenticatedTwitter() {

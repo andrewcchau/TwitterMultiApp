@@ -18,9 +18,12 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Path("/api/1.0/twitter")
@@ -73,6 +76,21 @@ public class TwitterResource {
         return Response.ok(new Tweet(list), MediaType.APPLICATION_JSON).build();
     }
 
+    @GET
+    @Path("/tweet/filter")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getFilteredTweets(@QueryParam("keyword") Optional<String> keyword) {
+        List<TwitterPost> rawPosts = (List<TwitterPost>) ((Tweet) getHomeTimeline().getEntity()).getContent();
+
+        List<String> filteredPosts = rawPosts.parallelStream().filter(p -> p.getTwitterMessage().contains(keyword.orElse(""))).map(TwitterPost::getTwitterMessage).collect(Collectors.toList());
+        if(!filteredPosts.isEmpty()) {
+            logger.info("Successfully grabbed " + filteredPosts.size() + " tweets that matched keyword");
+            return Response.ok(new Tweet(filteredPosts), MediaType.APPLICATION_JSON).build();
+        } else {
+            logger.info("There were no tweets that contained given keyword");
+            return Response.ok().entity("There are no messages within the last " + TwitterApplication.TWEET_TOTAL + " that have the keyword \"" + keyword.orElse("") + "\" in them.").build();
+        }
+    }
 
     @POST
     @Path("/tweet")
@@ -94,6 +112,7 @@ public class TwitterResource {
 
         return Response.status(Response.Status.OK).entity(successMessage(status.getText())).build();
     }
+
 
     /*
      * Used to re-check authentication credentials
