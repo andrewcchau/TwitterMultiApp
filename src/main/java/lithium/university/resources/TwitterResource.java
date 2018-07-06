@@ -66,7 +66,7 @@ public class TwitterResource {
 
         List<TwitterPost> list;
         try {
-            list = twitterService.retrieveFromTwitter(twitter, TwitterApplication.TWEET_TOTAL);
+            list = twitterService.retrieveFromTwitter(twitter, TwitterApplication.TWEET_TOTAL, "");
         } catch (TwitterException te) {
             logger.error("An exception has occurred in getHomeTimeline", te);
             return Response.serverError().entity(errorMessage).build();
@@ -80,12 +80,18 @@ public class TwitterResource {
     @Path("/tweet/filter")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getFilteredTweets(@QueryParam("keyword") Optional<String> keyword) {
-        List<TwitterPost> rawPosts = (List<TwitterPost>) ((Tweet) getHomeTimeline().getEntity()).getContent();
+        this.getTwitterAuthentication();
 
-        List<String> filteredPosts = rawPosts.stream().filter(p -> p.getTwitterMessage().contains(keyword.orElse(""))).map(TwitterPost::getTwitterMessage).collect(Collectors.toList());
+        List<TwitterPost> filterList;
+        try {
+            filterList = twitterService.retrieveFromTwitter(twitter, TwitterApplication.TWEET_TOTAL, keyword.orElse(""));
+        } catch (TwitterException te) {
+            logger.error("An exception has occurred in getFilteredTweets");
+            return Response.serverError().entity(errorMessage).build();
+        }
 
-        logger.info("Grabbed " + filteredPosts.size() + " tweets that matched keyword: " + keyword.orElse(""));
-        return Response.ok(new Tweet(filteredPosts), MediaType.APPLICATION_JSON_TYPE).build();
+        logger.info("Grabbed " + filterList.size() + " tweets that matched keyword: " + keyword.orElse(""));
+        return Response.ok(new Tweet(filterList.stream().map(TwitterPost::getTwitterMessage).collect(Collectors.toList())), MediaType.APPLICATION_JSON_TYPE).build();
     }
 
     @POST
