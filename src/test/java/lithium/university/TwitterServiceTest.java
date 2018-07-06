@@ -1,8 +1,8 @@
 package lithium.university;
 
+import lithium.university.exceptions.TwitterServiceException;
 import lithium.university.models.TwitterPost;
 import lithium.university.services.TwitterService;
-import lithium.university.services.TwitterServiceException;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.Before;
@@ -143,6 +143,24 @@ public class TwitterServiceTest {
         for(int i = 0; i < size; i++){
             Assert.assertEquals(testMessage + i, l.get(i).getTwitterMessage());
         }
+    }
+
+    @Test
+    public void testRetrieveFiltered() throws TwitterException {
+        ResponseList<Status> fakeList = new FakeResponseList<>();
+        fakeList.add(mockStatus("Tester 1"));
+        fakeList.add(mockStatus("Tester 2"));
+
+        Mockito.when(twitterTest.getHomeTimeline(Mockito.any(Paging.class))).thenReturn(fakeList);
+
+        List<TwitterPost> l = twitterServiceTest.retrieveFilteredFromTwitter(twitterTest, 1, "1");
+        Assert.assertEquals(1, l.size());
+        Assert.assertEquals("Tester 1", l.get(0).getTwitterMessage());
+    }
+
+    @Test
+    public void testRetrieveFilterNullKeyword() throws TwitterException {
+        Assert.assertNull(twitterServiceTest.retrieveFilteredFromTwitter(twitterTest, 1, null));
     }
 
     @Test

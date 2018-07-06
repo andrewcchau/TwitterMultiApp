@@ -3,9 +3,9 @@ package lithium.university.resources;
 import lithium.university.Tweet;
 import lithium.university.TwitterApplication;
 import lithium.university.TwitterProperties;
+import lithium.university.exceptions.TwitterServiceException;
 import lithium.university.models.TwitterPost;
 import lithium.university.services.TwitterService;
-import lithium.university.services.TwitterServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import twitter4j.Status;
@@ -18,9 +18,12 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Path("/api/1.0/twitter")
@@ -70,9 +73,26 @@ public class TwitterResource {
         }
 
         logger.info("Successfully grabbed tweets from home timeline.");
-        return Response.ok(new Tweet(list), MediaType.APPLICATION_JSON).build();
+        return Response.ok(new Tweet(list)).build();
     }
 
+    @GET
+    @Path("/tweet/filter")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getFilteredTweets(@QueryParam("keyword") Optional<String> keyword) {
+        this.getTwitterAuthentication();
+
+        List<TwitterPost> filterList;
+        try {
+            filterList = twitterService.retrieveFilteredFromTwitter(twitter, TwitterApplication.TWEET_TOTAL, keyword.orElse(""));
+        } catch (TwitterException te) {
+            logger.error("An exception has occurred in getFilteredTweets");
+            return Response.serverError().entity(errorMessage).build();
+        }
+
+        logger.info("Grabbed " + filterList.size() + " tweets that matched keyword: " + keyword.orElse(""));
+        return Response.ok(new Tweet(filterList.stream().map(TwitterPost::getTwitterMessage).collect(Collectors.toList()))).build();
+    }
 
     @POST
     @Path("/tweet")
@@ -94,6 +114,7 @@ public class TwitterResource {
 
         return Response.status(Response.Status.OK).entity(successMessage(status.getText())).build();
     }
+
 
     /*
      * Used to re-check authentication credentials

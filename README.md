@@ -23,7 +23,9 @@ To post to twitter using this program, follow these steps:
 4. Send the form data to http://localhost:8080/api/1.0/twitter/tweet
 
 ## Viewing Twitter Timeline
-To view your home timeline, ensure the program is running (see: Running The Program above) and go to http://localhost:8080/api/1.0/twitter/timeline
+To view your home timeline, ensure the program is running (see: Running The Program above):
+* To view latest posts on your home timeline, go to http://localhost:8080/api/1.0/timeline
+* To view posts from your timeline that match a given keyword, go to http://localhost:8080/api/1.0/tweet/filter?keyword=<KEYWORD> where <KEYWORD> is a keyword to be matched
 
 
 # Unit Testing

@@ -1,6 +1,7 @@
 package lithium.university.services;
 
 import lithium.university.TwitterProperties;
+import lithium.university.exceptions.TwitterServiceException;
 import lithium.university.models.TwitterPost;
 import lithium.university.models.TwitterUser;
 import org.slf4j.Logger;
@@ -12,8 +13,9 @@ import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.conf.ConfigurationBuilder;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class TwitterService {
     private static final TwitterService INSTANCE = new TwitterService();
@@ -38,26 +40,35 @@ public class TwitterService {
             throw new TwitterServiceException("Cannot post. Message length should not exceed 280 characters");
         }
 
-        Status status = twitter.updateStatus(message);
-        logger.info("Successfully updated status to: \"" + status.getText() + "\"");
-        return status;
+        logger.info("Successfully updated status");
+        return Stream.of(twitter.updateStatus(message)).collect(Collectors.toList()).get(0);
     }
 
     /*
      * Gets the data from twitter and returns a list of the statuses
      * */
     public List<TwitterPost> retrieveFromTwitter(Twitter twitter, final int tweetTotal) throws TwitterException {
-        List<TwitterPost> posts = new ArrayList<>();
-
         Paging p = new Paging(1, tweetTotal);
         logger.debug("Attempting to grab " + tweetTotal + " tweets from Twitter timeline");
         List<Status> statuses = twitter.getHomeTimeline(p);
-        for(Status status: statuses) {
-            posts.add(new TwitterPost(status.getText(),
-                                      new TwitterUser(status.getUser().getName(), status.getUser().getScreenName(), status.getUser().getProfileImageURL()),
-                                      status.getCreatedAt()));
+        return statuses.stream().map(s -> new TwitterPost(s.getText(),
+                                    new TwitterUser(s.getUser().getName(), s.getUser().getScreenName(), s.getUser().getProfileImageURL()),
+                                    s.getCreatedAt()))
+                                .collect(Collectors.toList());
+    }
+
+    public List<TwitterPost> retrieveFilteredFromTwitter(Twitter twitter, final int tweetTotal, String keyword) throws TwitterException {
+        if(keyword == null) {
+            return null;
         }
-        return posts;
+        Paging p = new Paging(1, tweetTotal);
+        logger.debug("Attempting find tweets from Twitter timeline that match keyword: " + keyword);
+        List<Status> statuses = twitter.getHomeTimeline(p);
+        return statuses.stream().filter(s -> s.getText().contains(keyword))
+                                .map(s -> new TwitterPost(s.getText(),
+                                        new TwitterUser(s.getUser().getName(), s.getUser().getScreenName(), s.getUser().getProfileImageURL()),
+                                        s.getCreatedAt()))
+                                .collect(Collectors.toList());
     }
 
     public Twitter getAuthenticatedTwitter() {
