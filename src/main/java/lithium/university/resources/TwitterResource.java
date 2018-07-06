@@ -82,14 +82,10 @@ public class TwitterResource {
     public Response getFilteredTweets(@QueryParam("keyword") Optional<String> keyword) {
         List<TwitterPost> rawPosts = (List<TwitterPost>) ((Tweet) getHomeTimeline().getEntity()).getContent();
 
-        List<String> filteredPosts = rawPosts.parallelStream().filter(p -> p.getTwitterMessage().contains(keyword.orElse(""))).map(TwitterPost::getTwitterMessage).collect(Collectors.toList());
-        if(!filteredPosts.isEmpty()) {
-            logger.info("Successfully grabbed " + filteredPosts.size() + " tweets that matched keyword");
-            return Response.ok(new Tweet(filteredPosts), MediaType.APPLICATION_JSON).build();
-        } else {
-            logger.info("There were no tweets that contained given keyword");
-            return Response.ok().entity("There are no messages within the last " + TwitterApplication.TWEET_TOTAL + " that have the keyword \"" + keyword.orElse("") + "\" in them.").build();
-        }
+        List<String> filteredPosts = rawPosts.stream().filter(p -> p.getTwitterMessage().contains(keyword.orElse(""))).map(TwitterPost::getTwitterMessage).collect(Collectors.toList());
+
+        logger.info("Grabbed " + filteredPosts.size() + " tweets that matched keyword: " + keyword.orElse(""));
+        return Response.ok(new Tweet(filteredPosts), MediaType.APPLICATION_JSON_TYPE).build();
     }
 
     @POST

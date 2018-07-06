@@ -12,7 +12,6 @@ import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.conf.ConfigurationBuilder;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -51,7 +50,7 @@ public class TwitterService {
         Paging p = new Paging(1, tweetTotal);
         logger.debug("Attempting to grab " + tweetTotal + " tweets from Twitter timeline");
         List<Status> statuses = twitter.getHomeTimeline(p);
-        return statuses.parallelStream().map(s -> new TwitterPost(s.getText(),
+        return statuses.stream().map(s -> new TwitterPost(s.getText(),
                                         new TwitterUser(s.getUser().getName(), s.getUser().getScreenName(), s.getUser().getProfileImageURL()),
                                         s.getCreatedAt()))
                                 .collect(Collectors.toList());
