@@ -66,14 +66,14 @@ public class TwitterResource {
 
         List<TwitterPost> list;
         try {
-            list = twitterService.retrieveFromTwitter(twitter, TwitterApplication.TWEET_TOTAL, "");
+            list = twitterService.retrieveFromTwitter(twitter, TwitterApplication.TWEET_TOTAL);
         } catch (TwitterException te) {
             logger.error("An exception has occurred in getHomeTimeline", te);
             return Response.serverError().entity(errorMessage).build();
         }
 
         logger.info("Successfully grabbed tweets from home timeline.");
-        return Response.ok(new Tweet(list), MediaType.APPLICATION_JSON).build();
+        return Response.ok(new Tweet(list)).build();
     }
 
     @GET
@@ -84,14 +84,14 @@ public class TwitterResource {
 
         List<TwitterPost> filterList;
         try {
-            filterList = twitterService.retrieveFromTwitter(twitter, TwitterApplication.TWEET_TOTAL, keyword.orElse(""));
+            filterList = twitterService.retrieveFilteredFromTwitter(twitter, TwitterApplication.TWEET_TOTAL, keyword.orElse(""));
         } catch (TwitterException te) {
             logger.error("An exception has occurred in getFilteredTweets");
             return Response.serverError().entity(errorMessage).build();
         }
 
         logger.info("Grabbed " + filterList.size() + " tweets that matched keyword: " + keyword.orElse(""));
-        return Response.ok(new Tweet(filterList.stream().map(TwitterPost::getTwitterMessage).collect(Collectors.toList())), MediaType.APPLICATION_JSON_TYPE).build();
+        return Response.ok(new Tweet(filterList.stream().map(TwitterPost::getTwitterMessage).collect(Collectors.toList()))).build();
     }
 
     @POST

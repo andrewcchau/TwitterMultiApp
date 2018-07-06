@@ -107,12 +107,12 @@ public class TwitterServiceTest {
 
     @Test (expected = IllegalArgumentException.class)
     public void testRetrieveNegative() throws TwitterException {
-        twitterServiceTest.retrieveFromTwitter(twitterTest, -1, "");
+        twitterServiceTest.retrieveFromTwitter(twitterTest, -1);
     }
 
     @Test (expected = IllegalArgumentException.class)
     public void testRetrieveNothing() throws TwitterException {
-        twitterServiceTest.retrieveFromTwitter(twitterTest, 0, "");
+        twitterServiceTest.retrieveFromTwitter(twitterTest, 0);
     }
 
     @Test
@@ -122,7 +122,7 @@ public class TwitterServiceTest {
 
         Mockito.when(twitterTest.getHomeTimeline(Mockito.any(Paging.class))).thenReturn(fakeList);
 
-        List<TwitterPost> l = twitterServiceTest.retrieveFromTwitter(twitterTest, 1, "");
+        List<TwitterPost> l = twitterServiceTest.retrieveFromTwitter(twitterTest, 1);
         Assert.assertEquals(1, l.size());
         Assert.assertEquals(mockStatus().getText(), l.get(0).getTwitterMessage());
     }
@@ -138,7 +138,7 @@ public class TwitterServiceTest {
 
         Mockito.when(twitterTest.getHomeTimeline(Mockito.any(Paging.class))).thenReturn(fakeList);
 
-        List<TwitterPost> l = twitterServiceTest.retrieveFromTwitter(twitterTest, size, "");
+        List<TwitterPost> l = twitterServiceTest.retrieveFromTwitter(twitterTest, size);
         Assert.assertEquals(size, l.size());
         for(int i = 0; i < size; i++){
             Assert.assertEquals(testMessage + i, l.get(i).getTwitterMessage());
@@ -153,7 +153,7 @@ public class TwitterServiceTest {
 
         Mockito.when(twitterTest.getHomeTimeline(Mockito.any(Paging.class))).thenReturn(fakeList);
 
-        List<TwitterPost> l = twitterServiceTest.retrieveFromTwitter(twitterTest, 1, "1");
+        List<TwitterPost> l = twitterServiceTest.retrieveFilteredFromTwitter(twitterTest, 1, "1");
         Assert.assertEquals(1, l.size());
         Assert.assertEquals("Tester 1", l.get(0).getTwitterMessage());
     }

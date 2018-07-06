@@ -45,7 +45,7 @@ public class TwitterResourceTest {
         List<TwitterPost> fakeList = new ArrayList<>();
         fakeList.add(mockPost());
 
-        Mockito.when(twitterServiceTest.retrieveFromTwitter(Mockito.any(Twitter.class), Mockito.anyInt(), Mockito.anyString())).thenReturn(fakeList);
+        Mockito.when(twitterServiceTest.retrieveFromTwitter(Mockito.any(Twitter.class), Mockito.anyInt())).thenReturn(fakeList);
         Mockito.when(twitterServiceTest.getAuthenticatedTwitter()).thenReturn(Mockito.mock(Twitter.class));
 
         Response response = twitterResourceTest.getHomeTimeline();
@@ -56,7 +56,7 @@ public class TwitterResourceTest {
 
     @Test
     public void testResourceGetErrorHandling() throws TwitterException {
-        Mockito.when(twitterServiceTest.retrieveFromTwitter(Mockito.any(Twitter.class), Mockito.anyInt(), Mockito.anyString())).thenThrow(TwitterException.class);
+        Mockito.when(twitterServiceTest.retrieveFromTwitter(Mockito.any(Twitter.class), Mockito.anyInt())).thenThrow(TwitterException.class);
 
         Response response = twitterResourceTest.getHomeTimeline();
         Assert.assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
@@ -70,7 +70,7 @@ public class TwitterResourceTest {
             fakeList.add(mockPost("Sample " + i));
         }
 
-        Mockito.when(twitterServiceTest.retrieveFromTwitter(Mockito.any(Twitter.class), Mockito.anyInt(), Mockito.anyString())).thenReturn(fakeList);
+        Mockito.when(twitterServiceTest.retrieveFilteredFromTwitter(Mockito.any(Twitter.class), Mockito.anyInt(), Mockito.anyString())).thenReturn(fakeList);
         Mockito.when(twitterServiceTest.getAuthenticatedTwitter()).thenReturn(Mockito.mock(Twitter.class));
 
         Response response = twitterResourceTest.getFilteredTweets(Optional.of("Sample"));
@@ -81,7 +81,7 @@ public class TwitterResourceTest {
 
     @Test
     public void testResourceGetFilterErrorHandling() throws TwitterException {
-        Mockito.when(twitterServiceTest.retrieveFromTwitter(Mockito.any(Twitter.class), Mockito.anyInt(), Mockito.anyString())).thenThrow(TwitterException.class);
+        Mockito.when(twitterServiceTest.retrieveFilteredFromTwitter(Mockito.any(Twitter.class), Mockito.anyInt(), Mockito.anyString())).thenThrow(TwitterException.class);
 
         Response response = twitterResourceTest.getFilteredTweets(Optional.of("Anything"));
         Assert.assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());

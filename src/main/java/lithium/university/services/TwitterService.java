@@ -46,7 +46,17 @@ public class TwitterService {
     /*
      * Gets the data from twitter and returns a list of the statuses
      * */
-    public List<TwitterPost> retrieveFromTwitter(Twitter twitter, final int tweetTotal, String keyword) throws TwitterException {
+    public List<TwitterPost> retrieveFromTwitter(Twitter twitter, final int tweetTotal) throws TwitterException {
+        Paging p = new Paging(1, tweetTotal);
+        logger.debug("Attempting to grab " + tweetTotal + " tweets from Twitter timeline");
+        List<Status> statuses = twitter.getHomeTimeline(p);
+        return statuses.stream().map(s -> new TwitterPost(s.getText(),
+                                    new TwitterUser(s.getUser().getName(), s.getUser().getScreenName(), s.getUser().getProfileImageURL()),
+                                    s.getCreatedAt()))
+                                .collect(Collectors.toList());
+    }
+
+    public List<TwitterPost> retrieveFilteredFromTwitter(Twitter twitter, final int tweetTotal, String keyword) throws TwitterException {
         Paging p = new Paging(1, tweetTotal);
         logger.debug("Attempting to grab " + tweetTotal + " tweets from Twitter timeline");
         List<Status> statuses = twitter.getHomeTimeline(p);
