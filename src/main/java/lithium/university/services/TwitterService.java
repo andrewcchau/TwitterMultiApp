@@ -73,15 +73,16 @@ public class TwitterService {
 
     public Twitter getAuthenticatedTwitter() {
         logger.debug("Re-authenticating Twitter credentials");
+        String blank = "";
         if(twitterProperties == null) {
             return null;
         }
         ConfigurationBuilder cb = new ConfigurationBuilder();
         cb.setJSONStoreEnabled(true);
-        cb.setOAuthConsumerKey(twitterProperties.getConsumerKey())
-                .setOAuthConsumerSecret(twitterProperties.getConsumerSecret())
-                .setOAuthAccessToken(twitterProperties.getAccessToken())
-                .setOAuthAccessTokenSecret(twitterProperties.getAccessTokenSecret());
+        cb.setOAuthConsumerKey(twitterProperties.getConsumerKey().orElse(blank))
+                .setOAuthConsumerSecret(twitterProperties.getConsumerSecret().orElse(blank))
+                .setOAuthAccessToken(twitterProperties.getAccessToken().orElse(blank))
+                .setOAuthAccessTokenSecret(twitterProperties.getAccessTokenSecret().orElse(blank));
         TwitterFactory twitterFactory = new TwitterFactory(cb.build());
         return twitterFactory.getInstance();
     }

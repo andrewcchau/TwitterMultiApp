@@ -1,6 +1,7 @@
 package lithium.university.models;
 
 import java.util.Date;
+import java.util.Optional;
 
 public class TwitterPost {
     private String twitterMessage;
@@ -15,24 +16,24 @@ public class TwitterPost {
         this.createdAt = createdAt;
     }
 
-    public String getTwitterMessage() {
-        return twitterMessage;
+    public Optional<String> getTwitterMessage() {
+        return Optional.ofNullable(twitterMessage);
     }
 
     public void setTwitterMessage(String twitterMessage) {
         this.twitterMessage = twitterMessage;
     }
 
-    public TwitterUser getUser() {
-        return user;
+    public Optional<TwitterUser> getUser() {
+        return Optional.ofNullable(user);
     }
 
     public void setUser(TwitterUser user) {
         this.user = user;
     }
 
-    public Date getCreatedAt() {
-        return createdAt;
+    public Optional<Date> getCreatedAt() {
+        return Optional.ofNullable(createdAt);
     }
 
     public void setCreatedAt(Date createdAt) {

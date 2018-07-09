@@ -31,7 +31,7 @@ public class TwitterResourceTest {
 
     private TwitterPost mockPost(String message) {
         TwitterPost post = Mockito.mock(TwitterPost.class);
-        Mockito.when(post.getTwitterMessage()).thenReturn(message);
+        Mockito.when(post.getTwitterMessage()).thenReturn(Optional.of(message));
         return post;
     }
 
@@ -49,8 +49,8 @@ public class TwitterResourceTest {
 
         Response response = twitterResourceTest.getHomeTimeline();
         Assert.assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        Assert.assertEquals(1, ((List<TwitterPost>) ((Tweet) response.getEntity()).getContent()).size());
-        Assert.assertEquals(mockPost().getTwitterMessage(), ((List<TwitterPost>) ((Tweet) response.getEntity()).getContent()).get(0).getTwitterMessage());
+        Assert.assertEquals(1, ((List<TwitterPost>) ((Tweet) response.getEntity()).getContent().get()).size());
+        Assert.assertEquals(mockPost().getTwitterMessage(), ((List<TwitterPost>) ((Tweet) response.getEntity()).getContent().get()).get(0).getTwitterMessage());
     }
 
     @Test
@@ -74,8 +74,8 @@ public class TwitterResourceTest {
 
         Response response = twitterResourceTest.getFilteredTweets(Optional.of("Sample"));
         Assert.assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        Assert.assertEquals(5, ((List<TwitterPost>) ((Tweet) response.getEntity()).getContent()).size());
-        Assert.assertEquals(fakeList.get(0).getTwitterMessage() , ((List<String>) ((Tweet) response.getEntity()).getContent()).get(0));
+        Assert.assertEquals(5, ((List<TwitterPost>) ((Tweet) response.getEntity()).getContent().get()).size());
+        Assert.assertEquals(fakeList.get(0).getTwitterMessage() , ((List<String>) ((Tweet) response.getEntity()).getContent().get()).get(0));
     }
 
     @Test

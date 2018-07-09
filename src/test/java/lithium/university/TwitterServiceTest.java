@@ -124,7 +124,7 @@ public class TwitterServiceTest {
 
         List<TwitterPost> l = twitterServiceTest.retrieveFromTwitter(twitterTest, 1);
         Assert.assertEquals(1, l.size());
-        Assert.assertEquals(mockStatus().getText(), l.get(0).getTwitterMessage());
+        Assert.assertEquals(mockStatus().getText(), l.get(0).getTwitterMessage().get());
     }
 
     @Test
@@ -141,7 +141,7 @@ public class TwitterServiceTest {
         List<TwitterPost> l = twitterServiceTest.retrieveFromTwitter(twitterTest, size);
         Assert.assertEquals(size, l.size());
         for(int i = 0; i < size; i++){
-            Assert.assertEquals(testMessage + i, l.get(i).getTwitterMessage());
+            Assert.assertEquals(testMessage + i, l.get(i).getTwitterMessage().get());
         }
     }
 
@@ -155,7 +155,7 @@ public class TwitterServiceTest {
 
         List<TwitterPost> l = twitterServiceTest.retrieveFilteredFromTwitter(twitterTest, 1, "1");
         Assert.assertEquals(1, l.size());
-        Assert.assertEquals("Tester 1", l.get(0).getTwitterMessage());
+        Assert.assertEquals("Tester 1", l.get(0).getTwitterMessage().get());
     }
 
     @Test

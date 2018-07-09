@@ -2,6 +2,8 @@ package lithium.university;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.Optional;
+
 
 public class Tweet<T> {
     private Object content;
@@ -14,7 +16,7 @@ public class Tweet<T> {
     }
 
     @JsonProperty
-    public Object getContent(){
-        return content;
+    public Optional<Object> getContent(){
+        return Optional.ofNullable(content);
     }
 }

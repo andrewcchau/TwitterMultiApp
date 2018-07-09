@@ -17,24 +17,24 @@ public class TwitterPropertiesTest {
     @Test
     public void testPropertiesGetAndSetConsumerKey(){
         twitterProperties.setConsumerKey(MESSAGE);
-        Assert.assertEquals(MESSAGE, twitterProperties.getConsumerKey());
+        Assert.assertEquals(MESSAGE, twitterProperties.getConsumerKey().orElseThrow(NullPointerException::new));
     }
 
     @Test
     public void testPropertiesGetAndSetConsumerSecret(){
         twitterProperties.setConsumerSecret(MESSAGE);
-        Assert.assertEquals(MESSAGE, twitterProperties.getConsumerSecret());
+        Assert.assertEquals(MESSAGE, twitterProperties.getConsumerSecret().orElseThrow(NullPointerException::new));
     }
 
     @Test
     public void testPropertiesGetAndSetAccessToken(){
         twitterProperties.setAccessToken(MESSAGE);
-        Assert.assertEquals(MESSAGE, twitterProperties.getAccessToken());
+        Assert.assertEquals(MESSAGE, twitterProperties.getAccessToken().orElseThrow(NullPointerException::new));
     }
 
     @Test
     public void testPropertiesGetAndSetAccessTokenSecret(){
         twitterProperties.setAccessTokenSecret(MESSAGE);
-        Assert.assertEquals(MESSAGE, twitterProperties.getAccessTokenSecret());
+        Assert.assertEquals(MESSAGE, twitterProperties.getAccessTokenSecret().orElseThrow(NullPointerException::new));
     }
 }
