@@ -24,6 +24,7 @@ import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 @Path("/api/1.0/twitter")
@@ -51,8 +52,8 @@ public class TwitterResource {
         this.twitterService = twitterService;
     }
 
-    public String successMessage(String message){
-        return "Successfully updated status to: " + message + "\n";
+    public String successMessage(Optional<String> message){
+        return "Successfully updated status to: " + message.orElse("Generic Message") + "\n";
     }
 
     public String getErrorMessage(){ return errorMessage;}
@@ -64,7 +65,7 @@ public class TwitterResource {
     public Response getHomeTimeline() {
         this.getTwitterAuthentication();
 
-        List<TwitterPost> list;
+        Optional<List<TwitterPost>> list;
         try {
             list = twitterService.retrieveFromTwitter(twitter, TwitterApplication.TWEET_TOTAL);
         } catch (TwitterException te) {
@@ -73,7 +74,7 @@ public class TwitterResource {
         }
 
         logger.info("Successfully grabbed tweets from home timeline.");
-        return Response.ok(new Tweet(list)).build();
+        return Response.ok(new Tweet(list.get())).build();
     }
 
     @GET
@@ -82,16 +83,19 @@ public class TwitterResource {
     public Response getFilteredTweets(@QueryParam("keyword") Optional<String> keyword) {
         this.getTwitterAuthentication();
 
-        List<TwitterPost> filterList;
+        Optional<List<TwitterPost>> filterList;
         try {
-            filterList = twitterService.retrieveFilteredFromTwitter(twitter, TwitterApplication.TWEET_TOTAL, keyword.orElse(""));
+            filterList = twitterService.retrieveFilteredFromTwitter(twitter, TwitterApplication.TWEET_TOTAL, keyword);
         } catch (TwitterException te) {
-            logger.error("An exception has occurred in getFilteredTweets");
+            logger.error("An exception from Twitter has occurred in getFilteredTweets");
             return Response.serverError().entity(errorMessage).build();
+        } catch (TwitterServiceException tse) {
+            logger.error("An exception from TwitterService has occurred in getFilteredTweets");
+            return Response.serverError().entity(tse.getMessage()).build();
         }
 
-        logger.info("Grabbed " + filterList.size() + " tweets that matched keyword: " + keyword.orElse(""));
-        return Response.ok(new Tweet(filterList.stream().map(TwitterPost::getTwitterMessage).collect(Collectors.toList()))).build();
+        logger.info("Grabbed " + filterList.get().size() + " tweets that matched keyword: " + keyword.orElse(""));
+        return Response.ok(new Tweet(filterList.map(List::stream).map(s -> s.map(TwitterPost::getTwitterMessage).collect(Collectors.toList())))).build();
     }
 
     @POST
@@ -103,16 +107,16 @@ public class TwitterResource {
         /*Attempt to post to Twitter*/
         Status status;
         try{
-             status = twitterService.postToTwitter(twitter, message, TwitterApplication.TWEET_LENGTH);
+             status = twitterService.postToTwitter(twitter, Optional.ofNullable(message), TwitterApplication.TWEET_LENGTH);
         }catch(TwitterException te){
             logger.error("An exception from Twitter has occurred in postTweet", te);
             return Response.serverError().entity(errorMessage).build();
         }catch(TwitterServiceException tse) {
-            logger.error("An exception from TwitterService has occured in postTweet", tse);
+            logger.error("An exception from TwitterService has occurred in postTweet", tse);
             return Response.serverError().entity(tse.getMessage()).build();
         }
 
-        return Response.status(Response.Status.OK).entity(successMessage(status.getText())).build();
+        return Response.status(Response.Status.OK).entity(successMessage(Optional.ofNullable(status.getText()))).build();
     }
 
 

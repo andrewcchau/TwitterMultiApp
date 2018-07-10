@@ -14,6 +14,7 @@ import twitter4j.TwitterFactory;
 import twitter4j.conf.ConfigurationBuilder;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -31,44 +32,39 @@ public class TwitterService {
      * Input: Twitter twitter - twitter instance, String message - message to be posted, int tweetTotal - total limited characters
      * Output: status object of updated status if successful update, null otherwise
      * */
-    public Status postToTwitter(Twitter twitter, String message, int tweetTotal) throws TwitterException, TwitterServiceException {
-        if (message == null) {
+    public Status postToTwitter(Twitter twitter, Optional<String> message, int tweetTotal) throws TwitterException, TwitterServiceException {
+        if(message.isPresent()) {
+            logger.info("Attempting to update status");
+            return Stream.of(twitter.updateStatus(message.filter(s -> s.length() > 0)
+                                                         .filter(s -> s.length() <= tweetTotal)
+                                                         .orElseThrow(() -> new TwitterServiceException("Cannot post. Message length should be between 0 and 280 characters"))))
+                        .collect(Collectors.toList()).get(0);
+        }else {
             throw new TwitterServiceException("Cannot post. Message data is either missing or not in the correct form.");
-        }else if (message.length() <= 0) {
-            throw new TwitterServiceException("Cannot post. Message length must be greater than 0");
-        }else if (message.length() > tweetTotal) {
-            throw new TwitterServiceException("Cannot post. Message length should not exceed 280 characters");
         }
-
-        logger.info("Successfully updated status");
-        return Stream.of(twitter.updateStatus(message)).collect(Collectors.toList()).get(0);
     }
 
     /*
      * Gets the data from twitter and returns a list of the statuses
      * */
-    public List<TwitterPost> retrieveFromTwitter(Twitter twitter, final int tweetTotal) throws TwitterException {
+    public Optional<List<TwitterPost>> retrieveFromTwitter(Twitter twitter, final int tweetTotal) throws TwitterException {
         Paging p = new Paging(1, tweetTotal);
         logger.debug("Attempting to grab " + tweetTotal + " tweets from Twitter timeline");
-        List<Status> statuses = twitter.getHomeTimeline(p);
-        return statuses.stream().map(s -> new TwitterPost(s.getText(),
-                                    new TwitterUser(s.getUser().getName(), s.getUser().getScreenName(), s.getUser().getProfileImageURL()),
-                                    s.getCreatedAt()))
-                                .collect(Collectors.toList());
+        Optional<List<Status>> statuses = Optional.of(twitter.getHomeTimeline(p));
+        return statuses.map(List::stream).map(s -> s.map(tp -> new TwitterPost(tp.getText(),
+                                                                    new TwitterUser(tp.getUser().getName(), tp.getUser().getScreenName(), tp.getUser().getProfileImageURL()),
+                                                                    tp.getCreatedAt())).collect(Collectors.toList()));
     }
 
-    public List<TwitterPost> retrieveFilteredFromTwitter(Twitter twitter, final int tweetTotal, String keyword) throws TwitterException {
-        if(keyword == null) {
-            return null;
-        }
+    public Optional<List<TwitterPost>> retrieveFilteredFromTwitter(Twitter twitter, final int tweetTotal, Optional<String> keyword) throws TwitterException, TwitterServiceException {
         Paging p = new Paging(1, tweetTotal);
-        logger.debug("Attempting find tweets from Twitter timeline that match keyword: " + keyword);
-        List<Status> statuses = twitter.getHomeTimeline(p);
-        return statuses.stream().filter(s -> s.getText().contains(keyword))
-                                .map(s -> new TwitterPost(s.getText(),
-                                        new TwitterUser(s.getUser().getName(), s.getUser().getScreenName(), s.getUser().getProfileImageURL()),
-                                        s.getCreatedAt()))
-                                .collect(Collectors.toList());
+        logger.debug("Attempting find tweets from Twitter timeline that match keyword: " + keyword.orElseThrow(() -> new TwitterServiceException("Keyword to search cannot be null.")));
+        Optional<List<Status>> statuses = Optional.of(twitter.getHomeTimeline(p));
+        return statuses.map(List::stream).map(s -> s.filter(st -> st.getText().contains(keyword.orElse("")))
+                                                    .map(st -> new TwitterPost(st.getText(),
+                                                                new TwitterUser(st.getUser().getName(), st.getUser().getScreenName(), st.getUser().getProfileImageURL()),
+                                                                st.getCreatedAt()))
+                                                    .collect(Collectors.toList()));
     }
 
     public Twitter getAuthenticatedTwitter() {

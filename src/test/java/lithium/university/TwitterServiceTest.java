@@ -20,6 +20,7 @@ import twitter4j.TwitterException;
 import twitter4j.User;
 
 import java.util.List;
+import java.util.Optional;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TwitterServiceTest {
@@ -61,7 +62,7 @@ public class TwitterServiceTest {
     @Test (expected = TwitterServiceException.class)
     public void testPostNull() throws TwitterException, TwitterServiceException {
         try {
-            twitterServiceTest.postToTwitter(twitterTest, null, TwitterApplication.TWEET_LENGTH);
+            twitterServiceTest.postToTwitter(twitterTest, Optional.ofNullable(null), TwitterApplication.TWEET_LENGTH);
         } catch(TwitterServiceException tse) {
             Assert.assertEquals("Cannot post. Message data is either missing or not in the correct form.", tse.getMessage());
             throw tse;
@@ -72,7 +73,7 @@ public class TwitterServiceTest {
     @Test (expected = TwitterServiceException.class)
     public void testPostCharLengthZero() throws TwitterException, TwitterServiceException {
         try {
-            twitterServiceTest.postToTwitter(twitterTest, generateStringLength(0), TwitterApplication.TWEET_LENGTH);
+            twitterServiceTest.postToTwitter(twitterTest, Optional.of(generateStringLength(0)), TwitterApplication.TWEET_LENGTH);
         } catch(TwitterException te){
             Assert.assertEquals("Message length must be greater than 0", te.getMessage());
             throw te;
@@ -83,7 +84,7 @@ public class TwitterServiceTest {
     @Test (expected = TwitterServiceException.class)
     public void testPostCharLengthOver() throws TwitterException, TwitterServiceException {
         try {
-            twitterServiceTest.postToTwitter(twitterTest, generateStringLength(TwitterApplication.TWEET_LENGTH + 1), TwitterApplication.TWEET_LENGTH);
+            twitterServiceTest.postToTwitter(twitterTest, Optional.of(generateStringLength(TwitterApplication.TWEET_LENGTH + 1)), TwitterApplication.TWEET_LENGTH);
         } catch(TwitterException te) {
             Assert.assertEquals("Message length should not exceed 280 characters", te.getMessage());
             throw te;
@@ -93,14 +94,14 @@ public class TwitterServiceTest {
 
     @Test
     public void testPostCharLengthUnder() throws TwitterException, TwitterServiceException {
-        Status publishTest = twitterServiceTest.postToTwitter(twitterTest, generateStringLength(TwitterApplication.TWEET_LENGTH - 1), TwitterApplication.TWEET_LENGTH);
+        Status publishTest = twitterServiceTest.postToTwitter(twitterTest, Optional.of(generateStringLength(TwitterApplication.TWEET_LENGTH - 1)), TwitterApplication.TWEET_LENGTH);
         Assert.assertNotNull(publishTest);
         Assert.assertEquals(mockMessage, publishTest.getText());
     }
 
     @Test
     public void testPostCharLengthEqual() throws TwitterException, TwitterServiceException {
-        Status publishTest = twitterServiceTest.postToTwitter(twitterTest, generateStringLength(TwitterApplication.TWEET_LENGTH), TwitterApplication.TWEET_LENGTH);
+        Status publishTest = twitterServiceTest.postToTwitter(twitterTest, Optional.of(generateStringLength(TwitterApplication.TWEET_LENGTH)), TwitterApplication.TWEET_LENGTH);
         Assert.assertNotNull(publishTest);
         Assert.assertEquals(mockMessage, publishTest.getText());
     }
@@ -122,9 +123,9 @@ public class TwitterServiceTest {
 
         Mockito.when(twitterTest.getHomeTimeline(Mockito.any(Paging.class))).thenReturn(fakeList);
 
-        List<TwitterPost> l = twitterServiceTest.retrieveFromTwitter(twitterTest, 1);
-        Assert.assertEquals(1, l.size());
-        Assert.assertEquals(mockStatus().getText(), l.get(0).getTwitterMessage().get());
+        Optional<List<TwitterPost>> l = twitterServiceTest.retrieveFromTwitter(twitterTest, 1);
+        Assert.assertEquals(1, l.get().size());
+        Assert.assertEquals(mockStatus().getText(), l.get().get(0).getTwitterMessage());
     }
 
     @Test
@@ -138,29 +139,29 @@ public class TwitterServiceTest {
 
         Mockito.when(twitterTest.getHomeTimeline(Mockito.any(Paging.class))).thenReturn(fakeList);
 
-        List<TwitterPost> l = twitterServiceTest.retrieveFromTwitter(twitterTest, size);
-        Assert.assertEquals(size, l.size());
+        Optional<List<TwitterPost>> l = twitterServiceTest.retrieveFromTwitter(twitterTest, size);
+        Assert.assertEquals(size, l.get().size());
         for(int i = 0; i < size; i++){
-            Assert.assertEquals(testMessage + i, l.get(i).getTwitterMessage().get());
+            Assert.assertEquals(testMessage + i, l.get().get(i).getTwitterMessage());
         }
     }
 
     @Test
-    public void testRetrieveFiltered() throws TwitterException {
+    public void testRetrieveFiltered() throws TwitterException, TwitterServiceException {
         ResponseList<Status> fakeList = new FakeResponseList<>();
         fakeList.add(mockStatus("Tester 1"));
         fakeList.add(mockStatus("Tester 2"));
 
         Mockito.when(twitterTest.getHomeTimeline(Mockito.any(Paging.class))).thenReturn(fakeList);
 
-        List<TwitterPost> l = twitterServiceTest.retrieveFilteredFromTwitter(twitterTest, 1, "1");
-        Assert.assertEquals(1, l.size());
-        Assert.assertEquals("Tester 1", l.get(0).getTwitterMessage().get());
+        Optional<List<TwitterPost>> l = twitterServiceTest.retrieveFilteredFromTwitter(twitterTest, 1, Optional.of("1"));
+        Assert.assertEquals(1, l.get().size());
+        Assert.assertEquals("Tester 1", l.get().get(0).getTwitterMessage());
     }
 
-    @Test
-    public void testRetrieveFilterNullKeyword() throws TwitterException {
-        Assert.assertNull(twitterServiceTest.retrieveFilteredFromTwitter(twitterTest, 1, null));
+    @Test (expected = TwitterServiceException.class)
+    public void testRetrieveFilterNullKeyword() throws TwitterException, TwitterServiceException {
+        twitterServiceTest.retrieveFilteredFromTwitter(twitterTest, 1, Optional.ofNullable(null));
     }
 
     @Test

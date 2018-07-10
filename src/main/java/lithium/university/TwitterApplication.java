@@ -5,8 +5,6 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import lithium.university.resources.TwitterResource;
 
-import java.util.MissingResourceException;
-
 
 public class TwitterApplication extends Application<TwitterConfiguration> {
     public static final int TWEET_TOTAL = 25;

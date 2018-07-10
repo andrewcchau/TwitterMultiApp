@@ -11,20 +11,20 @@ public class TwitterUserTest {
     public void testTwitterHandleGetterAndSetter() {
         String handle = "Tester";
         twitterUserTest.setTwitterHandle(handle);
-        Assert.assertEquals(handle, twitterUserTest.getTwitterHandle().get());
+        Assert.assertEquals(handle, twitterUserTest.getTwitterHandle());
     }
 
     @Test
     public void testNameGetterAndSetter() {
         String name = "Mr. Tester";
         twitterUserTest.setName(name);
-        Assert.assertEquals(name, twitterUserTest.getName().get());
+        Assert.assertEquals(name, twitterUserTest.getName());
     }
 
     @Test
     public void testImageURLGetterAndSetter() {
         String url = "http://www.url.fake";
         twitterUserTest.setProfileImageURL(url);
-        Assert.assertEquals(url, twitterUserTest.getProfileImageURL().get());
+        Assert.assertEquals(url, twitterUserTest.getProfileImageURL());
     }
 }

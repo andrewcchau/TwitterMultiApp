@@ -1,7 +1,5 @@
 package lithium.university.models;
 
-import java.util.Optional;
-
 public class TwitterUser {
     private String twitterHandle;
     private String name;
@@ -15,24 +13,24 @@ public class TwitterUser {
         this.profileImageURL = profileImageURL;
     }
 
-    public Optional<String> getTwitterHandle() {
-        return Optional.ofNullable(twitterHandle);
+    public String getTwitterHandle() {
+        return twitterHandle;
     }
 
     public void setTwitterHandle(String twitterHandle) {
         this.twitterHandle = twitterHandle;
     }
 
-    public Optional<String> getName() {
-        return Optional.ofNullable(name);
+    public String getName() {
+        return name;
     }
 
     public void setName(String name) {
         this.name = name;
     }
 
-    public Optional<String> getProfileImageURL() {
-        return Optional.ofNullable(profileImageURL);
+    public String getProfileImageURL() {
+        return profileImageURL;
     }
 
     public void setProfileImageURL(String profileImageURL) {
