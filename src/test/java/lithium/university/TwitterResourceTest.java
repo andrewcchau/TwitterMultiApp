@@ -51,8 +51,8 @@ public class TwitterResourceTest {
 
         Response response = twitterResourceTest.getHomeTimeline();
         Assert.assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        Assert.assertEquals(1, ((Optional<List<TwitterPost>>) response.getEntity()).get().size());
-        Assert.assertEquals(mockPost().getTwitterMessage(), ((Optional<List<TwitterPost>>) response.getEntity()).get().get(0).getTwitterMessage());
+        Assert.assertEquals(1, ((List<TwitterPost>) response.getEntity()).size());
+        Assert.assertEquals(mockPost().getTwitterMessage(), ((List<TwitterPost>) response.getEntity()).get(0).getTwitterMessage());
     }
 
     @Test
@@ -76,7 +76,7 @@ public class TwitterResourceTest {
 
         Response response = twitterResourceTest.getFilteredTweets(Optional.of("Sample"));
 
-        List<TwitterPost> list = (List<TwitterPost>) ((Stream) ((Optional<Tweet>) response.getEntity()).get().getContent().get()).collect(Collectors.toList());
+        List<String> list = (List<String>) ((Stream) ((Tweet) response.getEntity()).getContent().get()).collect(Collectors.toList());
 
         Assert.assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         Assert.assertEquals(5,  list.size());

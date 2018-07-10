@@ -65,7 +65,7 @@ public class TwitterResource {
         this.getTwitterAuthentication();
 
         try {
-            return Response.ok(twitterService.retrieveFromTwitter(twitter, TwitterApplication.TWEET_TOTAL)).build();
+            return twitterService.retrieveFromTwitter(twitter, TwitterApplication.TWEET_TOTAL).map(l -> Response.ok(l).build()).get();
         } catch (TwitterException te) {
             logger.error("An exception has occurred in getHomeTimeline", te);
             return Response.serverError().entity(errorMessage).build();
@@ -79,10 +79,10 @@ public class TwitterResource {
         this.getTwitterAuthentication();
 
         try {
-            return Response.ok(twitterService.retrieveFilteredFromTwitter(twitter, TwitterApplication.TWEET_TOTAL, keyword)
-                                             .map(List::stream)
-                                             .map(s -> s.map(TwitterPost::getTwitterMessage))
-                                             .map(l -> new Tweet(l))).build();
+            return twitterService.retrieveFilteredFromTwitter(twitter, TwitterApplication.TWEET_TOTAL, keyword)
+                                    .map(List::stream)
+                                    .map(s -> s.map(TwitterPost::getTwitterMessage))
+                                    .map(l -> Response.ok(new Tweet(l)).build()).get();
         } catch (TwitterException te) {
             logger.error("An exception from Twitter has occurred in getFilteredTweets", te);
             return Response.serverError().entity(errorMessage).build();
@@ -100,10 +100,10 @@ public class TwitterResource {
 
         /*Attempt to post to Twitter*/
         try{
-            return Response.ok(Stream.of(twitterService.postToTwitter(twitter, Optional.ofNullable(message), TwitterApplication.TWEET_LENGTH))
-                                     .map(status -> successMessage(status.getText()))
-                                     .collect(Collectors.toList())
-                                     .get(0)).build();
+            return Stream.of(twitterService.postToTwitter(twitter, Optional.ofNullable(message), TwitterApplication.TWEET_LENGTH))
+                            .map(status -> successMessage(status.getText()))
+                            .map(status -> Response.ok(status).build())
+                            .collect(Collectors.toList()).get(0);
         }catch(TwitterException te){
             logger.error("An exception from Twitter has occurred in postTweet", te);
             return Response.serverError().entity(errorMessage).build();
