@@ -8,7 +8,6 @@ import lithium.university.models.TwitterPost;
 import lithium.university.services.TwitterService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 
@@ -24,7 +23,6 @@ import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 
 @Path("/api/1.0/twitter")
@@ -53,7 +51,7 @@ public class TwitterResource {
     }
 
     public String successMessage(Optional<String> message){
-        return "Successfully updated status to: " + message.orElse("Generic Message") + "\n";
+        return "Successfully updated status to: " + message.orElse("<No message passed in>") + "\n";
     }
 
     public String getErrorMessage(){ return errorMessage;}
@@ -83,19 +81,17 @@ public class TwitterResource {
     public Response getFilteredTweets(@QueryParam("keyword") Optional<String> keyword) {
         this.getTwitterAuthentication();
 
-        Optional<List<TwitterPost>> filterList;
         try {
-            filterList = twitterService.retrieveFilteredFromTwitter(twitter, TwitterApplication.TWEET_TOTAL, keyword);
+            return Response.ok(new Tweet(twitterService.retrieveFilteredFromTwitter(twitter, TwitterApplication.TWEET_TOTAL, keyword)
+                                                 .map(List::stream)
+                                                 .map(s -> s.map(TwitterPost::getTwitterMessage).collect(Collectors.toList())))).build();
         } catch (TwitterException te) {
-            logger.error("An exception from Twitter has occurred in getFilteredTweets");
+            logger.error("An exception from Twitter has occurred in getFilteredTweets", te);
             return Response.serverError().entity(errorMessage).build();
         } catch (TwitterServiceException tse) {
-            logger.error("An exception from TwitterService has occurred in getFilteredTweets");
+            logger.error("An exception from TwitterService has occurred in getFilteredTweets", tse);
             return Response.serverError().entity(tse.getMessage()).build();
         }
-
-        logger.info("Grabbed " + filterList.get().size() + " tweets that matched keyword: " + keyword.orElse(""));
-        return Response.ok(new Tweet(filterList.map(List::stream).map(s -> s.map(TwitterPost::getTwitterMessage).collect(Collectors.toList())))).build();
     }
 
     @POST
@@ -105,9 +101,10 @@ public class TwitterResource {
         this.getTwitterAuthentication();
 
         /*Attempt to post to Twitter*/
-        Status status;
         try{
-             status = twitterService.postToTwitter(twitter, Optional.ofNullable(message), TwitterApplication.TWEET_LENGTH);
+             return Response.status(Response.Status.OK)
+                            .entity(successMessage(Optional.ofNullable(twitterService.postToTwitter(twitter, Optional.ofNullable(message), TwitterApplication.TWEET_LENGTH).getText())))
+                            .build();
         }catch(TwitterException te){
             logger.error("An exception from Twitter has occurred in postTweet", te);
             return Response.serverError().entity(errorMessage).build();
@@ -115,8 +112,6 @@ public class TwitterResource {
             logger.error("An exception from TwitterService has occurred in postTweet", tse);
             return Response.serverError().entity(tse.getMessage()).build();
         }
-
-        return Response.status(Response.Status.OK).entity(successMessage(Optional.ofNullable(status.getText()))).build();
     }
 
 

@@ -5,8 +5,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import java.util.Optional;
-
 public class TwitterConfigurationTest {
     private TwitterConfiguration twitterConfiguration;
     private TwitterProperties twitterProperties;
@@ -16,12 +14,12 @@ public class TwitterConfigurationTest {
     public void init(){
         twitterConfiguration = new TwitterConfiguration();
         twitterProperties = Mockito.mock(TwitterProperties.class);
-        Mockito.<Optional>when(twitterProperties.getConsumerKey()).thenReturn(Optional.of(MESSAGE));
+        Mockito.when(twitterProperties.getConsumerKey()).thenReturn(MESSAGE);
     }
 
     @Test
     public void testConfigurationGetAndSetTwitter(){
         twitterConfiguration.setTwitterProperties(twitterProperties);
-        Assert.assertEquals(MESSAGE, twitterConfiguration.getTwitterProperties().get().getConsumerKey().get());
+        Assert.assertEquals(MESSAGE, twitterConfiguration.getTwitterProperties().get().getConsumerKey());
     }
 }

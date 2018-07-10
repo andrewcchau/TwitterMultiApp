@@ -2,8 +2,6 @@ package lithium.university;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.Optional;
-
 
 public class TwitterProperties {
     private String consumerKey;
@@ -12,8 +10,8 @@ public class TwitterProperties {
     private String accessTokenSecret;
 
     @JsonProperty("consumerKey")
-    public Optional<String> getConsumerKey() {
-        return Optional.ofNullable(consumerKey);
+    public String getConsumerKey() {
+        return consumerKey;
     }
 
     public void setConsumerKey(String consumerKey) {
@@ -21,8 +19,8 @@ public class TwitterProperties {
     }
 
     @JsonProperty("consumerSecret")
-    public Optional<String> getConsumerSecret() {
-        return Optional.ofNullable(consumerSecret);
+    public String getConsumerSecret() {
+        return consumerSecret;
     }
 
     public void setConsumerSecret(String consumerSecret) {
@@ -30,8 +28,8 @@ public class TwitterProperties {
     }
 
     @JsonProperty("accessToken")
-    public Optional<String> getAccessToken() {
-        return Optional.ofNullable(accessToken);
+    public String getAccessToken() {
+        return accessToken;
     }
 
     public void setAccessToken(String accessToken) {
@@ -39,8 +37,8 @@ public class TwitterProperties {
     }
 
     @JsonProperty("accessTokenSecret")
-    public Optional<String> getAccessTokenSecret() {
-        return Optional.ofNullable(accessTokenSecret);
+    public String getAccessTokenSecret() {
+        return accessTokenSecret;
     }
 
     public void setAccessTokenSecret(String accessTokenSecret) {

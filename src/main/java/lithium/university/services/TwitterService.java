@@ -50,35 +50,36 @@ public class TwitterService {
     public Optional<List<TwitterPost>> retrieveFromTwitter(Twitter twitter, final int tweetTotal) throws TwitterException {
         Paging p = new Paging(1, tweetTotal);
         logger.debug("Attempting to grab " + tweetTotal + " tweets from Twitter timeline");
-        Optional<List<Status>> statuses = Optional.of(twitter.getHomeTimeline(p));
-        return statuses.map(List::stream).map(s -> s.map(tp -> new TwitterPost(tp.getText(),
-                                                                    new TwitterUser(tp.getUser().getName(), tp.getUser().getScreenName(), tp.getUser().getProfileImageURL()),
-                                                                    tp.getCreatedAt())).collect(Collectors.toList()));
+        return Optional.of(twitter.getHomeTimeline(p))
+                                .map(List::stream)
+                                .map(s -> s.map(tp -> new TwitterPost(tp.getText(),
+                                                        new TwitterUser(tp.getUser().getName(), tp.getUser().getScreenName(), tp.getUser().getProfileImageURL()),
+                                                        tp.getCreatedAt())).collect(Collectors.toList()));
     }
 
     public Optional<List<TwitterPost>> retrieveFilteredFromTwitter(Twitter twitter, final int tweetTotal, Optional<String> keyword) throws TwitterException, TwitterServiceException {
         Paging p = new Paging(1, tweetTotal);
         logger.debug("Attempting find tweets from Twitter timeline that match keyword: " + keyword.orElseThrow(() -> new TwitterServiceException("Keyword to search cannot be null.")));
-        Optional<List<Status>> statuses = Optional.of(twitter.getHomeTimeline(p));
-        return statuses.map(List::stream).map(s -> s.filter(st -> st.getText().contains(keyword.orElse("")))
-                                                    .map(st -> new TwitterPost(st.getText(),
-                                                                new TwitterUser(st.getUser().getName(), st.getUser().getScreenName(), st.getUser().getProfileImageURL()),
-                                                                st.getCreatedAt()))
-                                                    .collect(Collectors.toList()));
+        return Optional.of(twitter.getHomeTimeline(p))
+                        .map(List::stream)
+                        .map(s -> s.filter(st -> st.getText().contains(keyword.orElse("")))
+                                    .map(st -> new TwitterPost(st.getText(),
+                                                new TwitterUser(st.getUser().getName(), st.getUser().getScreenName(), st.getUser().getProfileImageURL()),
+                                                st.getCreatedAt()))
+                        .collect(Collectors.toList()));
     }
 
     public Twitter getAuthenticatedTwitter() {
         logger.debug("Re-authenticating Twitter credentials");
-        String blank = "";
         if(twitterProperties == null) {
             return null;
         }
         ConfigurationBuilder cb = new ConfigurationBuilder();
         cb.setJSONStoreEnabled(true);
-        cb.setOAuthConsumerKey(twitterProperties.getConsumerKey().orElse(blank))
-                .setOAuthConsumerSecret(twitterProperties.getConsumerSecret().orElse(blank))
-                .setOAuthAccessToken(twitterProperties.getAccessToken().orElse(blank))
-                .setOAuthAccessTokenSecret(twitterProperties.getAccessTokenSecret().orElse(blank));
+        cb.setOAuthConsumerKey(twitterProperties.getConsumerKey())
+                .setOAuthConsumerSecret(twitterProperties.getConsumerSecret())
+                .setOAuthAccessToken(twitterProperties.getAccessToken())
+                .setOAuthAccessTokenSecret(twitterProperties.getAccessTokenSecret());
         TwitterFactory twitterFactory = new TwitterFactory(cb.build());
         return twitterFactory.getInstance();
     }
