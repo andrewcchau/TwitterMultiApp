@@ -16,6 +16,8 @@ import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class TwitterResourceTest {
     private TwitterResource twitterResourceTest;
@@ -49,8 +51,8 @@ public class TwitterResourceTest {
 
         Response response = twitterResourceTest.getHomeTimeline();
         Assert.assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        Assert.assertEquals(1, ((List<TwitterPost>) ((Tweet) response.getEntity()).getContent().get()).size());
-        Assert.assertEquals(mockPost().getTwitterMessage(), ((List<TwitterPost>) ((Tweet) response.getEntity()).getContent().get()).get(0).getTwitterMessage());
+        Assert.assertEquals(1, ((Optional<List<TwitterPost>>) response.getEntity()).get().size());
+        Assert.assertEquals(mockPost().getTwitterMessage(), ((Optional<List<TwitterPost>>) response.getEntity()).get().get(0).getTwitterMessage());
     }
 
     @Test
@@ -73,9 +75,12 @@ public class TwitterResourceTest {
         Mockito.when(twitterServiceTest.getAuthenticatedTwitter()).thenReturn(Mockito.mock(Twitter.class));
 
         Response response = twitterResourceTest.getFilteredTweets(Optional.of("Sample"));
+
+        List<TwitterPost> list = (List<TwitterPost>) ((Stream) ((Optional<Tweet>) response.getEntity()).get().getContent().get()).collect(Collectors.toList());
+
         Assert.assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        Assert.assertEquals(5, ((Optional<List<TwitterPost>>) ((Tweet) response.getEntity()).getContent().get()).get().size());
-        Assert.assertEquals(fakeList.get(0).getTwitterMessage() , ((Optional<List<String>>) ((Tweet) response.getEntity()).getContent().get()).get().get(0));
+        Assert.assertEquals(5,  list.size());
+        Assert.assertEquals(fakeList.get(0).getTwitterMessage() , list.get(0));
     }
 
     @Test
@@ -108,7 +113,7 @@ public class TwitterResourceTest {
 
         Response response = twitterResourceTest.postTweet(message);
         Assert.assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        Assert.assertEquals(twitterResourceTest.successMessage(Optional.of(message)), response.getEntity());
+        Assert.assertEquals(twitterResourceTest.successMessage(message), response.getEntity());
     }
 
     @Test

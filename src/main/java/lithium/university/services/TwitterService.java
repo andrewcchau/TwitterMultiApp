@@ -30,7 +30,7 @@ public class TwitterService {
     /*
      * Takes a message and error checks it before attempting to post to user's twitter
      * Input: Twitter twitter - twitter instance, String message - message to be posted, int tweetTotal - total limited characters
-     * Output: status object of updated status if successful update, null otherwise
+     * Output: status object of updated status
      * */
     public Status postToTwitter(Twitter twitter, Optional<String> message, int tweetTotal) throws TwitterException, TwitterServiceException {
         if(message.isPresent()) {
@@ -59,7 +59,7 @@ public class TwitterService {
 
     public Optional<List<TwitterPost>> retrieveFilteredFromTwitter(Twitter twitter, final int tweetTotal, Optional<String> keyword) throws TwitterException, TwitterServiceException {
         Paging p = new Paging(1, tweetTotal);
-        logger.debug("Attempting find tweets from Twitter timeline that match keyword: " + keyword.orElseThrow(() -> new TwitterServiceException("Keyword to search cannot be null.")));
+        logger.debug("Attempting to find tweets from Twitter timeline that match keyword: " + keyword.orElseThrow(() -> new TwitterServiceException("Keyword to search cannot be null.")));
         return Optional.of(twitter.getHomeTimeline(p))
                         .map(List::stream)
                         .map(s -> s.filter(st -> st.getText().contains(keyword.orElse("")))
