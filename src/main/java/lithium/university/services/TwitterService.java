@@ -34,25 +34,11 @@ public class TwitterService {
      * Input: Twitter twitter - twitter instance, String message - message to be posted, int tweetTotal - total limited characters
      * Output: status object of updated status
      * */
-
-    /*TO DO: Change this syntax to match the other syntax for streams and optionals*/
     public Optional<Status> postToTwitter(Twitter twitter, Optional<String> message, int tweetTotal) throws TwitterException, TwitterServiceException {
         if (message.isPresent()) {
             logger.info("Attempting to update status");
-
-            /*Original 'funky' way of returning Optional<Status> object*/
-            return Optional.of(twitter.updateStatus(message.filter(s -> s.length() > 0)
-                    .filter(s -> s.length() <= tweetTotal)
+            return Optional.of(twitter.updateStatus(message.filter(s -> s.length() > 0 && s.length() <= tweetTotal)
                     .orElseThrow(() -> new TwitterServiceException("Cannot post. Message length should be between 0 and 280 characters"))));
-
-            /*The 'hacky' way of returning message.map()...*/
-//            return message.map(m -> {
-//                try {
-//                    return twitter.updateStatus(m);
-//                } catch (TwitterException te) {
-//                    throw new TwitterServiceException(te);
-//                }
-//            });
         } else {
             throw new TwitterServiceException("Cannot post. Message data is either missing or not in the correct form.");
         }
