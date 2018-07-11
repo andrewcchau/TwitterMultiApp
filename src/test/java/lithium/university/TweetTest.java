@@ -16,6 +16,6 @@ public class TweetTest {
     public void testTweetGetter(){
         String test = "Hello";
         tweetTest = new Tweet(test);
-        Assert.assertEquals(test, tweetTest.getContent());
+        Assert.assertEquals(test, tweetTest.getContent().get());
     }
 }

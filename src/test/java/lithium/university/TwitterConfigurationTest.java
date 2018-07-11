@@ -20,6 +20,6 @@ public class TwitterConfigurationTest {
     @Test
     public void testConfigurationGetAndSetTwitter(){
         twitterConfiguration.setTwitterProperties(twitterProperties);
-        Assert.assertEquals(MESSAGE, twitterConfiguration.getTwitterProperties().getConsumerKey());
+        Assert.assertEquals(MESSAGE, twitterConfiguration.getTwitterProperties().get().getConsumerKey());
     }
 }

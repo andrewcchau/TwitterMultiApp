@@ -27,7 +27,7 @@ public class TwitterApplication extends Application<TwitterConfiguration> {
     @Override
     public void run(TwitterConfiguration config, Environment environment){
         final TwitterHealthCheck healthCheck = new TwitterHealthCheck();
-        final TwitterResource resource = new TwitterResource(config.getTwitterProperties());
+        final TwitterResource resource = new TwitterResource(config.getTwitterProperties().get());
 
         environment.healthChecks().register("twitter", healthCheck);
         environment.jersey().register(resource);
