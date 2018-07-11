@@ -16,30 +16,44 @@ import twitter4j.conf.ConfigurationBuilder;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class TwitterService {
     private static final TwitterService INSTANCE = new TwitterService();
     private final Logger logger = LoggerFactory.getLogger(TwitterService.class);
     private TwitterProperties twitterProperties;
 
-    private TwitterService() {}
+    private TwitterService() {
+    }
 
-    public static TwitterService getInstance() { return INSTANCE; }
+    public static TwitterService getInstance() {
+        return INSTANCE;
+    }
 
     /*
      * Takes a message and error checks it before attempting to post to user's twitter
      * Input: Twitter twitter - twitter instance, String message - message to be posted, int tweetTotal - total limited characters
      * Output: status object of updated status
      * */
-    public Status postToTwitter(Twitter twitter, Optional<String> message, int tweetTotal) throws TwitterException, TwitterServiceException {
-        if(message.isPresent()) {
+
+    /*TO DO: Change this syntax to match the other syntax for streams and optionals*/
+    public Optional<Status> postToTwitter(Twitter twitter, Optional<String> message, int tweetTotal) throws TwitterException, TwitterServiceException {
+        if (message.isPresent()) {
             logger.info("Attempting to update status");
-            return Stream.of(twitter.updateStatus(message.filter(s -> s.length() > 0)
-                                                         .filter(s -> s.length() <= tweetTotal)
-                                                         .orElseThrow(() -> new TwitterServiceException("Cannot post. Message length should be between 0 and 280 characters"))))
-                        .collect(Collectors.toList()).get(0);
-        }else {
+
+            /*Original 'funky' way of returning Optional<Status> object*/
+            return Optional.of(twitter.updateStatus(message.filter(s -> s.length() > 0)
+                    .filter(s -> s.length() <= tweetTotal)
+                    .orElseThrow(() -> new TwitterServiceException("Cannot post. Message length should be between 0 and 280 characters"))));
+
+            /*The 'hacky' way of returning message.map()...*/
+//            return message.map(m -> {
+//                try {
+//                    return twitter.updateStatus(m);
+//                } catch (TwitterException te) {
+//                    throw new TwitterServiceException(te);
+//                }
+//            });
+        } else {
             throw new TwitterServiceException("Cannot post. Message data is either missing or not in the correct form.");
         }
     }
@@ -50,28 +64,38 @@ public class TwitterService {
     public Optional<List<TwitterPost>> retrieveFromTwitter(Twitter twitter, final int tweetTotal) throws TwitterException {
         Paging p = new Paging(1, tweetTotal);
         logger.debug("Attempting to grab " + tweetTotal + " tweets from Twitter timeline");
-        return Optional.of(twitter.getHomeTimeline(p))
-                                .map(List::stream)
-                                .map(s -> s.map(tp -> new TwitterPost(tp.getText(),
-                                                        new TwitterUser(tp.getUser().getName(), tp.getUser().getScreenName(), tp.getUser().getProfileImageURL()),
-                                                        tp.getCreatedAt())).collect(Collectors.toList()));
+
+        return Optional.of(twitter.getHomeTimeline(p)
+                .stream()
+                .map(tp -> new TwitterPost(
+                        tp.getText(),
+                        new TwitterUser(
+                                tp.getUser().getName(),
+                                tp.getUser().getScreenName(),
+                                tp.getUser().getProfileImageURL()),
+                        tp.getCreatedAt()))
+                .collect(Collectors.toList()));
     }
 
     public Optional<List<TwitterPost>> retrieveFilteredFromTwitter(Twitter twitter, final int tweetTotal, Optional<String> keyword) throws TwitterException, TwitterServiceException {
         Paging p = new Paging(1, tweetTotal);
         logger.debug("Attempting to find tweets from Twitter timeline that match keyword: " + keyword.orElseThrow(() -> new TwitterServiceException("Keyword to search cannot be null.")));
-        return Optional.of(twitter.getHomeTimeline(p))
-                        .map(List::stream)
-                        .map(s -> s.filter(st -> st.getText().contains(keyword.orElse("")))
-                                    .map(st -> new TwitterPost(st.getText(),
-                                                new TwitterUser(st.getUser().getName(), st.getUser().getScreenName(), st.getUser().getProfileImageURL()),
-                                                st.getCreatedAt()))
-                        .collect(Collectors.toList()));
+        return Optional.of(twitter.getHomeTimeline(p)
+                .stream()
+                .filter(s -> s.getText().contains(keyword.orElse("")))
+                .map(s -> new TwitterPost(
+                        s.getText(),
+                        new TwitterUser(
+                                s.getUser().getName(),
+                                s.getUser().getScreenName(),
+                                s.getUser().getProfileImageURL()),
+                        s.getCreatedAt()))
+                .collect(Collectors.toList()));
     }
 
     public Twitter getAuthenticatedTwitter() {
         logger.debug("Re-authenticating Twitter credentials");
-        if(twitterProperties == null) {
+        if (twitterProperties == null) {
             return null;
         }
         ConfigurationBuilder cb = new ConfigurationBuilder();

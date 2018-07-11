@@ -109,7 +109,7 @@ public class TwitterResourceTest {
         Status s = Mockito.mock(Status.class);
 
         Mockito.when(s.getText()).thenReturn(message);
-        Mockito.when(twitterServiceTest.postToTwitter(Mockito.any(Twitter.class), Mockito.any(Optional.class), Mockito.anyInt())).thenReturn(s);
+        Mockito.when(twitterServiceTest.postToTwitter(Mockito.any(Twitter.class), Mockito.any(Optional.class), Mockito.anyInt())).thenReturn(Optional.of(s));
 
         Response response = twitterResourceTest.postTweet(message);
         Assert.assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());

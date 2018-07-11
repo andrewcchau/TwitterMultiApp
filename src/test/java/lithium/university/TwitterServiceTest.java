@@ -94,14 +94,14 @@ public class TwitterServiceTest {
 
     @Test
     public void testPostCharLengthUnder() throws TwitterException, TwitterServiceException {
-        Status publishTest = twitterServiceTest.postToTwitter(twitterTest, Optional.of(generateStringLength(TwitterApplication.TWEET_LENGTH - 1)), TwitterApplication.TWEET_LENGTH);
+        Status publishTest = twitterServiceTest.postToTwitter(twitterTest, Optional.of(generateStringLength(TwitterApplication.TWEET_LENGTH - 1)), TwitterApplication.TWEET_LENGTH).get();
         Assert.assertNotNull(publishTest);
         Assert.assertEquals(mockMessage, publishTest.getText());
     }
 
     @Test
     public void testPostCharLengthEqual() throws TwitterException, TwitterServiceException {
-        Status publishTest = twitterServiceTest.postToTwitter(twitterTest, Optional.of(generateStringLength(TwitterApplication.TWEET_LENGTH)), TwitterApplication.TWEET_LENGTH);
+        Status publishTest = twitterServiceTest.postToTwitter(twitterTest, Optional.of(generateStringLength(TwitterApplication.TWEET_LENGTH)), TwitterApplication.TWEET_LENGTH).get();
         Assert.assertNotNull(publishTest);
         Assert.assertEquals(mockMessage, publishTest.getText());
     }
