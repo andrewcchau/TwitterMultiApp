@@ -180,4 +180,9 @@ public class TwitterServiceTest {
         twitterServiceTest.setTwitterProperties(twitterProperties);
         assertNotNull(twitterServiceTest.getAuthenticatedTwitter());
     }
+
+    @Test
+    public void testProvideServiceSingleton() {
+        assertEquals(TwitterService.class, twitterServiceTest.provideTwitterService().getClass());
+    }
 }

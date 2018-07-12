@@ -15,6 +15,7 @@ import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.conf.ConfigurationBuilder;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.List;
 import java.util.Optional;
@@ -22,13 +23,14 @@ import java.util.stream.Collectors;
 
 @Module
 public class TwitterService {
-//    private static final TwitterService INSTANCE = new TwitterService();
     private final Logger logger = LoggerFactory.getLogger(TwitterService.class);
     private TwitterProperties twitterProperties;
 
     @Provides
     @Singleton
-    TwitterService provideTwitterService() { return new TwitterService(); }
+    public TwitterService provideTwitterService() { return new TwitterService(); }
+
+
 
     /*
      * Takes a message and error checks it before attempting to post to user's twitter

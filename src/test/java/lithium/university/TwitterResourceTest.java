@@ -28,6 +28,7 @@ public class TwitterResourceTest {
     public void init() {
         twitterServiceTest = Mockito.mock(TwitterService.class);
         twitterResourceTest = new TwitterResource(twitterServiceTest);
+        twitterResourceTest.registerProperties(Mockito.mock(TwitterProperties.class));
         Mockito.when(twitterServiceTest.getAuthenticatedTwitter()).thenReturn(Mockito.mock(Twitter.class));
     }
 
