@@ -20,6 +20,7 @@
         <surefire.version>2.22.0</surefire.version>
         <mvn-compiler.version>3.7.0</mvn-compiler.version>
         <jacoco.version>0.8.1</jacoco.version>
+        <dagger.version>2.16</dagger.version>
     </properties>
 
 
@@ -69,6 +70,20 @@
                     <artifactId>slf4j-nop</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.google.dagger/dagger -->
+        <dependency>
+            <groupId>com.google.dagger</groupId>
+            <artifactId>dagger</artifactId>
+            <version>${dagger.version}</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.google.dagger/dagger-compiler -->
+        <dependency>
+            <groupId>com.google.dagger</groupId>
+            <artifactId>dagger-compiler</artifactId>
+            <version>${dagger.version}</version>
         </dependency>
 
     </dependencies>

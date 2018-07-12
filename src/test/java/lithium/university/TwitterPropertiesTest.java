@@ -1,8 +1,9 @@
 package lithium.university;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 
 public class TwitterPropertiesTest {
@@ -17,24 +18,24 @@ public class TwitterPropertiesTest {
     @Test
     public void testPropertiesGetAndSetConsumerKey(){
         twitterProperties.setConsumerKey(MESSAGE);
-        Assert.assertEquals(MESSAGE, twitterProperties.getConsumerKey());
+        assertEquals(MESSAGE, twitterProperties.getConsumerKey());
     }
 
     @Test
     public void testPropertiesGetAndSetConsumerSecret(){
         twitterProperties.setConsumerSecret(MESSAGE);
-        Assert.assertEquals(MESSAGE, twitterProperties.getConsumerSecret());
+        assertEquals(MESSAGE, twitterProperties.getConsumerSecret());
     }
 
     @Test
     public void testPropertiesGetAndSetAccessToken(){
         twitterProperties.setAccessToken(MESSAGE);
-        Assert.assertEquals(MESSAGE, twitterProperties.getAccessToken());
+        assertEquals(MESSAGE, twitterProperties.getAccessToken());
     }
 
     @Test
     public void testPropertiesGetAndSetAccessTokenSecret(){
         twitterProperties.setAccessTokenSecret(MESSAGE);
-        Assert.assertEquals(MESSAGE, twitterProperties.getAccessTokenSecret());
+        assertEquals(MESSAGE, twitterProperties.getAccessTokenSecret());
     }
 }

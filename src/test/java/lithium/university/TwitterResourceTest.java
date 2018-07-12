@@ -4,7 +4,6 @@ import lithium.university.exceptions.TwitterServiceException;
 import lithium.university.models.TwitterPost;
 import lithium.university.resources.TwitterResource;
 import lithium.university.services.TwitterService;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -18,6 +17,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static org.junit.Assert.assertEquals;
 
 public class TwitterResourceTest {
     private TwitterResource twitterResourceTest;
@@ -50,9 +51,9 @@ public class TwitterResourceTest {
         Mockito.when(twitterServiceTest.getAuthenticatedTwitter()).thenReturn(Mockito.mock(Twitter.class));
 
         Response response = twitterResourceTest.getHomeTimeline();
-        Assert.assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        Assert.assertEquals(1, ((List<TwitterPost>) response.getEntity()).size());
-        Assert.assertEquals(mockPost().getTwitterMessage(), ((List<TwitterPost>) response.getEntity()).get(0).getTwitterMessage());
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        assertEquals(1, ((List<TwitterPost>) response.getEntity()).size());
+        assertEquals(mockPost().getTwitterMessage(), ((List<TwitterPost>) response.getEntity()).get(0).getTwitterMessage());
     }
 
     @Test
@@ -60,8 +61,8 @@ public class TwitterResourceTest {
         Mockito.when(twitterServiceTest.retrieveFromTwitter(Mockito.any(Twitter.class), Mockito.anyInt())).thenThrow(TwitterException.class);
 
         Response response = twitterResourceTest.getHomeTimeline();
-        Assert.assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
-        Assert.assertEquals(twitterResourceTest.getErrorMessage(), response.getEntity());
+        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
+        assertEquals(twitterResourceTest.getErrorMessage(), response.getEntity());
     }
 
     @Test
@@ -78,9 +79,9 @@ public class TwitterResourceTest {
 
         List<String> list = (List<String>) ((Stream) ((Tweet) response.getEntity()).getContent().get()).collect(Collectors.toList());
 
-        Assert.assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        Assert.assertEquals(5,  list.size());
-        Assert.assertEquals(fakeList.get(0).getTwitterMessage() , list.get(0));
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        assertEquals(5,  list.size());
+        assertEquals(fakeList.get(0).getTwitterMessage() , list.get(0));
     }
 
     @Test
@@ -88,8 +89,8 @@ public class TwitterResourceTest {
         Mockito.when(twitterServiceTest.retrieveFilteredFromTwitter(Mockito.any(Twitter.class), Mockito.anyInt(), Mockito.any(Optional.class))).thenThrow(TwitterException.class);
 
         Response response = twitterResourceTest.getFilteredTweets(Optional.of("Anything"));
-        Assert.assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
-        Assert.assertEquals(twitterResourceTest.getErrorMessage(), response.getEntity());
+        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
+        assertEquals(twitterResourceTest.getErrorMessage(), response.getEntity());
     }
 
     @Test
@@ -99,8 +100,8 @@ public class TwitterResourceTest {
         Mockito.when(twitterServiceTest.retrieveFilteredFromTwitter(Mockito.any(Twitter.class), Mockito.anyInt(), Mockito.any(Optional.class))).thenThrow(new TwitterServiceException(errorMessage));
 
         Response response = twitterResourceTest.getFilteredTweets(Optional.of("anything"));
-        Assert.assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
-        Assert.assertEquals(errorMessage, response.getEntity());
+        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
+        assertEquals(errorMessage, response.getEntity());
     }
 
     @Test
@@ -112,8 +113,8 @@ public class TwitterResourceTest {
         Mockito.when(twitterServiceTest.postToTwitter(Mockito.any(Twitter.class), Mockito.any(Optional.class), Mockito.anyInt())).thenReturn(Optional.of(s));
 
         Response response = twitterResourceTest.postTweet(message);
-        Assert.assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        Assert.assertEquals(twitterResourceTest.successMessage(message), response.getEntity());
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        assertEquals(twitterResourceTest.successMessage(message), response.getEntity());
     }
 
     @Test
@@ -124,8 +125,8 @@ public class TwitterResourceTest {
         Mockito.when(twitterServiceTest.postToTwitter(Mockito.any(Twitter.class), Mockito.any(Optional.class), Mockito.anyInt())).thenThrow(new TwitterServiceException(errorLength));
 
         Response response = twitterResourceTest.postTweet(message);
-        Assert.assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
-        Assert.assertEquals(errorLength, response.getEntity());
+        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
+        assertEquals(errorLength, response.getEntity());
     }
 
     @Test
@@ -136,8 +137,8 @@ public class TwitterResourceTest {
         Mockito.when(twitterServiceTest.postToTwitter(Mockito.any(Twitter.class), Mockito.any(Optional.class), Mockito.anyInt())).thenThrow(new TwitterServiceException(errorZero));
 
         Response response = twitterResourceTest.postTweet(message);
-        Assert.assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
-        Assert.assertEquals(errorZero, response.getEntity());
+        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
+        assertEquals(errorZero, response.getEntity());
     }
 
     @Test
@@ -147,8 +148,8 @@ public class TwitterResourceTest {
         Mockito.when(twitterServiceTest.postToTwitter(Mockito.any(Twitter.class), Mockito.any(Optional.class), Mockito.anyInt())).thenThrow(new TwitterException(twitterResourceTest.getErrorMessage()));
 
         Response response = twitterResourceTest.postTweet(message);
-        Assert.assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
-        Assert.assertEquals(twitterResourceTest.getErrorMessage(), response.getEntity());
+        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
+        assertEquals(twitterResourceTest.getErrorMessage(), response.getEntity());
     }
 
     @Test
@@ -158,7 +159,7 @@ public class TwitterResourceTest {
         Mockito.when(twitterServiceTest.postToTwitter(Mockito.any(Twitter.class), Mockito.any(Optional.class), Mockito.anyInt())).thenThrow(new TwitterServiceException(errorNull));
 
         Response response = twitterResourceTest.postTweet(null);
-        Assert.assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
-        Assert.assertEquals(errorNull, response.getEntity());
+        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
+        assertEquals(errorNull, response.getEntity());
     }
 }
