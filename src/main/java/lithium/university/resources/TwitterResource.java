@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 
+import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -32,20 +33,8 @@ public class TwitterResource {
     private Twitter twitter;
     private TwitterService twitterService;
 
-    public TwitterResource() {
-        twitterService = TwitterService.getInstance();
-    }
-
-    public TwitterResource(TwitterProperties twitterProperties) {
-        this();
-        twitterService.setTwitterProperties(twitterProperties);
-    }
-
-    /*
-     * Used mainly for testing purposes
-     * */
+    @Inject
     public TwitterResource(TwitterService twitterService) {
-        this();
         this.twitterService = twitterService;
     }
 
@@ -119,5 +108,9 @@ public class TwitterResource {
      * */
     private void getTwitterAuthentication() {
         twitter = twitterService.getAuthenticatedTwitter();
+    }
+
+    public void registerProperties(TwitterProperties twitterProperties) {
+        twitterService.setTwitterProperties(twitterProperties);
     }
 }

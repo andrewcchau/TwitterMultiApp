@@ -1,5 +1,7 @@
 package lithium.university.services;
 
+import dagger.Module;
+import dagger.Provides;
 import lithium.university.TwitterProperties;
 import lithium.university.exceptions.TwitterServiceException;
 import lithium.university.models.TwitterPost;
@@ -13,21 +15,20 @@ import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.conf.ConfigurationBuilder;
 
+import javax.inject.Singleton;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Module
 public class TwitterService {
-    private static final TwitterService INSTANCE = new TwitterService();
+//    private static final TwitterService INSTANCE = new TwitterService();
     private final Logger logger = LoggerFactory.getLogger(TwitterService.class);
     private TwitterProperties twitterProperties;
 
-    private TwitterService() {
-    }
-
-    public static TwitterService getInstance() {
-        return INSTANCE;
-    }
+    @Provides
+    @Singleton
+    TwitterService provideTwitterService() { return new TwitterService(); }
 
     /*
      * Takes a message and error checks it before attempting to post to user's twitter
