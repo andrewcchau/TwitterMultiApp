@@ -3,7 +3,6 @@ package lithium.university;
 import lithium.university.exceptions.TwitterServiceException;
 import lithium.university.models.TwitterPost;
 import lithium.university.resources.TwitterResource;
-import lithium.university.services.TwitterProvider;
 import lithium.university.services.TwitterService;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,8 +31,7 @@ public class TwitterResourceTest {
     public void init() {
         twitterServiceTest = mock(TwitterService.class);
         TwitterProvider twitterProviderTest = mock(TwitterProvider.class);
-        twitterResourceTest = new TwitterResource(twitterServiceTest, twitterProviderTest);
-        twitterResourceTest.registerProperties(mock(TwitterProperties.class));
+        twitterResourceTest = new TwitterResource(twitterServiceTest, mock(Twitter.class));
         when(twitterProviderTest.get()).thenReturn(mock(Twitter.class));
     }
 

@@ -1,6 +1,5 @@
 package lithium.university;
 
-import lithium.university.services.TwitterProvider;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -16,8 +15,15 @@ public class TwitterProviderTest {
 
     @Before
     public void init() {
-        twitterProviderTest = new TwitterProvider();
+        twitterProviderTest = TwitterProvider.getInstance();
         twitterPropertiesTest = mock(TwitterProperties.class);
+    }
+
+    @Test
+    public void testSingletonInstance() {
+        TwitterProvider tp1 = TwitterProvider.getInstance();
+        TwitterProvider tp2 = TwitterProvider.getInstance();
+        assertEquals(tp1, tp2);
     }
 
     @Test
@@ -42,6 +48,8 @@ public class TwitterProviderTest {
 
         twitterProviderTest.setTwitterProperties(twitterPropertiesTest);
         assertNotNull(twitterProviderTest.get());
+        assertNotNull(twitterProviderTest.provideTwitter());
+        assertEquals(twitterProviderTest.get(), twitterProviderTest.provideTwitter());
     }
 
     @Test

@@ -26,9 +26,9 @@ public class TwitterApplication extends Application<TwitterConfiguration> {
 
     @Override
     public void run(TwitterConfiguration config, Environment environment){
+        TwitterProvider.getInstance().setTwitterProperties(config.getTwitterProperties().get());
         TwitterSetUp setUp = lithium.university.DaggerTwitterSetUp.builder().build();
         TwitterResource resource = setUp.resource();
-        resource.registerProperties(config.getTwitterProperties().get());
 
         environment.healthChecks().register("twitter", setUp.healthCheck());
         environment.jersey().register(resource);

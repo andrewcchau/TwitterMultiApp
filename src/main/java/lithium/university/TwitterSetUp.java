@@ -6,7 +6,7 @@ import lithium.university.resources.TwitterResource;
 import javax.inject.Singleton;
 
 @Singleton
-@Component
+@Component(modules = TwitterProvider.class)
 public interface TwitterSetUp {
     TwitterResource resource();
     TwitterHealthCheck healthCheck();
