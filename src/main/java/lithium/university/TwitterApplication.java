@@ -4,7 +4,6 @@ import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import lithium.university.resources.TwitterResource;
-import twitter4j.Twitter;
 
 
 public class TwitterApplication extends Application<TwitterConfiguration> {

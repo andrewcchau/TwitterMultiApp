@@ -1,6 +1,5 @@
 package lithium.university.services;
 
-import lithium.university.TwitterProperties;
 import lithium.university.exceptions.TwitterServiceException;
 import lithium.university.models.TwitterPost;
 import lithium.university.models.TwitterUser;
@@ -10,8 +9,6 @@ import twitter4j.Paging;
 import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
-import twitter4j.TwitterFactory;
-import twitter4j.conf.ConfigurationBuilder;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -20,8 +17,6 @@ import java.util.stream.Collectors;
 
 public class TwitterService {
     private final Logger logger = LoggerFactory.getLogger(TwitterService.class);
-    private TwitterProperties twitterProperties;
-
 
     @Inject public TwitterService() {}
 
@@ -73,24 +68,5 @@ public class TwitterService {
                                 s.getUser().getProfileImageURL()),
                         s.getCreatedAt()))
                 .collect(Collectors.toList()));
-    }
-
-    public Twitter getAuthenticatedTwitter() {
-        logger.debug("Re-authenticating Twitter credentials");
-        if (twitterProperties == null) {
-            return null;
-        }
-        ConfigurationBuilder cb = new ConfigurationBuilder();
-        cb.setJSONStoreEnabled(true);
-        cb.setOAuthConsumerKey(twitterProperties.getConsumerKey())
-                .setOAuthConsumerSecret(twitterProperties.getConsumerSecret())
-                .setOAuthAccessToken(twitterProperties.getAccessToken())
-                .setOAuthAccessTokenSecret(twitterProperties.getAccessTokenSecret());
-        TwitterFactory twitterFactory = new TwitterFactory(cb.build());
-        return twitterFactory.getInstance();
-    }
-
-    public void setTwitterProperties(TwitterProperties twitterProperties) {
-        this.twitterProperties = twitterProperties;
     }
 }

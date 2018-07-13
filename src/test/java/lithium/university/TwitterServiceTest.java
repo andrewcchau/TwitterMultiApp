@@ -9,7 +9,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import twitter4j.Paging;
 import twitter4j.ResponseList;
@@ -23,8 +22,11 @@ import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TwitterServiceTest {
@@ -37,13 +39,13 @@ public class TwitterServiceTest {
     private String mockMessage = "General status message for testing";
 
     private Status mockStatus(String message){
-        Status s = Mockito.mock(Status.class);
-        User u = Mockito.mock(User.class);
-        Mockito.when(s.getText()).thenReturn(message);
-        Mockito.when(s.getUser()).thenReturn(u);
-        Mockito.when(u.getName()).thenReturn("Tester");
-        Mockito.when(u.getProfileImageURL()).thenReturn("http://www.url.fake");
-        Mockito.when(u.getScreenName()).thenReturn("Mr. Tester");
+        Status s = mock(Status.class);
+        User u = mock(User.class);
+        when(s.getText()).thenReturn(message);
+        when(s.getUser()).thenReturn(u);
+        when(u.getName()).thenReturn("Tester");
+        when(u.getProfileImageURL()).thenReturn("http://www.url.fake");
+        when(u.getScreenName()).thenReturn("Mr. Tester");
         return s;
     }
 
@@ -58,9 +60,9 @@ public class TwitterServiceTest {
     @Before
     public void init() throws TwitterException {
         /*General status message for twitterPublish behavior*/
-        Status s = Mockito.mock(Status.class);
-        Mockito.when(s.getText()).thenReturn(mockMessage);
-        Mockito.when(twitterTest.updateStatus(Mockito.anyString())).thenReturn(s);
+        Status s = mock(Status.class);
+        when(s.getText()).thenReturn(mockMessage);
+        when(twitterTest.updateStatus(anyString())).thenReturn(s);
     }
 
     @Test (expected = TwitterServiceException.class)
@@ -125,7 +127,7 @@ public class TwitterServiceTest {
         ResponseList<Status> fakeList = new FakeResponseList<>();
         fakeList.add(mockStatus());
 
-        Mockito.when(twitterTest.getHomeTimeline(Mockito.any(Paging.class))).thenReturn(fakeList);
+        when(twitterTest.getHomeTimeline(any(Paging.class))).thenReturn(fakeList);
 
         Optional<List<TwitterPost>> l = twitterServiceTest.retrieveFromTwitter(twitterTest, 1);
         assertEquals(1, l.get().size());
@@ -141,7 +143,7 @@ public class TwitterServiceTest {
             fakeList.add(mockStatus(testMessage + i));
         }
 
-        Mockito.when(twitterTest.getHomeTimeline(Mockito.any(Paging.class))).thenReturn(fakeList);
+        when(twitterTest.getHomeTimeline(any(Paging.class))).thenReturn(fakeList);
 
         Optional<List<TwitterPost>> l = twitterServiceTest.retrieveFromTwitter(twitterTest, size);
         assertEquals(size, l.get().size());
@@ -156,7 +158,7 @@ public class TwitterServiceTest {
         fakeList.add(mockStatus("Tester 1"));
         fakeList.add(mockStatus("Tester 2"));
 
-        Mockito.when(twitterTest.getHomeTimeline(Mockito.any(Paging.class))).thenReturn(fakeList);
+        when(twitterTest.getHomeTimeline(any(Paging.class))).thenReturn(fakeList);
 
         Optional<List<TwitterPost>> l = twitterServiceTest.retrieveFilteredFromTwitter(twitterTest, 1, Optional.of("1"));
         assertEquals(1, l.get().size());
@@ -166,18 +168,5 @@ public class TwitterServiceTest {
     @Test (expected = TwitterServiceException.class)
     public void testRetrieveFilterNullKeyword() throws TwitterException, TwitterServiceException {
         twitterServiceTest.retrieveFilteredFromTwitter(twitterTest, 1, Optional.ofNullable(null));
-    }
-
-    @Test
-    public void testAuthenticationReturnNull() {
-        twitterServiceTest.setTwitterProperties(null);
-        assertNull(twitterServiceTest.getAuthenticatedTwitter());
-    }
-
-    @Test
-    public void testAuthenticationReturnNonNull() {
-        TwitterProperties twitterProperties = Mockito.mock(TwitterProperties.class);
-        twitterServiceTest.setTwitterProperties(twitterProperties);
-        assertNotNull(twitterServiceTest.getAuthenticatedTwitter());
     }
 }
