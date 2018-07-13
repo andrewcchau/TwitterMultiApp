@@ -17,15 +17,19 @@ import java.util.stream.Collectors;
 
 public class TwitterService {
     private final Logger logger = LoggerFactory.getLogger(TwitterService.class);
+    private Twitter twitter;
 
-    @Inject public TwitterService() {}
+    @Inject
+    public TwitterService(Twitter twitter) {
+        this.twitter = twitter;
+    }
 
     /*
      * Takes a message and error checks it before attempting to post to user's twitter
      * Input: Twitter twitter - twitter instance, String message - message to be posted, int tweetTotal - total limited characters
      * Output: status object of updated status
      * */
-    public Optional<Status> postToTwitter(Twitter twitter, Optional<String> message, int tweetTotal) throws TwitterException, TwitterServiceException {
+    public Optional<Status> postToTwitter(Optional<String> message, int tweetTotal) throws TwitterException, TwitterServiceException {
         if (message.isPresent()) {
             logger.info("Attempting to update status");
             return Optional.of(twitter.updateStatus(message.filter(s -> s.length() > 0 && s.length() <= tweetTotal)
@@ -38,7 +42,7 @@ public class TwitterService {
     /*
      * Gets the data from twitter and returns a list of the statuses
      * */
-    public Optional<List<TwitterPost>> retrieveFromTwitter(Twitter twitter, final int tweetTotal) throws TwitterException {
+    public Optional<List<TwitterPost>> retrieveFromTwitter(final int tweetTotal) throws TwitterException {
         Paging p = new Paging(1, tweetTotal);
         logger.debug("Attempting to grab " + tweetTotal + " tweets from Twitter timeline");
 
@@ -54,7 +58,7 @@ public class TwitterService {
                 .collect(Collectors.toList()));
     }
 
-    public Optional<List<TwitterPost>> retrieveFilteredFromTwitter(Twitter twitter, final int tweetTotal, Optional<String> keyword) throws TwitterException, TwitterServiceException {
+    public Optional<List<TwitterPost>> retrieveFilteredFromTwitter(final int tweetTotal, Optional<String> keyword) throws TwitterException, TwitterServiceException {
         Paging p = new Paging(1, tweetTotal);
         logger.debug("Attempting to find tweets from Twitter timeline that match keyword: " + keyword.orElseThrow(() -> new TwitterServiceException("Keyword to search cannot be null.")));
         return Optional.of(twitter.getHomeTimeline(p)

@@ -8,10 +8,8 @@ import twitter4j.Twitter;
 import twitter4j.TwitterFactory;
 import twitter4j.conf.ConfigurationBuilder;
 
-import javax.inject.Provider;
-
 @Module
-public class TwitterProvider implements Provider {
+public class TwitterProvider {
     private static final TwitterProvider INSTANCE = new TwitterProvider();
     private final Logger logger = LoggerFactory.getLogger(TwitterProvider.class);
     private TwitterProperties twitterProperties;
@@ -20,8 +18,6 @@ public class TwitterProvider implements Provider {
     public Twitter provideTwitter() {
         return INSTANCE.get();
     }
-
-    private TwitterProvider() {}
 
     public static TwitterProvider getInstance() {
         return INSTANCE;
@@ -41,7 +37,6 @@ public class TwitterProvider implements Provider {
         return twitterProperties;
     }
 
-    @Override
     public Twitter get() {
         logger.info("Providing new Twitter object");
         if (twitterProperties == null) {

@@ -68,7 +68,7 @@ public class TwitterServiceTest {
     @Test (expected = TwitterServiceException.class)
     public void testPostNull() throws TwitterException, TwitterServiceException {
         try {
-            twitterServiceTest.postToTwitter(twitterTest, Optional.ofNullable(null), TwitterApplication.TWEET_LENGTH);
+            twitterServiceTest.postToTwitter(Optional.ofNullable(null), TwitterApplication.TWEET_LENGTH);
         } catch(TwitterServiceException tse) {
             assertEquals("Cannot post. Message data is either missing or not in the correct form.", tse.getMessage());
             throw tse;
@@ -79,7 +79,7 @@ public class TwitterServiceTest {
     @Test (expected = TwitterServiceException.class)
     public void testPostCharLengthZero() throws TwitterException, TwitterServiceException {
         try {
-            twitterServiceTest.postToTwitter(twitterTest, Optional.of(generateStringLength(0)), TwitterApplication.TWEET_LENGTH);
+            twitterServiceTest.postToTwitter(Optional.of(generateStringLength(0)), TwitterApplication.TWEET_LENGTH);
         } catch(TwitterException te){
             assertEquals("Message length must be greater than 0", te.getMessage());
             throw te;
@@ -90,7 +90,7 @@ public class TwitterServiceTest {
     @Test (expected = TwitterServiceException.class)
     public void testPostCharLengthOver() throws TwitterException, TwitterServiceException {
         try {
-            twitterServiceTest.postToTwitter(twitterTest, Optional.of(generateStringLength(TwitterApplication.TWEET_LENGTH + 1)), TwitterApplication.TWEET_LENGTH);
+            twitterServiceTest.postToTwitter(Optional.of(generateStringLength(TwitterApplication.TWEET_LENGTH + 1)), TwitterApplication.TWEET_LENGTH);
         } catch(TwitterException te) {
             assertEquals("Message length should not exceed 280 characters", te.getMessage());
             throw te;
@@ -100,26 +100,26 @@ public class TwitterServiceTest {
 
     @Test
     public void testPostCharLengthUnder() throws TwitterException, TwitterServiceException {
-        Status publishTest = twitterServiceTest.postToTwitter(twitterTest, Optional.of(generateStringLength(TwitterApplication.TWEET_LENGTH - 1)), TwitterApplication.TWEET_LENGTH).get();
+        Status publishTest = twitterServiceTest.postToTwitter(Optional.of(generateStringLength(TwitterApplication.TWEET_LENGTH - 1)), TwitterApplication.TWEET_LENGTH).get();
         assertNotNull(publishTest);
         assertEquals(mockMessage, publishTest.getText());
     }
 
     @Test
     public void testPostCharLengthEqual() throws TwitterException, TwitterServiceException {
-        Status publishTest = twitterServiceTest.postToTwitter(twitterTest, Optional.of(generateStringLength(TwitterApplication.TWEET_LENGTH)), TwitterApplication.TWEET_LENGTH).get();
+        Status publishTest = twitterServiceTest.postToTwitter(Optional.of(generateStringLength(TwitterApplication.TWEET_LENGTH)), TwitterApplication.TWEET_LENGTH).get();
         assertNotNull(publishTest);
         assertEquals(mockMessage, publishTest.getText());
     }
 
     @Test (expected = IllegalArgumentException.class)
     public void testRetrieveNegative() throws TwitterException {
-        twitterServiceTest.retrieveFromTwitter(twitterTest, -1);
+        twitterServiceTest.retrieveFromTwitter(-1);
     }
 
     @Test (expected = IllegalArgumentException.class)
     public void testRetrieveNothing() throws TwitterException {
-        twitterServiceTest.retrieveFromTwitter(twitterTest, 0);
+        twitterServiceTest.retrieveFromTwitter(0);
     }
 
     @Test
@@ -129,7 +129,7 @@ public class TwitterServiceTest {
 
         when(twitterTest.getHomeTimeline(any(Paging.class))).thenReturn(fakeList);
 
-        Optional<List<TwitterPost>> l = twitterServiceTest.retrieveFromTwitter(twitterTest, 1);
+        Optional<List<TwitterPost>> l = twitterServiceTest.retrieveFromTwitter(1);
         assertEquals(1, l.get().size());
         assertEquals(mockStatus().getText(), l.get().get(0).getTwitterMessage());
     }
@@ -145,7 +145,7 @@ public class TwitterServiceTest {
 
         when(twitterTest.getHomeTimeline(any(Paging.class))).thenReturn(fakeList);
 
-        Optional<List<TwitterPost>> l = twitterServiceTest.retrieveFromTwitter(twitterTest, size);
+        Optional<List<TwitterPost>> l = twitterServiceTest.retrieveFromTwitter(size);
         assertEquals(size, l.get().size());
         for(int i = 0; i < size; i++){
             assertEquals(testMessage + i, l.get().get(i).getTwitterMessage());
@@ -160,13 +160,13 @@ public class TwitterServiceTest {
 
         when(twitterTest.getHomeTimeline(any(Paging.class))).thenReturn(fakeList);
 
-        Optional<List<TwitterPost>> l = twitterServiceTest.retrieveFilteredFromTwitter(twitterTest, 1, Optional.of("1"));
+        Optional<List<TwitterPost>> l = twitterServiceTest.retrieveFilteredFromTwitter(1, Optional.of("1"));
         assertEquals(1, l.get().size());
         assertEquals("Tester 1", l.get().get(0).getTwitterMessage());
     }
 
     @Test (expected = TwitterServiceException.class)
     public void testRetrieveFilterNullKeyword() throws TwitterException, TwitterServiceException {
-        twitterServiceTest.retrieveFilteredFromTwitter(twitterTest, 1, Optional.ofNullable(null));
+        twitterServiceTest.retrieveFilteredFromTwitter(1, Optional.ofNullable(null));
     }
 }
