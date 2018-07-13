@@ -1,9 +1,11 @@
 package lithium.university;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class TwitterConfigurationTest {
     private TwitterConfiguration twitterConfiguration;
@@ -13,13 +15,13 @@ public class TwitterConfigurationTest {
     @Before
     public void init(){
         twitterConfiguration = new TwitterConfiguration();
-        twitterProperties = Mockito.mock(TwitterProperties.class);
-        Mockito.when(twitterProperties.getConsumerKey()).thenReturn(MESSAGE);
+        twitterProperties = mock(TwitterProperties.class);
+        when(twitterProperties.getConsumerKey()).thenReturn(MESSAGE);
     }
 
     @Test
     public void testConfigurationGetAndSetTwitter(){
         twitterConfiguration.setTwitterProperties(twitterProperties);
-        Assert.assertEquals(MESSAGE, twitterConfiguration.getTwitterProperties().get().getConsumerKey());
+        assertEquals(MESSAGE, twitterConfiguration.getTwitterProperties().get().getConsumerKey());
     }
 }

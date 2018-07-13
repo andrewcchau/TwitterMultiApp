@@ -1,6 +1,5 @@
 package lithium.university.services;
 
-import lithium.university.TwitterProperties;
 import lithium.university.exceptions.TwitterServiceException;
 import lithium.university.models.TwitterPost;
 import lithium.university.models.TwitterUser;
@@ -10,23 +9,19 @@ import twitter4j.Paging;
 import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
-import twitter4j.TwitterFactory;
-import twitter4j.conf.ConfigurationBuilder;
 
+import javax.inject.Inject;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class TwitterService {
-    private static final TwitterService INSTANCE = new TwitterService();
     private final Logger logger = LoggerFactory.getLogger(TwitterService.class);
-    private TwitterProperties twitterProperties;
+    private Twitter twitter;
 
-    private TwitterService() {
-    }
-
-    public static TwitterService getInstance() {
-        return INSTANCE;
+    @Inject
+    public TwitterService(Twitter twitter) {
+        this.twitter = twitter;
     }
 
     /*
@@ -34,7 +29,7 @@ public class TwitterService {
      * Input: Twitter twitter - twitter instance, String message - message to be posted, int tweetTotal - total limited characters
      * Output: status object of updated status
      * */
-    public Optional<Status> postToTwitter(Twitter twitter, Optional<String> message, int tweetTotal) throws TwitterException, TwitterServiceException {
+    public Optional<Status> postToTwitter(Optional<String> message, int tweetTotal) throws TwitterException, TwitterServiceException {
         if (message.isPresent()) {
             logger.info("Attempting to update status");
             return Optional.of(twitter.updateStatus(message.filter(s -> s.length() > 0 && s.length() <= tweetTotal)
@@ -47,7 +42,7 @@ public class TwitterService {
     /*
      * Gets the data from twitter and returns a list of the statuses
      * */
-    public Optional<List<TwitterPost>> retrieveFromTwitter(Twitter twitter, final int tweetTotal) throws TwitterException {
+    public Optional<List<TwitterPost>> retrieveFromTwitter(final int tweetTotal) throws TwitterException {
         Paging p = new Paging(1, tweetTotal);
         logger.debug("Attempting to grab " + tweetTotal + " tweets from Twitter timeline");
 
@@ -63,7 +58,7 @@ public class TwitterService {
                 .collect(Collectors.toList()));
     }
 
-    public Optional<List<TwitterPost>> retrieveFilteredFromTwitter(Twitter twitter, final int tweetTotal, Optional<String> keyword) throws TwitterException, TwitterServiceException {
+    public Optional<List<TwitterPost>> retrieveFilteredFromTwitter(final int tweetTotal, Optional<String> keyword) throws TwitterException, TwitterServiceException {
         Paging p = new Paging(1, tweetTotal);
         logger.debug("Attempting to find tweets from Twitter timeline that match keyword: " + keyword.orElseThrow(() -> new TwitterServiceException("Keyword to search cannot be null.")));
         return Optional.of(twitter.getHomeTimeline(p)
@@ -77,24 +72,5 @@ public class TwitterService {
                                 s.getUser().getProfileImageURL()),
                         s.getCreatedAt()))
                 .collect(Collectors.toList()));
-    }
-
-    public Twitter getAuthenticatedTwitter() {
-        logger.debug("Re-authenticating Twitter credentials");
-        if (twitterProperties == null) {
-            return null;
-        }
-        ConfigurationBuilder cb = new ConfigurationBuilder();
-        cb.setJSONStoreEnabled(true);
-        cb.setOAuthConsumerKey(twitterProperties.getConsumerKey())
-                .setOAuthConsumerSecret(twitterProperties.getConsumerSecret())
-                .setOAuthAccessToken(twitterProperties.getAccessToken())
-                .setOAuthAccessTokenSecret(twitterProperties.getAccessTokenSecret());
-        TwitterFactory twitterFactory = new TwitterFactory(cb.build());
-        return twitterFactory.getInstance();
-    }
-
-    public void setTwitterProperties(TwitterProperties twitterProperties) {
-        this.twitterProperties = twitterProperties;
     }
 }

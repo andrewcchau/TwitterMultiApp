@@ -2,15 +2,14 @@ package lithium.university.resources;
 
 import lithium.university.Tweet;
 import lithium.university.TwitterApplication;
-import lithium.university.TwitterProperties;
 import lithium.university.exceptions.TwitterServiceException;
 import lithium.university.models.TwitterPost;
 import lithium.university.services.TwitterService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import twitter4j.Twitter;
 import twitter4j.TwitterException;
 
+import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -29,25 +28,13 @@ public class TwitterResource {
     private final Logger logger = LoggerFactory.getLogger(TwitterResource.class);
     private final String errorMessage = "Oops! Something went wrong! Please check the server log for details and try again.";
 
-    private Twitter twitter;
     private TwitterService twitterService;
 
-    public TwitterResource() {
-        twitterService = TwitterService.getInstance();
-    }
-
-    public TwitterResource(TwitterProperties twitterProperties) {
-        this();
-        twitterService.setTwitterProperties(twitterProperties);
-    }
-
-    /*
-     * Used mainly for testing purposes
-     * */
+    @Inject
     public TwitterResource(TwitterService twitterService) {
-        this();
         this.twitterService = twitterService;
     }
+
 
     public String successMessage(String message) {
         return "Successfully updated status to: " + message + "\n";
@@ -62,10 +49,8 @@ public class TwitterResource {
     @Path("/timeline")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getHomeTimeline() {
-        this.getTwitterAuthentication();
-
         try {
-            return twitterService.retrieveFromTwitter(twitter, TwitterApplication.TWEET_TOTAL).map(l -> Response.ok(l).build()).get();
+            return twitterService.retrieveFromTwitter(TwitterApplication.TWEET_TOTAL).map(l -> Response.ok(l).build()).get();
         } catch (TwitterException te) {
             logger.error("An exception has occurred in getHomeTimeline", te);
             return Response.serverError().entity(errorMessage).build();
@@ -76,10 +61,8 @@ public class TwitterResource {
     @Path("/tweet/filter")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getFilteredTweets(@QueryParam("keyword") Optional<String> keyword) {
-        this.getTwitterAuthentication();
-
         try {
-            return twitterService.retrieveFilteredFromTwitter(twitter, TwitterApplication.TWEET_TOTAL, keyword)
+            return twitterService.retrieveFilteredFromTwitter(TwitterApplication.TWEET_TOTAL, keyword)
                     .map(List::stream)
                     .map(s -> s.map(TwitterPost::getTwitterMessage))
                     .map(l -> Response.ok(new Tweet(l)).build()).get();
@@ -96,11 +79,9 @@ public class TwitterResource {
     @Path("/tweet")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public Response postTweet(@FormParam("message") String message) {
-        this.getTwitterAuthentication();
-
         /*Attempt to post to Twitter*/
         try {
-            return twitterService.postToTwitter(twitter, Optional.ofNullable(message), TwitterApplication.TWEET_LENGTH)
+            return twitterService.postToTwitter(Optional.ofNullable(message), TwitterApplication.TWEET_LENGTH)
                     .map(status -> successMessage(status.getText()))
                     .map(status -> Response.ok(status).build())
                     .get();
@@ -111,13 +92,5 @@ public class TwitterResource {
             logger.error("An exception from TwitterService has occurred in postTweet", tse);
             return Response.serverError().entity(tse.getMessage()).build();
         }
-    }
-
-
-    /*
-     * Used to re-check authentication credentials
-     * */
-    private void getTwitterAuthentication() {
-        twitter = twitterService.getAuthenticatedTwitter();
     }
 }
