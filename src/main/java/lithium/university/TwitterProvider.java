@@ -10,17 +10,16 @@ import twitter4j.conf.ConfigurationBuilder;
 
 @Module
 public class TwitterProvider {
-    private static final TwitterProvider INSTANCE = new TwitterProvider();
     private final Logger logger = LoggerFactory.getLogger(TwitterProvider.class);
     private TwitterProperties twitterProperties;
 
     @Provides
     public Twitter provideTwitter() {
-        return INSTANCE.get();
+        return this.get();
     }
 
-    public static TwitterProvider getInstance() {
-        return INSTANCE;
+    public TwitterProvider(TwitterProperties twitterProperties) {
+        this.twitterProperties = twitterProperties;
     }
 
     /*

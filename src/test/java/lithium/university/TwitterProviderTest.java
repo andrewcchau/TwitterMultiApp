@@ -15,15 +15,8 @@ public class TwitterProviderTest {
 
     @Before
     public void init() {
-        twitterProviderTest = TwitterProvider.getInstance();
         twitterPropertiesTest = mock(TwitterProperties.class);
-    }
-
-    @Test
-    public void testSingletonInstance() {
-        TwitterProvider tp1 = TwitterProvider.getInstance();
-        TwitterProvider tp2 = TwitterProvider.getInstance();
-        assertEquals(tp1, tp2);
+        twitterProviderTest = new TwitterProvider(twitterPropertiesTest);
     }
 
     @Test
