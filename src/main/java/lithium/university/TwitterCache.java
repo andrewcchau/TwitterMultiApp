@@ -53,4 +53,8 @@ public class TwitterCache {
 
         return false;
     }
+
+    public void clearCache() {
+        cache = null;
+    }
 }

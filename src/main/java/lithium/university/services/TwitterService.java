@@ -37,6 +37,7 @@ public class TwitterService {
     public Optional<Status> postToTwitter(Optional<String> message, int tweetTotal) throws TwitterException, TwitterServiceException {
         if (message.isPresent()) {
             logger.info("Attempting to update status");
+            twitterCache.clearCache();
             return Optional.of(twitter.updateStatus(message.filter(s -> s.length() > 0 && s.length() <= tweetTotal)
                     .orElseThrow(() -> new TwitterServiceException("Cannot post. Message length should be between 0 and 280 characters"))));
         } else {
