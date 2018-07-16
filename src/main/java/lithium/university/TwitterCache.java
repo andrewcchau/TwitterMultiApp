@@ -55,6 +55,7 @@ public class TwitterCache {
     }
 
     public void clearCache() {
+        logger.info("Clearing cache");
         cache = null;
     }
 }
