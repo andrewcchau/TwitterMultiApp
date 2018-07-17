@@ -10,7 +10,6 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import twitter4j.Paging;
 import twitter4j.ResponseList;
 import twitter4j.Status;
 import twitter4j.Twitter;
@@ -23,7 +22,6 @@ import java.util.Optional;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -32,6 +30,9 @@ import static org.mockito.Mockito.when;
 public class TwitterServiceTest {
     @Mock
     private Twitter twitterTest;
+
+    @Mock
+    private TwitterCache twitterCacheTest;
 
     @InjectMocks
     private TwitterService twitterServiceTest;
@@ -127,7 +128,7 @@ public class TwitterServiceTest {
         ResponseList<Status> fakeList = new FakeResponseList<>();
         fakeList.add(mockStatus());
 
-        when(twitterTest.getHomeTimeline(any(Paging.class))).thenReturn(fakeList);
+        when(twitterCacheTest.getCachedList()).thenReturn(fakeList);
 
         Optional<List<TwitterPost>> l = twitterServiceTest.retrieveFromTwitter(1);
         assertEquals(1, l.get().size());
@@ -143,7 +144,7 @@ public class TwitterServiceTest {
             fakeList.add(mockStatus(testMessage + i));
         }
 
-        when(twitterTest.getHomeTimeline(any(Paging.class))).thenReturn(fakeList);
+        when(twitterCacheTest.getCachedList()).thenReturn(fakeList);
 
         Optional<List<TwitterPost>> l = twitterServiceTest.retrieveFromTwitter(size);
         assertEquals(size, l.get().size());
@@ -158,7 +159,7 @@ public class TwitterServiceTest {
         fakeList.add(mockStatus("Tester 1"));
         fakeList.add(mockStatus("Tester 2"));
 
-        when(twitterTest.getHomeTimeline(any(Paging.class))).thenReturn(fakeList);
+        when(twitterCacheTest.getCachedList()).thenReturn(fakeList);
 
         Optional<List<TwitterPost>> l = twitterServiceTest.retrieveFilteredFromTwitter(1, Optional.of("1"));
         assertEquals(1, l.get().size());

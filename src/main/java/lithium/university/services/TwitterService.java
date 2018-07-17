@@ -1,11 +1,13 @@
 package lithium.university.services;
 
+import lithium.university.TwitterCache;
 import lithium.university.exceptions.TwitterServiceException;
 import lithium.university.models.TwitterPost;
 import lithium.university.models.TwitterUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import twitter4j.Paging;
+import twitter4j.ResponseList;
 import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -17,11 +19,14 @@ import java.util.stream.Collectors;
 
 public class TwitterService {
     private final Logger logger = LoggerFactory.getLogger(TwitterService.class);
+    private final int CACHE_TTL_SECONDS = 60;
     private Twitter twitter;
+    private TwitterCache twitterCache;
 
     @Inject
-    public TwitterService(Twitter twitter) {
+    public TwitterService(Twitter twitter, TwitterCache twitterCache) {
         this.twitter = twitter;
+        this.twitterCache = twitterCache;
     }
 
     /*
@@ -33,7 +38,11 @@ public class TwitterService {
         if (message.isPresent()) {
             logger.info("Attempting to update status");
             return Optional.of(twitter.updateStatus(message.filter(s -> s.length() > 0 && s.length() <= tweetTotal)
-                    .orElseThrow(() -> new TwitterServiceException("Cannot post. Message length should be between 0 and 280 characters"))));
+                    .orElseThrow(() -> new TwitterServiceException("Cannot post. Message length should be between 0 and 280 characters"))))
+                    .map(s -> {
+                        twitterCache.clearCache();
+                        return s;
+                    });
         } else {
             throw new TwitterServiceException("Cannot post. Message data is either missing or not in the correct form.");
         }
@@ -46,7 +55,14 @@ public class TwitterService {
         Paging p = new Paging(1, tweetTotal);
         logger.debug("Attempting to grab " + tweetTotal + " tweets from Twitter timeline");
 
-        return Optional.of(twitter.getHomeTimeline(p)
+        ResponseList<Status> cache = twitterCache.getCachedList();
+
+        if (cache == null) {
+            twitterCache.cacheList(twitter.getHomeTimeline(p), CACHE_TTL_SECONDS);
+            cache = twitterCache.getCachedList();
+        }
+
+        return Optional.of(cache
                 .stream()
                 .map(tp -> new TwitterPost(
                         tp.getText(),
@@ -61,7 +77,15 @@ public class TwitterService {
     public Optional<List<TwitterPost>> retrieveFilteredFromTwitter(final int tweetTotal, Optional<String> keyword) throws TwitterException, TwitterServiceException {
         Paging p = new Paging(1, tweetTotal);
         logger.debug("Attempting to find tweets from Twitter timeline that match keyword: " + keyword.orElseThrow(() -> new TwitterServiceException("Keyword to search cannot be null.")));
-        return Optional.of(twitter.getHomeTimeline(p)
+
+        ResponseList<Status> cache = twitterCache.getCachedList();
+
+        if (cache == null) {
+            twitterCache.cacheList(twitter.getHomeTimeline(p), CACHE_TTL_SECONDS);
+            cache = twitterCache.getCachedList();
+        }
+
+        return Optional.of(cache
                 .stream()
                 .filter(s -> s.getText().contains(keyword.orElse("")))
                 .map(s -> new TwitterPost(
