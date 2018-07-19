@@ -70,7 +70,8 @@ public class TwitterService {
                                 tp.getUser().getName(),
                                 tp.getUser().getScreenName(),
                                 tp.getUser().getProfileImageURL()),
-                        tp.getCreatedAt()))
+                        tp.getCreatedAt(),
+                        tp.getId()))
                 .collect(Collectors.toList()));
     }
 
@@ -94,7 +95,8 @@ public class TwitterService {
                                 s.getUser().getName(),
                                 s.getUser().getScreenName(),
                                 s.getUser().getProfileImageURL()),
-                        s.getCreatedAt()))
+                        s.getCreatedAt(),
+                        s.getId()))
                 .collect(Collectors.toList()));
     }
 }
