@@ -7,12 +7,12 @@ public class TwitterPost {
     private String twitterMessage;
     private TwitterUser user;
     private Date createdAt;
-    private long statusId;
+    private String statusId;
 
     public TwitterPost() {
     }
 
-    public TwitterPost(String twitterMessage, TwitterUser user, Date createdAt, long statusId) {
+    public TwitterPost(String twitterMessage, TwitterUser user, Date createdAt, String statusId) {
         this.twitterMessage = twitterMessage;
         this.user = user;
         this.createdAt = createdAt;
@@ -43,11 +43,11 @@ public class TwitterPost {
         this.createdAt = createdAt;
     }
 
-    public long getStatusId() {
+    public String getStatusId() {
         return statusId;
     }
 
-    public void setStatusId(long statusId) {
+    public void setStatusId(String statusId) {
         this.statusId = statusId;
     }
 
