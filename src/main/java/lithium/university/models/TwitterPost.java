@@ -7,14 +7,16 @@ public class TwitterPost {
     private String twitterMessage;
     private TwitterUser user;
     private Date createdAt;
+    private String Id;
 
     public TwitterPost() {
     }
 
-    public TwitterPost(String twitterMessage, TwitterUser user, Date createdAt) {
+    public TwitterPost(String twitterMessage, TwitterUser user, Date createdAt, String Id) {
         this.twitterMessage = twitterMessage;
         this.user = user;
         this.createdAt = createdAt;
+        this.Id = Id;
     }
 
     public String getTwitterMessage() {
@@ -39,6 +41,14 @@ public class TwitterPost {
 
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getId() {
+        return Id;
+    }
+
+    public void setId(String id) {
+        this.Id = id;
     }
 
     @Override
