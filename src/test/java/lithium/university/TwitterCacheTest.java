@@ -1,5 +1,6 @@
 package lithium.university;
 
+import lithium.university.models.FakeResponseList;
 import org.junit.Before;
 import org.junit.Test;
 import twitter4j.ResponseList;
@@ -52,7 +53,7 @@ public class TwitterCacheTest {
         assertNotNull(twitterCacheTest.getCachedList());
 
         try {
-            Thread.sleep(ttlSeconds * 1000);
+            Thread.sleep((ttlSeconds + 1)* 1000);
         } catch (Exception e) {
             fail();
         }

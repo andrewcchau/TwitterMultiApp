@@ -1,8 +1,10 @@
-package lithium.university;
+package lithium.university.services;
 
+import lithium.university.models.FakeResponseList;
+import lithium.university.TwitterApplication;
+import lithium.university.TwitterCache;
 import lithium.university.exceptions.TwitterServiceException;
 import lithium.university.models.TwitterPost;
-import lithium.university.services.TwitterService;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;

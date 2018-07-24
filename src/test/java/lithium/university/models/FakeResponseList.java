@@ -1,4 +1,4 @@
-package lithium.university;
+package lithium.university.models;
 
 import twitter4j.RateLimitStatus;
 import twitter4j.ResponseList;
