@@ -1,4 +1,4 @@
-package lithium.university;
+package lithium.university.models;
 
 import lithium.university.models.TwitterUser;
 import org.junit.Test;

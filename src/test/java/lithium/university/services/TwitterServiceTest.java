@@ -1,5 +1,8 @@
-package lithium.university;
+package lithium.university.services;
 
+import lithium.university.FakeResponseList;
+import lithium.university.TwitterApplication;
+import lithium.university.TwitterCache;
 import lithium.university.exceptions.TwitterServiceException;
 import lithium.university.models.TwitterPost;
 import lithium.university.services.TwitterService;

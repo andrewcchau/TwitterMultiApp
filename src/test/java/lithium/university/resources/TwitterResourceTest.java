@@ -1,5 +1,7 @@
-package lithium.university;
+package lithium.university.resources;
 
+import lithium.university.Tweet;
+import lithium.university.TwitterProvider;
 import lithium.university.exceptions.TwitterServiceException;
 import lithium.university.models.TwitterPost;
 import lithium.university.resources.TwitterResource;
