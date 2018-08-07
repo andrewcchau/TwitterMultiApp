@@ -72,11 +72,11 @@ public class TwitterResource {
     @GET
     @Path("/user")
     @Produces(MediaType.TEXT_PLAIN)
-    public Response getUser() {
+    public Response getUserHandle() {
         try {
-            return twitterService.retrieveUser().map(u -> Response.ok(u).header("Access-Control-Allow-Origin", "http://localhost:9000").build()).get();
+            return twitterService.retrieveUserHandle().map(u -> Response.ok(u).header("Access-Control-Allow-Origin", "http://localhost:9000").build()).get();
         } catch (TwitterException te) {
-            logger.error("An exception has occurred in getUser", te);
+            logger.error("An exception has occurred in getUserHandle", te);
             return Response.serverError().entity(errorMessage).header("Access-Control-Allow-Origin", "http://localhost:9000").build();
         }
     }

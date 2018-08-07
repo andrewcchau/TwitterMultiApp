@@ -53,7 +53,7 @@ public class TwitterService {
         }
     }
 
-    public Optional<String> retrieveUser() throws TwitterException {
+    public Optional<String> retrieveUserHandle() throws TwitterException {
         logger.debug("Attempting to grab user handle from Twitter");
 
         if(userHandleHolder == null) {
