@@ -53,16 +53,6 @@ public class TwitterService {
         }
     }
 
-    public Optional<String> retrieveUserHandle() throws TwitterException {
-        logger.debug("Attempting to grab user handle from Twitter");
-
-        if(userHandleHolder == null) {
-            userHandleHolder = Optional.ofNullable(twitter.showUser(twitter.getId()).getScreenName());
-        }
-
-        return userHandleHolder;
-    }
-
     /*
      * Gets the data from twitter and returns a list of the statuses
      * */
@@ -106,7 +96,7 @@ public class TwitterService {
                 .map(tp -> new TwitterPost(
                         tp.getText(),
                         new TwitterUser(
-                                tp.getUser().getScreenName(),
+                                null,
                                 tp.getUser().getName(),
                                 tp.getUser().getProfileImageURL()),
                         tp.getCreatedAt(),
