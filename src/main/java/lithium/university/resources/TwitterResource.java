@@ -58,6 +58,18 @@ public class TwitterResource {
     }
 
     @GET
+    @Path("/usertimeline")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getUserTimeline() {
+        try {
+            return twitterService.retrieveUserPosts(TwitterApplication.TWEET_TOTAL).map(l -> Response.ok(l).header("Access-Control-Allow-Origin", "http://localhost:9000").build()).get();
+        } catch (TwitterException te) {
+            logger.error("An exception has occurred in getHomeTimeline", te);
+            return Response.serverError().entity(errorMessage).header("Access-Control-Allow-Origin", "http://localhost:9000").build();
+        }
+    }
+
+    @GET
     @Path("/tweet/filter")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getFilteredTweets(@QueryParam("keyword") Optional<String> keyword) {

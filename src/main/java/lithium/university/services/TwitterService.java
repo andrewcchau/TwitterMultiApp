@@ -22,11 +22,13 @@ public class TwitterService {
     private final int CACHE_TTL_SECONDS = 60;
     private Twitter twitter;
     private TwitterCache twitterCache;
+    private TwitterCache userCache;
 
     @Inject
-    public TwitterService(Twitter twitter, TwitterCache twitterCache) {
+    public TwitterService(Twitter twitter, TwitterCache twitterCache, TwitterCache userCache) {
         this.twitter = twitter;
         this.twitterCache = twitterCache;
+        this.userCache = userCache;
     }
 
     /*
@@ -41,6 +43,7 @@ public class TwitterService {
                     .orElseThrow(() -> new TwitterServiceException("Cannot post. Message length should be between 0 and 280 characters"))))
                     .map(s -> {
                         twitterCache.clearCache();
+                        userCache.clearCache();
                         return s;
                     });
         } else {
@@ -67,8 +70,32 @@ public class TwitterService {
                 .map(tp -> new TwitterPost(
                         tp.getText(),
                         new TwitterUser(
-                                tp.getUser().getName(),
                                 tp.getUser().getScreenName(),
+                                tp.getUser().getName(),
+                                tp.getUser().getProfileImageURL()),
+                        tp.getCreatedAt(),
+                        Long.toString(tp.getId())))
+                .collect(Collectors.toList()));
+    }
+
+    public Optional<List<TwitterPost>> retrieveUserPosts(final int tweetTotal) throws TwitterException {
+        Paging p = new Paging(1, tweetTotal);
+        logger.debug("Attempting to grab " + tweetTotal + " tweets from Twitter timeline");
+
+        ResponseList<Status> cache = userCache.getCachedList();
+
+        if (cache == null) {
+            userCache.cacheList(twitter.getUserTimeline(twitter.getId(), p), CACHE_TTL_SECONDS);
+            cache = userCache.getCachedList();
+        }
+
+        return Optional.of(cache
+                .stream()
+                .map(tp -> new TwitterPost(
+                        tp.getText(),
+                        new TwitterUser(
+                                tp.getUser().getScreenName(),
+                                tp.getUser().getName(),
                                 tp.getUser().getProfileImageURL()),
                         tp.getCreatedAt(),
                         Long.toString(tp.getId())))
@@ -92,8 +119,8 @@ public class TwitterService {
                 .map(s -> new TwitterPost(
                         s.getText(),
                         new TwitterUser(
-                                s.getUser().getName(),
                                 s.getUser().getScreenName(),
+                                s.getUser().getName(),
                                 s.getUser().getProfileImageURL()),
                         s.getCreatedAt(),
                         Long.toString(s.getId())))
