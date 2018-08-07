@@ -96,7 +96,7 @@ public class TwitterService {
                 .map(tp -> new TwitterPost(
                         tp.getText(),
                         new TwitterUser(
-                                null,
+                                tp.getUser().getScreenName(),
                                 tp.getUser().getName(),
                                 tp.getUser().getProfileImageURL()),
                         tp.getCreatedAt(),
