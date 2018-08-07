@@ -64,7 +64,19 @@ public class TwitterResource {
         try {
             return twitterService.retrieveUserPosts(TwitterApplication.TWEET_TOTAL).map(l -> Response.ok(l).header("Access-Control-Allow-Origin", "http://localhost:9000").build()).get();
         } catch (TwitterException te) {
-            logger.error("An exception has occurred in getHomeTimeline", te);
+            logger.error("An exception has occurred in getUserTimeline", te);
+            return Response.serverError().entity(errorMessage).header("Access-Control-Allow-Origin", "http://localhost:9000").build();
+        }
+    }
+
+    @GET
+    @Path("/user")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getUser() {
+        try {
+            return twitterService.retrieveUser().map(u -> Response.ok(u).header("Access-Control-Allow-Origin", "http://localhost:9000").build()).get();
+        } catch (TwitterException te) {
+            logger.error("An exception has occurred in getUser", te);
             return Response.serverError().entity(errorMessage).header("Access-Control-Allow-Origin", "http://localhost:9000").build();
         }
     }

@@ -23,12 +23,14 @@ public class TwitterService {
     private Twitter twitter;
     private TwitterCache twitterCache;
     private TwitterCache userCache;
+    private Optional<String> userHandleHolder;
 
     @Inject
     public TwitterService(Twitter twitter, TwitterCache twitterCache, TwitterCache userCache) {
         this.twitter = twitter;
         this.twitterCache = twitterCache;
         this.userCache = userCache;
+        userHandleHolder = null;
     }
 
     /*
@@ -49,6 +51,16 @@ public class TwitterService {
         } else {
             throw new TwitterServiceException("Cannot post. Message data is either missing or not in the correct form.");
         }
+    }
+
+    public Optional<String> retrieveUser() throws TwitterException {
+        logger.debug("Attempting to grab user handle from Twitter");
+
+        if(userHandleHolder == null) {
+            userHandleHolder = Optional.ofNullable(twitter.showUser(twitter.getId()).getScreenName());
+        }
+
+        return userHandleHolder;
     }
 
     /*
@@ -80,7 +92,7 @@ public class TwitterService {
 
     public Optional<List<TwitterPost>> retrieveUserPosts(final int tweetTotal) throws TwitterException {
         Paging p = new Paging(1, tweetTotal);
-        logger.debug("Attempting to grab " + tweetTotal + " tweets from Twitter timeline");
+        logger.debug("Attempting to grab " + tweetTotal + " tweets from User timeline");
 
         ResponseList<Status> cache = userCache.getCachedList();
 
