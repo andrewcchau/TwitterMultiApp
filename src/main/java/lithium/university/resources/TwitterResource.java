@@ -71,7 +71,7 @@ public class TwitterResource {
 
     @GET
     @Path("/user")
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.TEXT_PLAIN)
     public Response getUser() {
         try {
             return twitterService.retrieveUser().map(u -> Response.ok(u).header("Access-Control-Allow-Origin", "http://localhost:9000").build()).get();
