@@ -1,7 +1,5 @@
 package lithium.university.models;
 
-import lithium.university.models.TwitterPost;
-import lithium.university.models.TwitterUser;
 import org.junit.Test;
 
 import java.util.Date;

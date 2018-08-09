@@ -80,30 +80,6 @@ public class TwitterService {
                 .collect(Collectors.toList()));
     }
 
-    public Optional<List<TwitterPost>> retrieveUserPosts(final int tweetTotal) throws TwitterException {
-        Paging p = new Paging(1, tweetTotal);
-        logger.debug("Attempting to grab " + tweetTotal + " tweets from User timeline");
-
-        ResponseList<Status> cache = userCache.getCachedList();
-
-        if (cache == null) {
-            userCache.cacheList(twitter.getUserTimeline(twitter.getId(), p), CACHE_TTL_SECONDS);
-            cache = userCache.getCachedList();
-        }
-
-        return Optional.of(cache
-                .stream()
-                .map(tp -> new TwitterPost(
-                        tp.getText(),
-                        new TwitterUser(
-                                tp.getUser().getScreenName(),
-                                tp.getUser().getName(),
-                                tp.getUser().getProfileImageURL()),
-                        tp.getCreatedAt(),
-                        Long.toString(tp.getId())))
-                .collect(Collectors.toList()));
-    }
-
     public Optional<List<TwitterPost>> retrieveFilteredFromTwitter(final int tweetTotal, Optional<String> keyword) throws TwitterException, TwitterServiceException {
         Paging p = new Paging(1, tweetTotal);
         logger.debug("Attempting to find tweets from Twitter timeline that match keyword: " + keyword.orElseThrow(() -> new TwitterServiceException("Keyword to search cannot be null.")));
@@ -126,6 +102,30 @@ public class TwitterService {
                                 s.getUser().getProfileImageURL()),
                         s.getCreatedAt(),
                         Long.toString(s.getId())))
+                .collect(Collectors.toList()));
+    }
+
+    public Optional<List<TwitterPost>> retrieveUserPosts(final int tweetTotal) throws TwitterException {
+        Paging p = new Paging(1, tweetTotal);
+        logger.debug("Attempting to grab " + tweetTotal + " tweets from User timeline");
+
+        ResponseList<Status> cache = userCache.getCachedList();
+
+        if (cache == null) {
+            userCache.cacheList(twitter.getUserTimeline(twitter.getId(), p), CACHE_TTL_SECONDS);
+            cache = userCache.getCachedList();
+        }
+
+        return Optional.of(cache
+                .stream()
+                .map(tp -> new TwitterPost(
+                        tp.getText(),
+                        new TwitterUser(
+                                tp.getUser().getScreenName(),
+                                tp.getUser().getName(),
+                                tp.getUser().getProfileImageURL()),
+                        tp.getCreatedAt(),
+                        Long.toString(tp.getId())))
                 .collect(Collectors.toList()));
     }
 }

@@ -1,9 +1,7 @@
 package lithium.university.resources;
 
-import lithium.university.Tweet;
 import lithium.university.TwitterApplication;
 import lithium.university.exceptions.TwitterServiceException;
-import lithium.university.models.TwitterPost;
 import lithium.university.services.TwitterService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +17,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.List;
 import java.util.Optional;
 
 
@@ -75,9 +72,7 @@ public class TwitterResource {
     public Response getFilteredTweets(@QueryParam("keyword") Optional<String> keyword) {
         try {
             return twitterService.retrieveFilteredFromTwitter(TwitterApplication.TWEET_TOTAL, keyword)
-                    .map(List::stream)
-                    .map(s -> s.map(TwitterPost::getTwitterMessage))
-                    .map(l -> Response.ok(new Tweet(l)).build()).get();
+                    .map(l -> Response.ok(l).header("Access-Control-Allow-Origin", "http://localhost:9000").build()).get();
         } catch (TwitterException te) {
             logger.error("An exception from Twitter has occurred in getFilteredTweets", te);
             return Response.serverError().entity(errorMessage).build();
