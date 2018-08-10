@@ -1,10 +1,8 @@
 package lithium.university.resources;
 
-import lithium.university.Tweet;
 import lithium.university.TwitterProvider;
 import lithium.university.exceptions.TwitterServiceException;
 import lithium.university.models.TwitterPost;
-import lithium.university.resources.TwitterResource;
 import lithium.university.services.TwitterService;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,8 +14,6 @@ import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -80,11 +76,11 @@ public class TwitterResourceTest {
 
         Response response = twitterResourceTest.getFilteredTweets(Optional.of("Sample"));
 
-        List<String> list = (List<String>) ((Stream) ((Tweet) response.getEntity()).getContent().get()).collect(Collectors.toList());
+        List<TwitterPost> list = ((List<TwitterPost>) response.getEntity());
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         assertEquals(5,  list.size());
-        assertEquals(fakeList.get(0).getTwitterMessage() , list.get(0));
+        assertEquals(fakeList.get(0).getTwitterMessage() , list.get(0).getTwitterMessage());
     }
 
     @Test
