@@ -75,10 +75,10 @@ public class TwitterResource {
                     .map(l -> Response.ok(l).header("Access-Control-Allow-Origin", "http://localhost:9000").build()).get();
         } catch (TwitterException te) {
             logger.error("An exception from Twitter has occurred in getFilteredTweets", te);
-            return Response.serverError().entity(errorMessage).build();
+            return Response.serverError().header("Access-Control-Allow-Origin", "http://localhost:9000").entity(errorMessage).build();
         } catch (TwitterServiceException tse) {
             logger.error("An exception from TwitterService has occurred in getFilteredTweets", tse);
-            return Response.serverError().entity(tse.getMessage()).build();
+            return Response.serverError().header("Access-Control-Allow-Origin", "http://localhost:9000").entity(tse.getMessage()).build();
         }
     }
 
@@ -90,14 +90,14 @@ public class TwitterResource {
         try {
             return twitterService.postToTwitter(Optional.ofNullable(message), TwitterApplication.TWEET_LENGTH)
                     .map(status -> successMessage(status.getText()))
-                    .map(status -> Response.ok(status).build())
+                    .map(status -> Response.ok(status).header("Access-Control-Allow-Origin", "http://localhost:9000").build())
                     .get();
         } catch (TwitterException te) {
             logger.error("An exception from Twitter has occurred in postTweet", te);
-            return Response.serverError().entity(errorMessage).build();
+            return Response.serverError().header("Access-Control-Allow-Origin", "http://localhost:9000").entity(errorMessage).build();
         } catch (TwitterServiceException tse) {
             logger.error("An exception from TwitterService has occurred in postTweet", tse);
-            return Response.serverError().entity(tse.getMessage()).build();
+            return Response.serverError().header("Access-Control-Allow-Origin", "http://localhost:9000").entity(tse.getMessage()).build();
         }
     }
 }
