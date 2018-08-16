@@ -47,10 +47,10 @@ public class TwitterResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getHomeTimeline() {
         try {
-            return twitterService.retrieveFromTwitter(TwitterApplication.TWEET_TOTAL).map(l -> Response.ok(l).header("Access-Control-Allow-Origin", "http://localhost:9000").build()).get();
+            return twitterService.retrieveFromTwitter(TwitterApplication.TWEET_TOTAL).map(l -> Response.ok(l).build()).get();
         } catch (TwitterException te) {
             logger.error("An exception has occurred in getHomeTimeline", te);
-            return Response.serverError().entity(errorMessage).header("Access-Control-Allow-Origin", "http://localhost:9000").build();
+            return Response.serverError().entity(errorMessage).build();
         }
     }
 
@@ -59,10 +59,10 @@ public class TwitterResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUserTimeline() {
         try {
-            return twitterService.retrieveUserPosts(TwitterApplication.TWEET_TOTAL).map(l -> Response.ok(l).header("Access-Control-Allow-Origin", "http://localhost:9000").build()).get();
+            return twitterService.retrieveUserPosts(TwitterApplication.TWEET_TOTAL).map(l -> Response.ok(l).build()).get();
         } catch (TwitterException te) {
             logger.error("An exception has occurred in getUserTimeline", te);
-            return Response.serverError().entity(errorMessage).header("Access-Control-Allow-Origin", "http://localhost:9000").build();
+            return Response.serverError().entity(errorMessage).build();
         }
     }
 
@@ -72,7 +72,7 @@ public class TwitterResource {
     public Response getFilteredTweets(@QueryParam("keyword") Optional<String> keyword) {
         try {
             return twitterService.retrieveFilteredFromTwitter(TwitterApplication.TWEET_TOTAL, keyword)
-                    .map(l -> Response.ok(l).header("Access-Control-Allow-Origin", "http://localhost:9000").build()).get();
+                    .map(l -> Response.ok(l).build()).get();
         } catch (TwitterException te) {
             logger.error("An exception from Twitter has occurred in getFilteredTweets", te);
             return Response.serverError().entity(errorMessage).build();

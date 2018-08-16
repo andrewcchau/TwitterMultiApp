@@ -23,14 +23,12 @@ public class TwitterService {
     private Twitter twitter;
     private TwitterCache twitterCache;
     private TwitterCache userCache;
-    private Optional<String> userHandleHolder;
 
     @Inject
     public TwitterService(Twitter twitter, TwitterCache twitterCache, TwitterCache userCache) {
         this.twitter = twitter;
         this.twitterCache = twitterCache;
         this.userCache = userCache;
-        userHandleHolder = null;
     }
 
     /*
