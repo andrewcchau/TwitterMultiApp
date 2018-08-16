@@ -58,9 +58,9 @@ public class TwitterService {
     public Optional<Status> replyToTweet(Optional<Long> statusID, Optional<String> message, int tweetTotal) throws TwitterException, TwitterServiceException {
         if(statusID.isPresent() && statusID.get() != 0 && message.isPresent()) {
             logger.info("Attempting to reply to tweet");
-            Status status = twitter.showStatus(statusID.get());
-            return Optional.of(twitter.updateStatus((new StatusUpdate("@" + status.getUser().getScreenName() + " " +
-                        message.filter(s -> s.length() > 0 && s.length() <= (tweetTotal - status.getUser().getScreenName().length() - 2))
+            String posterScreenName = twitter.showStatus(statusID.get()).getUser().getScreenName();
+            return Optional.of(twitter.updateStatus((new StatusUpdate("@" + posterScreenName + " " +
+                        message.filter(s -> s.length() > 0 && s.length() <= (tweetTotal - posterScreenName.length() - 2))
                                 .orElseThrow(() -> new TwitterServiceException("Cannot reply. Message length (including user tagging) should be between 0 and 280 characters")))
                     .inReplyToStatusId(statusID.map(s -> {
                             twitterCache.clearCache();
