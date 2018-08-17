@@ -43,7 +43,7 @@ public class TwitterServiceTest {
 
     private String mockMessage = "General status message for testing";
 
-    private long statusID = (long) 12345;
+    private long statusID = 12345;
 
     private Status mockStatus(String message) {
         Status s = mock(Status.class);

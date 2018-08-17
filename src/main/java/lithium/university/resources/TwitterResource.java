@@ -37,7 +37,9 @@ public class TwitterResource {
         return "Successfully updated status to: " + message + "\n";
     }
 
-    public String successReply(String message) { return "Successfully replied to status with: " + message + "\n";}
+    public String successReply(String message) {
+        return "Successfully replied to status with: " + message + "\n";
+    }
 
     public String getErrorMessage() {
         return errorMessage;
