@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 
 public class TwitterService {
     private final Logger logger = LoggerFactory.getLogger(TwitterService.class);
+    public static final int MAX_TWEET_LENGTH = 280;
     private final int CACHE_TTL_SECONDS = 60;
     private Twitter twitter;
     private TwitterCache twitterCache;
@@ -37,10 +38,10 @@ public class TwitterService {
      * Input: Twitter twitter - twitter instance, String message - message to be posted, int tweetTotal - total limited characters
      * Output: status object of updated status
      * */
-    public Optional<Status> postToTwitter(Optional<String> message, int tweetTotal) throws TwitterException, TwitterServiceException {
+    public Optional<Status> postToTwitter(Optional<String> message) throws TwitterException, TwitterServiceException {
         if (message.isPresent()) {
             logger.info("Attempting to update status");
-            return Optional.of(twitter.updateStatus(message.filter(s -> s.length() > 0 && s.length() <= tweetTotal)
+            return Optional.of(twitter.updateStatus(message.filter(s -> s.length() > 0 && s.length() <= MAX_TWEET_LENGTH)
                     .orElseThrow(() -> new TwitterServiceException("Cannot post. Message length should be between 0 and 280 characters"))))
                     .map(s -> {
                         twitterCache.clearCache();
@@ -55,13 +56,13 @@ public class TwitterService {
     /*
      * Takes in a tweet id and message and replies to the original tweet
      * */
-    public Optional<Status> replyToTweet(Optional<Long> statusID, Optional<String> message, int tweetTotal) throws TwitterException, TwitterServiceException {
+    public Optional<Status> replyToTweet(Optional<Long> statusID, Optional<String> message) throws TwitterException, TwitterServiceException {
         if (statusID.isPresent() && statusID.get() != 0 && message.isPresent()) {
             logger.info("Attempting to reply to tweet");
             Status status = twitter.showStatus(statusID.get());
             if(status != null) {
                 return Optional.of(twitter.updateStatus((new StatusUpdate("@" + status.getUser().getScreenName() + " " +
-                        message.filter(s -> s.length() > 0 && s.length() <= (tweetTotal - status.getUser().getScreenName().length() - 2))
+                        message.filter(s -> s.length() > 0 && s.length() <= (MAX_TWEET_LENGTH - status.getUser().getScreenName().length() - 2))
                                 .orElseThrow(() -> new TwitterServiceException("Cannot reply. Message length (including user tagging) should be between 0 and 280 characters")))
                         .inReplyToStatusId(statusID.map(s -> {
                             twitterCache.clearCache();

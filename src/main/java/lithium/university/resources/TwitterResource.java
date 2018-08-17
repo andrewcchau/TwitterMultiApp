@@ -92,7 +92,7 @@ public class TwitterResource {
     public Response postTweet(@FormParam("message") String message) {
         /*Attempt to post to Twitter*/
         try {
-            return twitterService.postToTwitter(Optional.ofNullable(message), TwitterApplication.TWEET_LENGTH)
+            return twitterService.postToTwitter(Optional.ofNullable(message))
                     .map(status -> successMessage(status.getText()))
                     .map(status -> Response.ok(status).build())
                     .get();
@@ -110,7 +110,7 @@ public class TwitterResource {
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public Response postTweetReply(@FormParam("statusID") long statusID, @FormParam("message") String message) {
         try {
-            return twitterService.replyToTweet(Optional.ofNullable(statusID), Optional.ofNullable(message), TwitterApplication.TWEET_LENGTH)
+            return twitterService.replyToTweet(Optional.ofNullable(statusID), Optional.ofNullable(message))
                     .map(status -> successReply(status.getText()))
                     .map(status -> Response.ok(status).build())
                     .get();

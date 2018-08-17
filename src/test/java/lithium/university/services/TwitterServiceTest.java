@@ -1,6 +1,5 @@
 package lithium.university.services;
 
-import lithium.university.TwitterApplication;
 import lithium.university.TwitterCache;
 import lithium.university.exceptions.TwitterServiceException;
 import lithium.university.models.FakeResponseList;
@@ -76,7 +75,7 @@ public class TwitterServiceTest {
     @Test(expected = TwitterServiceException.class)
     public void testPostNull() throws TwitterException, TwitterServiceException {
         try {
-            twitterServiceTest.postToTwitter(Optional.ofNullable(null), TwitterApplication.TWEET_LENGTH);
+            twitterServiceTest.postToTwitter(Optional.ofNullable(null));
         } catch (TwitterServiceException tse) {
             assertEquals("Cannot post. Message data is either missing or not in the correct form.", tse.getMessage());
             throw tse;
@@ -87,7 +86,7 @@ public class TwitterServiceTest {
     @Test(expected = TwitterServiceException.class)
     public void testPostCharLengthZero() throws TwitterException, TwitterServiceException {
         try {
-            twitterServiceTest.postToTwitter(Optional.of(generateStringLength(0)), TwitterApplication.TWEET_LENGTH);
+            twitterServiceTest.postToTwitter(Optional.of(generateStringLength(0)));
         } catch (TwitterServiceException tse) {
             assertEquals("Cannot post. Message length should be between 0 and 280 characters", tse.getMessage());
             throw tse;
@@ -98,7 +97,7 @@ public class TwitterServiceTest {
     @Test(expected = TwitterServiceException.class)
     public void testPostCharLengthOver() throws TwitterException, TwitterServiceException {
         try {
-            twitterServiceTest.postToTwitter(Optional.of(generateStringLength(TwitterApplication.TWEET_LENGTH + 1)), TwitterApplication.TWEET_LENGTH);
+            twitterServiceTest.postToTwitter(Optional.of(generateStringLength(TwitterService.MAX_TWEET_LENGTH + 1)));
         } catch (TwitterServiceException tse) {
             assertEquals("Cannot post. Message length should be between 0 and 280 characters", tse.getMessage());
             throw tse;
@@ -108,14 +107,14 @@ public class TwitterServiceTest {
 
     @Test
     public void testPostCharLengthUnder() throws TwitterException, TwitterServiceException {
-        Status publishTest = twitterServiceTest.postToTwitter(Optional.of(generateStringLength(TwitterApplication.TWEET_LENGTH - 1)), TwitterApplication.TWEET_LENGTH).get();
+        Status publishTest = twitterServiceTest.postToTwitter(Optional.of(generateStringLength(TwitterService.MAX_TWEET_LENGTH - 1))).get();
         assertNotNull(publishTest);
         assertEquals(mockMessage, publishTest.getText());
     }
 
     @Test
     public void testPostCharLengthEqual() throws TwitterException, TwitterServiceException {
-        Status publishTest = twitterServiceTest.postToTwitter(Optional.of(generateStringLength(TwitterApplication.TWEET_LENGTH)), TwitterApplication.TWEET_LENGTH).get();
+        Status publishTest = twitterServiceTest.postToTwitter(Optional.of(generateStringLength(TwitterService.MAX_TWEET_LENGTH))).get();
         assertNotNull(publishTest);
         assertEquals(mockMessage, publishTest.getText());
     }
@@ -123,7 +122,7 @@ public class TwitterServiceTest {
     @Test(expected = TwitterServiceException.class)
     public void testReplyToTweetZeroLength() throws TwitterException, TwitterServiceException {
         try {
-            twitterServiceTest.replyToTweet(Optional.of(statusID), Optional.of(generateStringLength(0)), TwitterApplication.TWEET_LENGTH);
+            twitterServiceTest.replyToTweet(Optional.of(statusID), Optional.of(generateStringLength(0)));
         } catch (TwitterServiceException tse) {
             assertEquals("Cannot reply. Status referenced by ID does not exist.", tse.getMessage());
             throw tse;
@@ -136,7 +135,7 @@ public class TwitterServiceTest {
         try {
             Status mockStatus = mockStatus();
             when(twitterTest.showStatus(Mockito.anyLong())).thenReturn(mockStatus);
-            twitterServiceTest.replyToTweet(Optional.of(statusID), Optional.of(generateStringLength(280)), TwitterApplication.TWEET_LENGTH);
+            twitterServiceTest.replyToTweet(Optional.of(statusID), Optional.of(generateStringLength(280)));
         } catch (TwitterServiceException tse) {
             assertEquals("Cannot reply. Message length (including user tagging) should be between 0 and 280 characters", tse.getMessage());
             throw tse;
@@ -149,8 +148,7 @@ public class TwitterServiceTest {
         Status mockStatus = mockStatus();
         when(twitterTest.showStatus(Mockito.anyLong())).thenReturn(mockStatus);
         Status replyTest = twitterServiceTest.replyToTweet(Optional.of(statusID),
-                Optional.of(generateStringLength(2)),
-                TwitterApplication.TWEET_LENGTH).get();
+                Optional.of(generateStringLength(2))).get();
         assertNotNull(replyTest);
         assertEquals(mockMessage, replyTest.getText());
     }
@@ -160,8 +158,7 @@ public class TwitterServiceTest {
         Status mockStatus = mockStatus();
         when(twitterTest.showStatus(Mockito.anyLong())).thenReturn(mockStatus);
         Status replyTest = twitterServiceTest.replyToTweet(Optional.of(statusID),
-                Optional.of(generateStringLength(280 - mockStatus.getUser().getScreenName().length() - 2)),
-                TwitterApplication.TWEET_LENGTH).get();
+                Optional.of(generateStringLength(280 - mockStatus.getUser().getScreenName().length() - 2))).get();
         assertNotNull(replyTest);
         assertEquals(mockMessage, replyTest.getText());
     }
@@ -169,7 +166,7 @@ public class TwitterServiceTest {
     @Test (expected = TwitterServiceException.class)
     public void testReplyNullStatusID() throws TwitterException, TwitterServiceException {
         try {
-            twitterServiceTest.replyToTweet(Optional.ofNullable(null), Optional.of(mockMessage), TwitterApplication.TWEET_LENGTH);
+            twitterServiceTest.replyToTweet(Optional.ofNullable(null), Optional.of(mockMessage));
         } catch(TwitterServiceException tse) {
             assertEquals("Cannot reply. Check that both 'message' and 'statusID' data are present.", tse.getMessage());
             throw tse;
@@ -181,7 +178,7 @@ public class TwitterServiceTest {
     public void testReplyNoStatusID() throws TwitterException, TwitterServiceException {
         Long noID = (long) 0;
         try {
-            twitterServiceTest.replyToTweet(Optional.ofNullable(noID), Optional.of(mockMessage), TwitterApplication.TWEET_LENGTH);
+            twitterServiceTest.replyToTweet(Optional.ofNullable(noID), Optional.of(mockMessage));
         } catch(TwitterServiceException tse) {
             assertEquals("Cannot reply. Check that both 'message' and 'statusID' data are present.", tse.getMessage());
             throw tse;
