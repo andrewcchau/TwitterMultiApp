@@ -13,7 +13,6 @@ import java.util.EnumSet;
 
 public class TwitterApplication extends Application<TwitterConfiguration> {
     public static final int TWEET_TOTAL = 25;
-    public static final int TWEET_LENGTH = 280;
 
     public static void main(String args[]) throws Exception {
         new TwitterApplication().run(args);

@@ -9,6 +9,7 @@ public class FakeResponseList<T> extends ArrayList<T> implements ResponseList<T>
     public RateLimitStatus getRateLimitStatus() {
         return null;
     }
+
     public int getAccessLevel() {
         return 1;
     }

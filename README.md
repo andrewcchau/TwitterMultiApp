@@ -22,6 +22,14 @@ To post to twitter using this program, follow these steps:
 3. Create a field named "message" and enter your desired post/message
 4. Send the form data to http://localhost:8080/api/1.0/twitter/tweet
 
+## Replying to a Twitter Post
+To reply to a post on twitter using this program, follow these steps:
+1. Make sure the program is running first (see: Running The Program above)
+2. Open a program that allows sending of form-urlencoded data such as Postman
+3. Created a field named "statusID" and enter the status ID of the original post
+3. Create a field named "message" and enter your desired reply
+4. Send the form data to http://localhost:8080/api/1.0/twitter/tweet/reply
+
 ## Viewing Twitter Timeline
 To view your home timeline, ensure the program is running (see: Running The Program above):
 * To view latest posts on your home timeline, go to http://localhost:8080/api/1.0/timeline

@@ -37,6 +37,10 @@ public class TwitterResource {
         return "Successfully updated status to: " + message + "\n";
     }
 
+    public String successReply(String message) {
+        return "Successfully replied to status with: " + message + "\n";
+    }
+
     public String getErrorMessage() {
         return errorMessage;
     }
@@ -88,7 +92,7 @@ public class TwitterResource {
     public Response postTweet(@FormParam("message") String message) {
         /*Attempt to post to Twitter*/
         try {
-            return twitterService.postToTwitter(Optional.ofNullable(message), TwitterApplication.TWEET_LENGTH)
+            return twitterService.postToTwitter(Optional.ofNullable(message))
                     .map(status -> successMessage(status.getText()))
                     .map(status -> Response.ok(status).build())
                     .get();
@@ -97,6 +101,24 @@ public class TwitterResource {
             return Response.serverError().entity(errorMessage).build();
         } catch (TwitterServiceException tse) {
             logger.error("An exception from TwitterService has occurred in postTweet", tse);
+            return Response.serverError().entity(tse.getMessage()).build();
+        }
+    }
+
+    @POST
+    @Path("/tweet/reply")
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    public Response postTweetReply(@FormParam("statusID") long statusID, @FormParam("message") String message) {
+        try {
+            return twitterService.replyToTweet(Optional.ofNullable(statusID), Optional.ofNullable(message))
+                    .map(status -> successReply(status.getText()))
+                    .map(status -> Response.ok(status).build())
+                    .get();
+        } catch (TwitterException te) {
+            logger.error("An exception from Twitter has occurred in replyToTweet", te);
+            return Response.serverError().entity(errorMessage).build();
+        } catch (TwitterServiceException tse) {
+            logger.error("An exception from TwitterService has occurred in replyToTweet", tse);
             return Response.serverError().entity(tse.getMessage()).build();
         }
     }
