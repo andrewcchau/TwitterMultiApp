@@ -53,20 +53,24 @@ public class TwitterService {
     }
 
     /*
-    * Takes in a tweet id and message and replies to the original tweet
-    * */
+     * Takes in a tweet id and message and replies to the original tweet
+     * */
     public Optional<Status> replyToTweet(Optional<Long> statusID, Optional<String> message, int tweetTotal) throws TwitterException, TwitterServiceException {
-        if(statusID.isPresent() && statusID.get() != 0 && message.isPresent()) {
+        if (statusID.isPresent() && statusID.get() != 0 && message.isPresent()) {
             logger.info("Attempting to reply to tweet");
-            String posterScreenName = twitter.showStatus(statusID.get()).getUser().getScreenName();
-            return Optional.of(twitter.updateStatus((new StatusUpdate("@" + posterScreenName + " " +
-                        message.filter(s -> s.length() > 0 && s.length() <= (tweetTotal - posterScreenName.length() - 2))
+            Status status = twitter.showStatus(statusID.get());
+            if(status != null) {
+                return Optional.of(twitter.updateStatus((new StatusUpdate("@" + status.getUser().getScreenName() + " " +
+                        message.filter(s -> s.length() > 0 && s.length() <= (tweetTotal - status.getUser().getScreenName().length() - 2))
                                 .orElseThrow(() -> new TwitterServiceException("Cannot reply. Message length (including user tagging) should be between 0 and 280 characters")))
-                    .inReplyToStatusId(statusID.map(s -> {
+                        .inReplyToStatusId(statusID.map(s -> {
                             twitterCache.clearCache();
                             userCache.clearCache();
                             return s;
                         }).get()))));
+            } else {
+                throw new TwitterServiceException("Cannot reply. Status referenced by ID does not exist.");
+            }
         } else {
             throw new TwitterServiceException("Cannot reply. Check that both 'message' and 'statusID' data are present.");
         }
