@@ -163,23 +163,23 @@ public class TwitterServiceTest {
         assertEquals(mockMessage, replyTest.getText());
     }
 
-    @Test (expected = TwitterServiceException.class)
+    @Test(expected = TwitterServiceException.class)
     public void testReplyNullStatusID() throws TwitterException, TwitterServiceException {
         try {
             twitterServiceTest.replyToTweet(Optional.ofNullable(null), Optional.of(mockMessage));
-        } catch(TwitterServiceException tse) {
+        } catch (TwitterServiceException tse) {
             assertEquals("Cannot reply. Check that both 'message' and 'statusID' data are present.", tse.getMessage());
             throw tse;
         }
         fail("TwitterServiceException did not throw!");
     }
 
-    @Test (expected = TwitterServiceException.class)
+    @Test(expected = TwitterServiceException.class)
     public void testReplyNoStatusID() throws TwitterException, TwitterServiceException {
         Long noID = (long) 0;
         try {
             twitterServiceTest.replyToTweet(Optional.ofNullable(noID), Optional.of(mockMessage));
-        } catch(TwitterServiceException tse) {
+        } catch (TwitterServiceException tse) {
             assertEquals("Cannot reply. Check that both 'message' and 'statusID' data are present.", tse.getMessage());
             throw tse;
         }

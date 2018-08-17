@@ -53,7 +53,7 @@ public class TwitterCacheTest {
         assertNotNull(twitterCacheTest.getCachedList());
 
         try {
-            Thread.sleep((ttlSeconds + 1)* 1000);
+            Thread.sleep((ttlSeconds + 1) * 1000);
         } catch (Exception e) {
             fail();
         }

@@ -69,7 +69,7 @@ public class TwitterResourceTest {
     @Test
     public void testResourceGetFilterSomething() throws TwitterException, TwitterServiceException {
         List<TwitterPost> fakeList = new ArrayList<>();
-        for(int i = 0; i < 5; i++) {
+        for (int i = 0; i < 5; i++) {
             fakeList.add(mockPost("Sample " + i));
         }
 
@@ -80,8 +80,8 @@ public class TwitterResourceTest {
         List<TwitterPost> list = ((List<TwitterPost>) response.getEntity());
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        assertEquals(5,  list.size());
-        assertEquals(fakeList.get(0).getTwitterMessage() , list.get(0).getTwitterMessage());
+        assertEquals(5, list.size());
+        assertEquals(fakeList.get(0).getTwitterMessage(), list.get(0).getTwitterMessage());
     }
 
     @Test
@@ -153,7 +153,7 @@ public class TwitterResourceTest {
     }
 
     @Test
-    public void testResourcePostNullMessage() throws TwitterException, TwitterServiceException{
+    public void testResourcePostNullMessage() throws TwitterException, TwitterServiceException {
         String errorNull = "Cannot post. Message data is either missing or not in the correct form.";
 
         when(twitterServiceTest.postToTwitter(any(Optional.class))).thenThrow(new TwitterServiceException(errorNull));
