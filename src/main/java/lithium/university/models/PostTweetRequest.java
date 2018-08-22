@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Optional;
 
-public class TwitterPost {
+public class PostTweetRequest {
     private Optional<String> message;
 
     @JsonProperty("message")

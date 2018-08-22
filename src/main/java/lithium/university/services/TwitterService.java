@@ -3,8 +3,8 @@ package lithium.university.services;
 import lithium.university.TwitterCache;
 import lithium.university.exceptions.TwitterServiceException;
 import lithium.university.models.Tweet;
-import lithium.university.models.TwitterPost;
-import lithium.university.models.TwitterReply;
+import lithium.university.models.PostTweetRequest;
+import lithium.university.models.ReplyTweetRequest;
 import lithium.university.models.TwitterUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +40,7 @@ public class TwitterService {
      * Input: Twitter twitter - twitter instance, String message - message to be posted, int tweetTotal - total limited characters
      * Output: status object of updated status
      * */
-    public Optional<Status> postToTwitter(Optional<TwitterPost> post) throws TwitterException, TwitterServiceException {
+    public Optional<Status> postToTwitter(Optional<PostTweetRequest> post) throws TwitterException, TwitterServiceException {
         if(post.isPresent()) {
             Optional<String> message = post.get().getMessage();
             if (message.isPresent()) {
@@ -63,7 +63,7 @@ public class TwitterService {
     /*
      * Takes in a tweet id and message and replies to the original tweet
      * */
-    public Optional<Status> replyToTweet(Optional<TwitterReply> reply) throws TwitterException, TwitterServiceException {
+    public Optional<Status> replyToTweet(Optional<ReplyTweetRequest> reply) throws TwitterException, TwitterServiceException {
         if(reply.isPresent()) {
             Optional<Long> statusID = reply.get().getStatusID();
             Optional<String> message = reply.get().getMessage();

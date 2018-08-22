@@ -3,8 +3,8 @@ package lithium.university.resources;
 import lithium.university.TwitterProvider;
 import lithium.university.exceptions.TwitterServiceException;
 import lithium.university.models.Tweet;
-import lithium.university.models.TwitterPost;
-import lithium.university.models.TwitterReply;
+import lithium.university.models.PostTweetRequest;
+import lithium.university.models.ReplyTweetRequest;
 import lithium.university.services.TwitterService;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,8 +27,8 @@ public class TwitterResourceTest {
     private TwitterResource twitterResourceTest;
     private TwitterService twitterServiceTest;
     private long statusID = 12345;
-    private TwitterPost twitterPostTest;
-    private TwitterReply twitterUserReplyTest;
+    private PostTweetRequest postTweetRequestTest;
+    private ReplyTweetRequest twitterUserReplyTest;
 
     @Before
     public void init() {
@@ -36,8 +36,8 @@ public class TwitterResourceTest {
         TwitterProvider twitterProviderTest = mock(TwitterProvider.class);
         twitterResourceTest = new TwitterResource(twitterServiceTest);
         when(twitterProviderTest.get()).thenReturn(mock(Twitter.class));
-        twitterPostTest = new TwitterPost();
-        twitterUserReplyTest = new TwitterReply();
+        postTweetRequestTest = new PostTweetRequest();
+        twitterUserReplyTest = new ReplyTweetRequest();
     }
 
     private Tweet mockPost(String message) {
@@ -118,8 +118,8 @@ public class TwitterResourceTest {
         when(s.getText()).thenReturn(message);
         when(twitterServiceTest.postToTwitter(any(Optional.class))).thenReturn(Optional.of(s));
 
-        twitterPostTest.setMessage(Optional.of(message));
-        Response response = twitterResourceTest.postTweet(Optional.ofNullable(twitterPostTest));
+        postTweetRequestTest.setMessage(Optional.of(message));
+        Response response = twitterResourceTest.postTweet(Optional.ofNullable(postTweetRequestTest));
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         assertEquals(twitterResourceTest.successMessage(message), response.getEntity());
     }
@@ -131,8 +131,8 @@ public class TwitterResourceTest {
 
         when(twitterServiceTest.postToTwitter(any(Optional.class))).thenThrow(new TwitterServiceException(errorLength));
 
-        twitterPostTest.setMessage(Optional.of(message));
-        Response response = twitterResourceTest.postTweet(Optional.ofNullable(twitterPostTest));
+        postTweetRequestTest.setMessage(Optional.of(message));
+        Response response = twitterResourceTest.postTweet(Optional.ofNullable(postTweetRequestTest));
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
         assertEquals(errorLength, response.getEntity());
     }
@@ -144,8 +144,8 @@ public class TwitterResourceTest {
 
         when(twitterServiceTest.postToTwitter(any(Optional.class))).thenThrow(new TwitterServiceException(errorZero));
 
-        twitterPostTest.setMessage(Optional.of(message));
-        Response response = twitterResourceTest.postTweet(Optional.ofNullable(twitterPostTest));
+        postTweetRequestTest.setMessage(Optional.of(message));
+        Response response = twitterResourceTest.postTweet(Optional.ofNullable(postTweetRequestTest));
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
         assertEquals(errorZero, response.getEntity());
     }
@@ -156,8 +156,8 @@ public class TwitterResourceTest {
 
         when(twitterServiceTest.postToTwitter(any(Optional.class))).thenThrow(new TwitterException(twitterResourceTest.getErrorMessage()));
 
-        twitterPostTest.setMessage(Optional.of(message));
-        Response response = twitterResourceTest.postTweet(Optional.ofNullable(twitterPostTest));
+        postTweetRequestTest.setMessage(Optional.of(message));
+        Response response = twitterResourceTest.postTweet(Optional.ofNullable(postTweetRequestTest));
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
         assertEquals(twitterResourceTest.getErrorMessage(), response.getEntity());
     }
