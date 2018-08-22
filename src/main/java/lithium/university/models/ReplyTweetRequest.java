@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Optional;
 
-public class TwitterReply extends TwitterPost {
+public class ReplyTweetRequest extends PostTweetRequest {
     private Optional<Long> statusID;
 
     @JsonProperty("statusID")
