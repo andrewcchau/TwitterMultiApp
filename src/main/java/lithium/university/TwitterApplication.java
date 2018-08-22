@@ -40,8 +40,8 @@ public class TwitterApplication extends Application<TwitterConfiguration> {
         /* Configure CORS */
         final FilterRegistration.Dynamic cors = environment.servlets().addFilter("CORS", CrossOriginFilter.class);
         cors.setInitParameter("allowedOrigins", "http://localhost:9000");
-        cors.setInitParameter("allowedHeaders", "Origin");
-        cors.setInitParameter("allowedMethods", "GET,POST");
+        cors.setInitParameter("allowedHeaders", "Origin, Content-Type");
+        cors.setInitParameter("allowedMethods", "OPTIONS,GET,POST");
         cors.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), true, "/*");
 
         environment.healthChecks().register("twitter", setUp.healthCheck());
