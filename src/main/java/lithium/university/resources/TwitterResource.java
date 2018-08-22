@@ -2,6 +2,8 @@ package lithium.university.resources;
 
 import lithium.university.TwitterApplication;
 import lithium.university.exceptions.TwitterServiceException;
+import lithium.university.models.TwitterPost;
+import lithium.university.models.TwitterReply;
 import lithium.university.services.TwitterService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,7 +11,6 @@ import twitter4j.TwitterException;
 
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -88,11 +89,11 @@ public class TwitterResource {
 
     @POST
     @Path("/tweet")
-    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    public Response postTweet(@FormParam("message") String message) {
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response postTweet(Optional<TwitterPost> post) {
         /*Attempt to post to Twitter*/
         try {
-            return twitterService.postToTwitter(Optional.ofNullable(message))
+            return twitterService.postToTwitter(post)
                     .map(status -> successMessage(status.getText()))
                     .map(status -> Response.ok(status).build())
                     .get();
@@ -107,10 +108,10 @@ public class TwitterResource {
 
     @POST
     @Path("/tweet/reply")
-    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    public Response postTweetReply(@FormParam("statusID") long statusID, @FormParam("message") String message) {
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response postTweetReply(Optional<TwitterReply> reply) {
         try {
-            return twitterService.replyToTweet(Optional.ofNullable(statusID), Optional.ofNullable(message))
+            return twitterService.replyToTweet(reply)
                     .map(status -> successReply(status.getText()))
                     .map(status -> Response.ok(status).build())
                     .get();

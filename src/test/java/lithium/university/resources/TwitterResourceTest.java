@@ -2,7 +2,9 @@ package lithium.university.resources;
 
 import lithium.university.TwitterProvider;
 import lithium.university.exceptions.TwitterServiceException;
+import lithium.university.models.Tweet;
 import lithium.university.models.TwitterPost;
+import lithium.university.models.TwitterReply;
 import lithium.university.services.TwitterService;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,6 +27,8 @@ public class TwitterResourceTest {
     private TwitterResource twitterResourceTest;
     private TwitterService twitterServiceTest;
     private long statusID = 12345;
+    private TwitterPost twitterPostTest;
+    private TwitterReply twitterUserReplyTest;
 
     @Before
     public void init() {
@@ -32,29 +36,31 @@ public class TwitterResourceTest {
         TwitterProvider twitterProviderTest = mock(TwitterProvider.class);
         twitterResourceTest = new TwitterResource(twitterServiceTest);
         when(twitterProviderTest.get()).thenReturn(mock(Twitter.class));
+        twitterPostTest = new TwitterPost();
+        twitterUserReplyTest = new TwitterReply();
     }
 
-    private TwitterPost mockPost(String message) {
-        TwitterPost post = mock(TwitterPost.class);
+    private Tweet mockPost(String message) {
+        Tweet post = mock(Tweet.class);
         when(post.getTwitterMessage()).thenReturn(message);
         return post;
     }
 
-    private TwitterPost mockPost() {
+    private Tweet mockPost() {
         return mockPost("General message");
     }
 
     @Test
     public void testResourceGetTimeline() throws TwitterException {
-        List<TwitterPost> fakeList = new ArrayList<>();
+        List<Tweet> fakeList = new ArrayList<>();
         fakeList.add(mockPost());
 
         when(twitterServiceTest.retrieveFromTwitter(anyInt())).thenReturn(Optional.of(fakeList));
 
         Response response = twitterResourceTest.getHomeTimeline();
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        assertEquals(1, ((List<TwitterPost>) response.getEntity()).size());
-        assertEquals(mockPost().getTwitterMessage(), ((List<TwitterPost>) response.getEntity()).get(0).getTwitterMessage());
+        assertEquals(1, ((List<Tweet>) response.getEntity()).size());
+        assertEquals(mockPost().getTwitterMessage(), ((List<Tweet>) response.getEntity()).get(0).getTwitterMessage());
     }
 
     @Test
@@ -68,7 +74,7 @@ public class TwitterResourceTest {
 
     @Test
     public void testResourceGetFilterSomething() throws TwitterException, TwitterServiceException {
-        List<TwitterPost> fakeList = new ArrayList<>();
+        List<Tweet> fakeList = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
             fakeList.add(mockPost("Sample " + i));
         }
@@ -77,7 +83,7 @@ public class TwitterResourceTest {
 
         Response response = twitterResourceTest.getFilteredTweets(Optional.of("Sample"));
 
-        List<TwitterPost> list = ((List<TwitterPost>) response.getEntity());
+        List<Tweet> list = ((List<Tweet>) response.getEntity());
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         assertEquals(5, list.size());
@@ -112,7 +118,8 @@ public class TwitterResourceTest {
         when(s.getText()).thenReturn(message);
         when(twitterServiceTest.postToTwitter(any(Optional.class))).thenReturn(Optional.of(s));
 
-        Response response = twitterResourceTest.postTweet(message);
+        twitterPostTest.setMessage(Optional.of(message));
+        Response response = twitterResourceTest.postTweet(Optional.ofNullable(twitterPostTest));
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         assertEquals(twitterResourceTest.successMessage(message), response.getEntity());
     }
@@ -124,7 +131,8 @@ public class TwitterResourceTest {
 
         when(twitterServiceTest.postToTwitter(any(Optional.class))).thenThrow(new TwitterServiceException(errorLength));
 
-        Response response = twitterResourceTest.postTweet(message);
+        twitterPostTest.setMessage(Optional.of(message));
+        Response response = twitterResourceTest.postTweet(Optional.ofNullable(twitterPostTest));
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
         assertEquals(errorLength, response.getEntity());
     }
@@ -136,7 +144,8 @@ public class TwitterResourceTest {
 
         when(twitterServiceTest.postToTwitter(any(Optional.class))).thenThrow(new TwitterServiceException(errorZero));
 
-        Response response = twitterResourceTest.postTweet(message);
+        twitterPostTest.setMessage(Optional.of(message));
+        Response response = twitterResourceTest.postTweet(Optional.ofNullable(twitterPostTest));
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
         assertEquals(errorZero, response.getEntity());
     }
@@ -147,7 +156,8 @@ public class TwitterResourceTest {
 
         when(twitterServiceTest.postToTwitter(any(Optional.class))).thenThrow(new TwitterException(twitterResourceTest.getErrorMessage()));
 
-        Response response = twitterResourceTest.postTweet(message);
+        twitterPostTest.setMessage(Optional.of(message));
+        Response response = twitterResourceTest.postTweet(Optional.ofNullable(twitterPostTest));
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
         assertEquals(twitterResourceTest.getErrorMessage(), response.getEntity());
     }
@@ -158,7 +168,7 @@ public class TwitterResourceTest {
 
         when(twitterServiceTest.postToTwitter(any(Optional.class))).thenThrow(new TwitterServiceException(errorNull));
 
-        Response response = twitterResourceTest.postTweet(null);
+        Response response = twitterResourceTest.postTweet(Optional.ofNullable(null));
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
         assertEquals(errorNull, response.getEntity());
     }
@@ -169,9 +179,11 @@ public class TwitterResourceTest {
         Status s = mock(Status.class);
 
         when(s.getText()).thenReturn(message);
-        when(twitterServiceTest.replyToTweet(any(Optional.class), any(Optional.class))).thenReturn(Optional.of(s));
+        when(twitterServiceTest.replyToTweet(any(Optional.class))).thenReturn(Optional.of(s));
 
-        Response response = twitterResourceTest.postTweetReply(statusID, message);
+        twitterUserReplyTest.setStatusID(Optional.of(statusID));
+        twitterUserReplyTest.setMessage(Optional.of(message));
+        Response response = twitterResourceTest.postTweetReply(Optional.of(twitterUserReplyTest));
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         assertEquals(twitterResourceTest.successReply(message), response.getEntity());
     }
@@ -181,9 +193,11 @@ public class TwitterResourceTest {
         String message = "This should not actually make it to Twitter!";
         String errorLength = "Cannot reply. Message length (including user tagging) should be between 0 and 280 characters";
 
-        when(twitterServiceTest.replyToTweet(any(Optional.class), any(Optional.class))).thenThrow(new TwitterServiceException(errorLength));
+        when(twitterServiceTest.replyToTweet(any(Optional.class))).thenThrow(new TwitterServiceException(errorLength));
 
-        Response response = twitterResourceTest.postTweetReply(statusID, message);
+        twitterUserReplyTest.setStatusID(Optional.of(statusID));
+        twitterUserReplyTest.setMessage(Optional.of(message));
+        Response response = twitterResourceTest.postTweetReply(Optional.of(twitterUserReplyTest));
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
         assertEquals(errorLength, response.getEntity());
     }
@@ -193,9 +207,11 @@ public class TwitterResourceTest {
         String message = "";
         String errorLength = "Cannot reply. Message length (including user tagging) should be between 0 and 280 characters";
 
-        when(twitterServiceTest.replyToTweet(any(Optional.class), any(Optional.class))).thenThrow(new TwitterServiceException(errorLength));
+        when(twitterServiceTest.replyToTweet(any(Optional.class))).thenThrow(new TwitterServiceException(errorLength));
 
-        Response response = twitterResourceTest.postTweetReply(statusID, message);
+        twitterUserReplyTest.setStatusID(Optional.of(statusID));
+        twitterUserReplyTest.setMessage(Optional.of(message));
+        Response response = twitterResourceTest.postTweetReply(Optional.of(twitterUserReplyTest));
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
         assertEquals(errorLength, response.getEntity());
     }
@@ -204,9 +220,11 @@ public class TwitterResourceTest {
     public void testResourceReplyErrorHandling() throws TwitterException, TwitterServiceException {
         String message = "This should not actually make it to Twitter!";
 
-        when(twitterServiceTest.replyToTweet(any(Optional.class), any(Optional.class))).thenThrow(new TwitterException(twitterResourceTest.getErrorMessage()));
+        when(twitterServiceTest.replyToTweet(any(Optional.class))).thenThrow(new TwitterException(twitterResourceTest.getErrorMessage()));
 
-        Response response = twitterResourceTest.postTweetReply(statusID, message);
+        twitterUserReplyTest.setStatusID(Optional.of(statusID));
+        twitterUserReplyTest.setMessage(Optional.of(message));
+        Response response = twitterResourceTest.postTweetReply(Optional.of(twitterUserReplyTest));
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
         assertEquals(twitterResourceTest.getErrorMessage(), response.getEntity());
     }
@@ -215,9 +233,9 @@ public class TwitterResourceTest {
     public void testResourceReplyNullMessage() throws TwitterException, TwitterServiceException {
         String errorNull = "Cannot reply. Check that both 'message' and 'statusID' data are present.";
 
-        when(twitterServiceTest.replyToTweet(any(Optional.class), any(Optional.class))).thenThrow(new TwitterServiceException(errorNull));
-
-        Response response = twitterResourceTest.postTweetReply(statusID, null);
+        when(twitterServiceTest.replyToTweet(any(Optional.class))).thenThrow(new TwitterServiceException(errorNull));
+        twitterUserReplyTest.setStatusID(Optional.of(statusID));
+        Response response = twitterResourceTest.postTweetReply(Optional.of(twitterUserReplyTest));
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
         assertEquals(errorNull, response.getEntity());
     }
@@ -226,9 +244,11 @@ public class TwitterResourceTest {
     public void testResourceReplyNoStatusID() throws TwitterException, TwitterServiceException {
         String errorNull = "Cannot reply. Check that both 'message' and 'statusID' data are present.";
 
-        when(twitterServiceTest.replyToTweet(any(Optional.class), any(Optional.class))).thenThrow(new TwitterServiceException(errorNull));
+        when(twitterServiceTest.replyToTweet(any(Optional.class))).thenThrow(new TwitterServiceException(errorNull));
 
-        Response response = twitterResourceTest.postTweetReply(0, "Test Message");
+        twitterUserReplyTest.setStatusID(Optional.of((long) 0));
+        twitterUserReplyTest.setMessage(Optional.of("Test Message"));
+        Response response = twitterResourceTest.postTweetReply(Optional.of(twitterUserReplyTest));
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
         assertEquals(errorNull, response.getEntity());
     }
